@@ -1,0 +1,41 @@
+.workspace {
+  grid-area: canvas;
+  place-self: stretch;
+  background-color: $canvas-background-color;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
+  } 
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $transparent-main-color;
+    border-radius: 5px;
+
+
+    &:hover {
+      background-color: $main-color;
+    }
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  &-scaler {
+    transform: scale(1);
+  }
+}
+
+.canvas-wrapper {
+  border-top: 90vh solid transparent;
+  border-bottom: 90vh solid transparent;
+  border-right: 90vw solid transparent;
+  border-left: 90vw solid transparent;
+}
+

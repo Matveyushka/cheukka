@@ -1,0 +1,12 @@
+@import './Constants';
+
+@import './MenuBar';
+@import './StatusBar';
+@import './Workspace';
+@import './Main';
+@import './Canvas';
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+}

@@ -1,0 +1,91 @@
+.status-bar {
+  z-index: 1000;
+  grid-area: statusbar;
+  background-color: $main-color;
+  color: $second-color;
+  font-family: $main-font;
+  font-size: $default-font-size;
+
+  display: grid;
+  grid-template: 
+    "statuslabel . diagramtypechooser scaleslider" auto
+    / auto 1fr auto auto;
+  align-items: center;
+
+  &-element {
+    padding: 0.2em 0.4em;
+  }
+
+  &-label {
+    grid-area: statuslabel;
+  }
+
+  &-chooser {
+    grid-area: diagramtypechooser;
+  }
+
+  &-scaler {
+    grid-area: scaleslider;
+
+    padding-right: 1em;
+
+    display: grid;
+    grid-template:
+      ". . ." auto
+      / auto 1fr auto;
+    align-items: center;
+
+    &-label {
+      font-size: 1rem;
+      margin-top: -0.2em;
+      cursor: pointer;
+    }
+
+    &-slider {
+      margin: 0 0.3em;
+      -webkit-appearance: none;
+      height: 0.1em;
+      border-radius: 5px;  
+      background: $second-color;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    &-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 0.8em;
+      height: 0.8em;
+      border-radius: 50%; 
+      background: $second-color;
+      cursor: pointer;
+    }
+    
+    &-slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: $second-color;
+      cursor: pointer;
+    }
+  }
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;       /* Remove default arrow */
+
+  background-color: $main-color;
+  border: none;
+  font-family: $main-font;
+  color: $second-color;
+  direction: rtl;
+  padding: 0 0.5em;
+}
+
+option { 
+  direction: rtl; 
+}

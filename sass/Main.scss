@@ -1,0 +1,10 @@
+.main {
+  height: 100%;
+  display: grid;
+  grid-template: 
+    "menubar" auto
+    "canvas"  1fr 
+    "statusbar" auto
+    / auto;
+  align-items: stretch;
+}
