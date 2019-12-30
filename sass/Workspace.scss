@@ -26,10 +26,6 @@
   &::-webkit-scrollbar-corner {
     background-color: transparent;
   }
-
-  &-scaler {
-    transform: scale(1);
-  }
 }
 
 .canvas-wrapper {
@@ -39,3 +35,8 @@
   border-left: 90vw solid transparent;
 }
 
+.debug {
+  position: absolute;
+  left: 0;
+  top: 20;
+}

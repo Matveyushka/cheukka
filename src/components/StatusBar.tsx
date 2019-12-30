@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setScale, increaseScale, decreaseScale } from '../actions'
+import { setScale, increaseScale, decreaseScale, setScaleFocusX, setScaleFocusY } from '../actions'
 import { Store } from '../stores'
 
 export interface StatusBarProps {
