@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setScale, increaseScale, decreaseScale, setScaleFocusX, setScaleFocusY } from '../actions'
 import { Store } from '../stores'
+import { MIN_SCALE, MAX_SCALE } from '../constants'
 
 export interface StatusBarProps {
 
@@ -43,7 +44,7 @@ export const StatusBar = (props: StatusBarProps) => {
         <input 
           id="typeinp" 
           type="range" 
-          min="0" max="200" 
+          min={MIN_SCALE} max={MAX_SCALE}
           value={scale} 
           onChange={handleChange}
           step="5"   

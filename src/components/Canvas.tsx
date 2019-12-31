@@ -9,6 +9,9 @@ export const Canvas = (props: CanvasProps) => {
 
   return (
     <div className="diagram-canvas">
+      <div id="b1"></div>
+      <div id="b2"></div>
+      <div id="b3"></div>
     </div>
   )
 }

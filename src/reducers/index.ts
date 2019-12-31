@@ -7,22 +7,25 @@ import {
   SET_XOFFSET, 
   SET_YOFFSET, 
   INCREASE_SCALE, 
-  DECREASE_SCALE 
+  DECREASE_SCALE,
+
+  MAX_SCALE,
+  MIN_SCALE
 } from '../constants';
 
 export const mainReducer = (state: Store, action: Action) : Store => {
   
   switch (action.type) {
     case SET_SCALE:
-      return { ...state, prevScale: state.scale, scale: action.scale }
+      return { ...state, prevScale: +state.scale, scale: +action.scale }
     case INCREASE_SCALE:
-      if (state.scale + action.scale <= 200) {
-        return { ...state, prevScale: state.scale,  scale: state.scale + action.scale }
+      if (state.scale + action.scale <= MAX_SCALE) {
+        return { ...state, prevScale: +state.scale,  scale: +state.scale + action.scale }
       }
       return state
     case DECREASE_SCALE:
-      if (state.scale - action.scale >= 0) { 
-        return { ...state, prevScale: state.scale,  scale: state.scale - action.scale }
+      if (state.scale - action.scale >= MIN_SCALE) { 
+        return { ...state, prevScale: +state.scale,  scale: +state.scale - action.scale }
       }
       return state
     case SET_SCALE:

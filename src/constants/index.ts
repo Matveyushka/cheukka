@@ -18,3 +18,7 @@ export type SET_XOFFSET = typeof SET_XOFFSET
 
 export const SET_YOFFSET = 'SET_YOFFSET'
 export type SET_YOFFSET = typeof SET_YOFFSET
+
+export const MAX_SCALE = 300
+
+export const MIN_SCALE = 100

@@ -29,10 +29,7 @@
 }
 
 .canvas-wrapper {
-  border-top: 90vh solid transparent;
-  border-bottom: 90vh solid transparent;
-  border-right: 90vw solid transparent;
-  border-left: 90vw solid transparent;
+  position: relative;
 }
 
 .debug {
