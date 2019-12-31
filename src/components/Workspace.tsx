@@ -14,6 +14,8 @@ export const Workspace = () => {
 
   const [c, sc] = React.useState<boolean>(false)
 
+  const [cost, scost] = React.useState<number>(scale)
+
   const defaultCanvasVhHeight = 90
   const defaultCanvasVhWidth = 64
   const scaleMultiplier = scale / 100
@@ -67,10 +69,10 @@ export const Workspace = () => {
       event.preventDefault()
       const wheelDelta = Math.sign(event.deltaY)
       if (wheelDelta < 0) {
-        dispatch(increaseScale(5))
+        dispatch(increaseScale(15))
       }
       else if (wheelDelta > 0) {
-        dispatch(decreaseScale(5))
+        dispatch(decreaseScale(15))
       }
     }
   }
@@ -112,6 +114,7 @@ export const Workspace = () => {
     thisElement.scrollLeft = ofX;
     sc(true)
     thisElement.scrollTop = ofY;
+    scost(scale)
   }, [scale])
 
   React.useEffect(() => {
@@ -129,11 +132,11 @@ export const Workspace = () => {
       <div className="canvas-wrapper" style={{
         height: defaultCanvasVhHeight + 'vh',
         width: defaultCanvasVhWidth + 'vh',
-        borderRight: defaultXEmpty / scaleMultiplier + 'px solid transparent',
-        borderLeft: defaultXEmpty / scaleMultiplier + 'px solid transparent',
-        borderTop: defaultYEmpty / scaleMultiplier + 'px solid transparent',
-        borderBottom: defaultYEmpty / scaleMultiplier + 'px solid transparent',
-        transform: `scale(${scaleMultiplier})`,
+        borderRight: defaultXEmpty / (cost / 100) + 'px solid transparent',
+        borderLeft: defaultXEmpty / (cost / 100) + 'px solid transparent',
+        borderTop: defaultYEmpty / (cost / 100) + 'px solid transparent',
+        borderBottom: defaultYEmpty / (cost / 100) + 'px solid transparent',
+        transform: `scale(${(cost / 100)})`,
         transformOrigin: `0 0`,
       }}>
         <Canvas>
