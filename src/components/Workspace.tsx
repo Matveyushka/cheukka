@@ -12,6 +12,8 @@ export const Workspace = () => {
   const prevScale = useSelector<Store, number>((state: Store) => state.prevScale)
   const dispatch = useDispatch()
 
+  const [c, sc] = React.useState<boolean>(false)
+
   const defaultCanvasVhHeight = 90
   const defaultCanvasVhWidth = 64
   const scaleMultiplier = scale / 100
@@ -45,8 +47,14 @@ export const Workspace = () => {
 
   const scrollHandler = (event: any) => {
     let thisElement = document.getElementsByClassName('workspace')[0]
-    setOffsetX(thisElement.scrollLeft)
-    setOffsetY(thisElement.scrollTop)
+    console.log(thisElement.scrollLeft)
+    console.log(thisElement.scrollTop)
+    if (!c)
+    {
+      setOffsetX(thisElement.scrollLeft)
+      setOffsetY(thisElement.scrollTop)
+    }
+    sc(false)
   }
 
   const preventContextMenu = (event: any) => {
@@ -70,10 +78,10 @@ export const Workspace = () => {
   React.useEffect(() => {
     let thisElement = document.getElementsByClassName('workspace')[0]
 
-    setOffsetX(thisElement.scrollLeft)
-    setOffsetY(thisElement.scrollTop)
     thisElement.scrollTop -= lastYMovement;
     thisElement.scrollLeft -= lastXMovement;
+    setOffsetX(thisElement.scrollLeft)
+    setOffsetY(thisElement.scrollTop)
 
   }, [lastXMovement, lastYMovement])
 
@@ -97,7 +105,12 @@ export const Workspace = () => {
 
     setOffsetX(ofX)
     setOffsetY(ofY)
+    console.log(ofX)
+    console.log(ofY)
+
+    sc(true)
     thisElement.scrollLeft = ofX;
+    sc(true)
     thisElement.scrollTop = ofY;
   }, [scale])
 
