@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { Canvas } from './Canvas'
 import { useDispatch, useSelector } from 'react-redux'
-import { increaseScale, decreaseScale } from '../actions'
+import { increaseScale, decreaseScale, setOffsetX, setOffsetY } from '../actions'
 import { Store } from '../stores'
-import { vhToPx, pxToVh, vwToPx, pxToVw } from '../utils'
+import { vhToPx, vwToPx, getScaledOffsets } from '../utils'
 import { defaultCanvasWidth, defaultCanvasHeight, defaultEmptySpaceWidth, defaultEmptySpaceHeight } from '../constants'
 
 export interface DiagramCanvasProps { }
@@ -11,6 +11,9 @@ export interface DiagramCanvasProps { }
 export const Workspace = () => {
   const scale = useSelector<Store, number>((state: Store) => state.scale)
   const prevScale = useSelector<Store, number>((state: Store) => state.prevScale)
+  const offsetX = useSelector<Store, number>((state: Store) => state.xOffset)
+  const offsetY = useSelector<Store, number>((state: Store) => state.yOffset)
+
   const dispatch = useDispatch()
 
   const workspaceRef = React.useRef(null)
@@ -19,23 +22,16 @@ export const Workspace = () => {
 
   const [cost, scost] = React.useState<number>(scale)
 
-  const scaleMultiplier = scale / 100
-  const prevScaleMultiplier = prevScale / 100
-
-  const defaultXOffset = defaultEmptySpaceWidth - vwToPx(50) + defaultCanvasWidth / 2
-  const defaultYOffset = defaultEmptySpaceHeight - vhToPx(50) + defaultCanvasHeight / 2 + 25
-
   const [mouseXPosition, setMouseXPosition] = React.useState<number>(0);
   const [mouseYPosition, setMouseYPosition] = React.useState<number>(0);
-  const [offsetX, setOffsetX] = React.useState<number>(defaultXOffset);
-  const [offsetY, setOffsetY] = React.useState<number>(defaultYOffset);
+
 
   const mouseMoveHandler = (event: any) => {
     setMouseXPosition(event.clientX)
     setMouseYPosition(event.clientY)
     if (event.buttons === 2) {
-      setOffsetX(offsetX - event.movementX)
-      setOffsetY(offsetY - event.movementY)
+      dispatch(setOffsetX(offsetX - event.movementX))
+      dispatch(setOffsetY(offsetY - event.movementY))
     }
   }
 
@@ -47,8 +43,8 @@ export const Workspace = () => {
   const scrollHandler = (event: any) => {
     if (!c)
     {
-      setOffsetX(workspaceRef.current.scrollLeft)
-      setOffsetY(workspaceRef.current.scrollTop)
+      dispatch(setOffsetX(workspaceRef.current.scrollLeft))
+      dispatch(setOffsetY(workspaceRef.current.scrollTop))
     }
     sc(false)
   }
@@ -71,57 +67,35 @@ export const Workspace = () => {
     }
   }
 
-  const getScaledOffsets = (
-    prevOffsetX: number,
-    prevOffsetY: number,
-    scaleFocusX: number,
-    scaleFocusY: number,
-    newScale: number,
-    oldScale: number,
-    ) => {
-      const mfxo = scaleFocusX + prevOffsetX
-      const mfyo = scaleFocusY + prevOffsetY
-  
-      const wid = defaultCanvasWidth * newScale + defaultEmptySpaceWidth * 2
-      const hei = defaultCanvasHeight * newScale + defaultEmptySpaceHeight * 2
-  
-      const prevwid = defaultCanvasWidth * oldScale + defaultEmptySpaceWidth * 2
-      const prevhei = defaultCanvasHeight * oldScale + defaultEmptySpaceHeight * 2
-  
-      const mfxn = (mfxo - defaultEmptySpaceWidth) * (wid - defaultEmptySpaceWidth * 2) / (prevwid - defaultEmptySpaceWidth * 2) + defaultEmptySpaceWidth
-      const mfyn = (mfyo - defaultEmptySpaceHeight) * (hei - defaultEmptySpaceHeight * 2) / (prevhei - defaultEmptySpaceHeight * 2) + defaultEmptySpaceHeight
-  
-      const _offsetX = mfxn - scaleFocusX
-      const _offsetY = mfyn - scaleFocusY
-
-      return { _offsetX, _offsetY }
-  }
-
   React.useEffect(() => {
     const { _offsetX, _offsetY } = getScaledOffsets(
       offsetX,
       offsetY,
       mouseXPosition,
       mouseYPosition - 18,
-      scaleMultiplier,
-      prevScaleMultiplier,
+      scale / 100,
+      prevScale / 100,
     )
 
-    setOffsetX(_offsetX)
-    setOffsetY(_offsetY)
+    dispatch(setOffsetX(_offsetX))
+    dispatch(setOffsetY(_offsetY))
   }, [scale])
 
   React.useEffect(() => {
     workspaceRef.current.scrollLeft = offsetX;
-    workspaceRef.current.scrollTop = offsetY;
-    scost(scale)
+    workspaceRef.current.scrollTop = offsetY; 
+    scost(scale / 100)
     sc(true)
   }, [offsetX, offsetY])
 
   React.useEffect(() => {
     workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false });
-    workspaceRef.current.scrollLeft = defaultXOffset
-    workspaceRef.current.scrollTop = defaultYOffset
+
+    const defaultXOffset = defaultEmptySpaceWidth - vwToPx(50) + defaultCanvasWidth / 2
+    const defaultYOffset = defaultEmptySpaceHeight - vhToPx(50) + defaultCanvasHeight / 2 + 25
+
+    dispatch(setOffsetX(defaultXOffset))
+    dispatch(setOffsetY(defaultYOffset))
   }, [])
 
   return (
@@ -135,11 +109,11 @@ export const Workspace = () => {
       <div className="canvas-wrapper" style={{
         height: defaultCanvasHeight + 'px',
         width: defaultCanvasWidth + 'px',
-        borderRight: defaultEmptySpaceWidth / (cost / 100) + 'px solid transparent',
-        borderLeft: defaultEmptySpaceWidth / (cost / 100) + 'px solid transparent',
-        borderTop: defaultEmptySpaceHeight / (cost / 100) + 'px solid transparent',
-        borderBottom: defaultEmptySpaceHeight / (cost / 100) + 'px solid transparent',
-        transform: `scale(${(cost / 100)})`,
+        borderRight: defaultEmptySpaceWidth / cost + 'px solid transparent',
+        borderLeft: defaultEmptySpaceWidth / cost + 'px solid transparent',
+        borderTop: defaultEmptySpaceHeight / cost + 'px solid transparent',
+        borderBottom: defaultEmptySpaceHeight / cost + 'px solid transparent',
+        transform: `scale(${cost})`,
         transformOrigin: `0 0`,
       }}>
         <Canvas>

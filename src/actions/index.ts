@@ -12,9 +12,9 @@ export interface SetScaleFocusX { type: Constants.SET_SCALE_FOCUS_X; coordinate:
 
 export interface SetScaleFocusY { type: Constants.SET_SCALE_FOCUS_Y; coordinate: number; }
 
-export interface SetXOffset { type: Constants.SET_XOFFSET; offset: number; }
+export interface SetOffsetX { type: Constants.SET_XOFFSET; offset: number; }
 
-export interface SetYOffset { type: Constants.SET_YOFFSET; offset: number; }
+export interface SetOffsetY { type: Constants.SET_YOFFSET; offset: number; }
 
 //actions
 
@@ -43,14 +43,14 @@ export const setScaleFocusY = (coordinate: number) : SetScaleFocusY => ({
   coordinate: coordinate
 });
 
-export const setXOffset = (offset: number) : SetXOffset => ({
+export const setOffsetX = (offset: number) : SetOffsetX => ({
   type: Constants.SET_XOFFSET,
   offset: offset
 });
 
-export const setYOffset = (offset: number) : SetYOffset => ({
+export const setOffsetY = (offset: number) : SetOffsetY => ({
   type: Constants.SET_YOFFSET,
   offset: offset
 });
 
-export type Action = SetScale | IncreaseScale | DecreaseScale | SetXOffset | SetYOffset;
+export type Action = SetScale | IncreaseScale | DecreaseScale | SetOffsetX | SetOffsetY;
