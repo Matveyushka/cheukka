@@ -25,10 +25,12 @@ export const MAX_SCALE = 300
 
 export const MIN_SCALE = 100
 
-export const defaultCanvasWidth = vhToPx(64)
+export const DEFAULT_CANVAS_WIDTH = vhToPx(64)
 
-export const defaultCanvasHeight = vhToPx(90)
+export const DEFAULT_CANVAS_HEIGHT = vhToPx(90)
 
-export const defaultEmptySpaceWidth = vwToPx(60)
+export const DEFAULT_EMPTY_SPACE_WIDTH = vwToPx(60)
 
-export const defaultEmptySpaceHeight = vhToPx(60)
+export const DEFAULT_EMPTY_SPACE_HEIGHT = vhToPx(60)
+
+export const LEFT_MOUSE_BUTTON = 2

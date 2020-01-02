@@ -6,8 +6,8 @@ export interface Store {
   scaleFocusX: number;
   scaleFocusY: number;
   prevScale: number;
-  xOffset: number;
-  yOffset: number;
+  offsetX: number;
+  offsetY: number;
 }
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
@@ -16,6 +16,6 @@ export const store = createStore<Store, any, any, any>(mainReducer,
     scaleFocusX: 0,
     scaleFocusY: 0,
     prevScale: 100,
-    xOffset: 0,
-    yOffset: 0,
+    offsetX: 0,
+    offsetY: 0,
   })

@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setScale, increaseScale, decreaseScale, setScaleFocusX, setScaleFocusY } from '../actions'
+import { setScale, increaseScale, decreaseScale } from '../actions'
 import { Store } from '../stores'
 import { MIN_SCALE, MAX_SCALE } from '../constants'
+import { vhToPx, vwToPx } from '../utils' 
 
 export interface StatusBarProps {
 
@@ -13,15 +14,15 @@ export const StatusBar = (props: StatusBarProps) => {
   const dispatch = useDispatch()
 
   const handleChange = (event: any) => {
-    dispatch(setScale(event.target.value))
+    dispatch(setScale(event.target.value, vwToPx(50), vhToPx(50)))
   }
 
   const plusClickHandler = () => {
-    dispatch(increaseScale(5))
+    dispatch(increaseScale(5, vwToPx(50), vhToPx(50)))
   }
 
   const minusClickHandler = () => {
-    dispatch(decreaseScale(5))
+    dispatch(decreaseScale(5, vwToPx(50), vhToPx(50)))
   }
   return (
     <div className="status-bar">

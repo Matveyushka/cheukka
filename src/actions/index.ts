@@ -2,11 +2,11 @@ import * as Constants from '../constants'
 
 //interfaces
 
-export interface SetScale { type: Constants.SET_SCALE; scale: number; }
+export interface SetScale { type: Constants.SET_SCALE; scale: number; scaleFocusX: number; scaleFocusY: number; }
 
-export interface IncreaseScale { type: Constants.INCREASE_SCALE; scale: number; }
+export interface IncreaseScale { type: Constants.INCREASE_SCALE; scale: number; scaleFocusX: number; scaleFocusY: number; }
 
-export interface DecreaseScale { type: Constants.DECREASE_SCALE; scale: number; }
+export interface DecreaseScale { type: Constants.DECREASE_SCALE; scale: number; scaleFocusX: number; scaleFocusY: number; }
 
 export interface SetScaleFocusX { type: Constants.SET_SCALE_FOCUS_X; coordinate: number; }
 
@@ -18,19 +18,25 @@ export interface SetOffsetY { type: Constants.SET_YOFFSET; offset: number; }
 
 //actions
 
-export const setScale = (scale: number) : SetScale => ({
+export const setScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : SetScale => ({
   type: Constants.SET_SCALE,
-  scale: scale
+  scale: scale,
+  scaleFocusX: scaleFocusX,
+  scaleFocusY: scaleFocusY
 });
 
-export const increaseScale = (scale: number) : IncreaseScale => ({
+export const increaseScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : IncreaseScale => ({
   type: Constants.INCREASE_SCALE,
-  scale: scale
+  scale: scale,
+  scaleFocusX: scaleFocusX,
+  scaleFocusY: scaleFocusY
 });
 
-export const decreaseScale = (scale: number) : DecreaseScale => ({
+export const decreaseScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : DecreaseScale => ({
   type: Constants.DECREASE_SCALE,
-  scale: scale
+  scale: scale,
+  scaleFocusX: scaleFocusX,
+  scaleFocusY: scaleFocusY
 });
 
 export const setScaleFocusX = (coordinate: number) : SetScaleFocusX => ({

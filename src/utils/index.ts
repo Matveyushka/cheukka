@@ -1,8 +1,8 @@
 import {
-  defaultCanvasWidth,
-  defaultCanvasHeight,
-  defaultEmptySpaceWidth,
-  defaultEmptySpaceHeight,
+  DEFAULT_CANVAS_WIDTH,
+  DEFAULT_CANVAS_HEIGHT,
+  DEFAULT_EMPTY_SPACE_WIDTH,
+  DEFAULT_EMPTY_SPACE_HEIGHT,
 } from '../constants'
 
 export const vwToPx = (vw: number) => {
@@ -32,14 +32,14 @@ export const getScaledOffsets = (
     const mfxo = scaleFocusX + prevOffsetX
     const mfyo = scaleFocusY + prevOffsetY
 
-    const wid = defaultCanvasWidth * newScale + defaultEmptySpaceWidth * 2
-    const hei = defaultCanvasHeight * newScale + defaultEmptySpaceHeight * 2
+    const wid = DEFAULT_CANVAS_WIDTH * newScale + DEFAULT_EMPTY_SPACE_WIDTH * 2
+    const hei = DEFAULT_CANVAS_HEIGHT * newScale + DEFAULT_EMPTY_SPACE_HEIGHT * 2
 
-    const prevwid = defaultCanvasWidth * oldScale + defaultEmptySpaceWidth * 2
-    const prevhei = defaultCanvasHeight * oldScale + defaultEmptySpaceHeight * 2
+    const prevwid = DEFAULT_CANVAS_WIDTH * oldScale + DEFAULT_EMPTY_SPACE_WIDTH * 2
+    const prevhei = DEFAULT_CANVAS_HEIGHT * oldScale + DEFAULT_EMPTY_SPACE_HEIGHT * 2
 
-    const mfxn = (mfxo - defaultEmptySpaceWidth) * (wid - defaultEmptySpaceWidth * 2) / (prevwid - defaultEmptySpaceWidth * 2) + defaultEmptySpaceWidth
-    const mfyn = (mfyo - defaultEmptySpaceHeight) * (hei - defaultEmptySpaceHeight * 2) / (prevhei - defaultEmptySpaceHeight * 2) + defaultEmptySpaceHeight
+    const mfxn = (mfxo - DEFAULT_EMPTY_SPACE_WIDTH) * (wid - DEFAULT_EMPTY_SPACE_WIDTH * 2) / (prevwid - DEFAULT_EMPTY_SPACE_WIDTH * 2) + DEFAULT_EMPTY_SPACE_WIDTH
+    const mfyn = (mfyo - DEFAULT_EMPTY_SPACE_HEIGHT) * (hei - DEFAULT_EMPTY_SPACE_HEIGHT * 2) / (prevhei - DEFAULT_EMPTY_SPACE_HEIGHT * 2) + DEFAULT_EMPTY_SPACE_HEIGHT
 
     const _offsetX = mfxn - scaleFocusX
     const _offsetY = mfyn - scaleFocusY
