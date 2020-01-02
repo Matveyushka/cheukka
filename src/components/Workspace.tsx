@@ -12,6 +12,8 @@ export const Workspace = () => {
   const prevScale = useSelector<Store, number>((state: Store) => state.prevScale)
   const dispatch = useDispatch()
 
+  const workspaceRef = React.useRef(null)
+
   const [c, sc] = React.useState<boolean>(false)
 
   const [cost, scost] = React.useState<number>(scale)
@@ -48,13 +50,10 @@ export const Workspace = () => {
   }
 
   const scrollHandler = (event: any) => {
-    let thisElement = document.getElementsByClassName('workspace')[0]
-    console.log(thisElement.scrollLeft)
-    console.log(thisElement.scrollTop)
     if (!c)
     {
-      setOffsetX(thisElement.scrollLeft)
-      setOffsetY(thisElement.scrollTop)
+      setOffsetX(workspaceRef.current.scrollLeft)
+      setOffsetY(workspaceRef.current.scrollTop)
     }
     sc(false)
   }
@@ -69,27 +68,31 @@ export const Workspace = () => {
       event.preventDefault()
       const wheelDelta = Math.sign(event.deltaY)
       if (wheelDelta < 0) {
-        dispatch(increaseScale(15))
+        dispatch(increaseScale(5))
       }
       else if (wheelDelta > 0) {
-        dispatch(decreaseScale(15))
+        dispatch(decreaseScale(5))
       }
     }
   }
 
   React.useEffect(() => {
-    let thisElement = document.getElementsByClassName('workspace')[0]
-
-    thisElement.scrollTop -= lastYMovement;
-    thisElement.scrollLeft -= lastXMovement;
-    setOffsetX(thisElement.scrollLeft)
-    setOffsetY(thisElement.scrollTop)
+    workspaceRef.current.scrollTop -= lastYMovement;
+    workspaceRef.current.scrollLeft -= lastXMovement;
+    setOffsetX(workspaceRef.current.scrollLeft)
+    setOffsetY(workspaceRef.current.scrollTop)
 
   }, [lastXMovement, lastYMovement])
 
-  React.useEffect(() => {
-    let thisElement = document.getElementsByClassName('workspace')[0]
+  const getScaledOffsets = (
+    scaleFocusX: number,
+    scaleFocusY: number,
 
+    ) => {
+
+  }
+
+  React.useEffect(() => {
     const mfxo = mouseXPosition + offsetX
     const mfyo = mouseYPosition - 18 + offsetY
 
@@ -107,19 +110,16 @@ export const Workspace = () => {
 
     setOffsetX(ofX)
     setOffsetY(ofY)
-    console.log(ofX)
-    console.log(ofY)
 
     sc(true)
-    thisElement.scrollLeft = ofX;
+    workspaceRef.current.scrollLeft = ofX;
     sc(true)
-    thisElement.scrollTop = ofY;
+    workspaceRef.current.scrollTop = ofY;
     scost(scale)
   }, [scale])
 
   React.useEffect(() => {
-    let thisElement = document.getElementsByClassName('workspace')[0]
-    thisElement.addEventListener("mousewheel", onWheelHandler, { passive: false });
+    workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false });
   }, [])
 
   return (
@@ -128,6 +128,7 @@ export const Workspace = () => {
       onMouseMove={mouseMoveHandler}
       onContextMenu={preventContextMenu}
       onScroll={scrollHandler}
+      ref={workspaceRef}
     >
       <div className="canvas-wrapper" style={{
         height: defaultCanvasVhHeight + 'vh',
