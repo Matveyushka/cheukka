@@ -1,3 +1,5 @@
+import { vhToPx, vwToPx } from '../utils' 
+
 export const SET_SCALE = 'SET_SCALE'
 export type SET_SCALE = typeof SET_SCALE
 
@@ -22,3 +24,11 @@ export type SET_YOFFSET = typeof SET_YOFFSET
 export const MAX_SCALE = 300
 
 export const MIN_SCALE = 100
+
+export const defaultCanvasWidth = vhToPx(64)
+
+export const defaultCanvasHeight = vhToPx(90)
+
+export const defaultEmptySpaceWidth = vwToPx(60)
+
+export const defaultEmptySpaceHeight = vhToPx(60)
