@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { Canvas } from './Canvas'
+import { Canvas } from '../Canvas'
 import { useDispatch, useSelector } from 'react-redux'
-import { increaseScale, decreaseScale, setOffsetX, setOffsetY } from '../actions'
-import { Store } from '../stores'
+import { increaseScale, decreaseScale, setOffsetX, setOffsetY } from '../../actions'
+import { Store } from '../../stores'
 import { 
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
@@ -10,10 +10,10 @@ import {
   DEFAULT_EMPTY_SPACE_HEIGHT,
   LEFT_MOUSE_BUTTON,
   SCALE_STEP
-} from '../constants'
+} from '../../constants'
 import {
   getScale, vwToPx, vhToPx
-} from '../utils'
+} from '../../utils'
 
 export interface DiagramCanvasProps { }
 
