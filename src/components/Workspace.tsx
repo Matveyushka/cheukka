@@ -3,39 +3,43 @@ import { Canvas } from './Canvas'
 import { useDispatch, useSelector } from 'react-redux'
 import { increaseScale, decreaseScale, setOffsetX, setOffsetY } from '../actions'
 import { Store } from '../stores'
-import { vhToPx, vwToPx } from '../utils'
 import { 
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
   DEFAULT_EMPTY_SPACE_WIDTH,
   DEFAULT_EMPTY_SPACE_HEIGHT,
-  LEFT_MOUSE_BUTTON
+  LEFT_MOUSE_BUTTON,
+  SCALE_STEP
 } from '../constants'
+import {
+  getScale
+} from '../utils'
 
 export interface DiagramCanvasProps { }
 
 export const Workspace = () => {
   const workspaceRef = React.useRef(null)
 
-  const scale = useSelector<Store, number>((state: Store) => state.scale)
+  const Scale = useSelector<Store, number>((state: Store) => state.Scale)
   const offsetX = useSelector<Store, number>((state: Store) => state.offsetX)
   const offsetY = useSelector<Store, number>((state: Store) => state.offsetY)
 
   const dispatch = useDispatch()
 
   const [scrolledByOffset, setScrolledByOffset] = React.useState<boolean>(false)
-  const [offsetSyncScale, setOffsetSyncScale] = React.useState<number>(scale)
+  const [scrollSyncScale, setScrollSyncScale] = React.useState<number>(getScale(Scale))
 
   const mouseMoveHandler = (event: any) => {
     if (event.buttons === LEFT_MOUSE_BUTTON) {
-      dispatch(setOffsetX(offsetX - event.movementX))
-      dispatch(setOffsetY(offsetY - event.movementY))
+      dispatch(setOffsetX(Math.round(offsetX - event.movementX)))
+      dispatch(setOffsetY(Math.round(offsetY - event.movementY)))
     }
   }
 
   const scrollHandler = (event: any) => {
     if (!scrolledByOffset)
     {
+      console.log(1)
       dispatch(setOffsetX(workspaceRef.current.scrollLeft))
       dispatch(setOffsetY(workspaceRef.current.scrollTop))
     }
@@ -44,18 +48,22 @@ export const Workspace = () => {
 
   const preventContextMenu = (event: any) => {
     event.preventDefault()
-    return false
   }
 
   const onWheelHandler = (event: any) => {
     if (event.ctrlKey) {
       event.preventDefault()
+      
+      const workspaceBoundingClientRect = workspaceRef.current.getBoundingClientRect()
+      const scaleFocusX = event.clientX - workspaceBoundingClientRect.left
+      const scaleFocusY = event.clientY - workspaceBoundingClientRect.top
+
       const wheelDelta = Math.sign(event.deltaY)
       if (wheelDelta < 0) {
-        dispatch(increaseScale(5, event.clientX, event.clientY - 18))
+        dispatch(increaseScale(SCALE_STEP, scaleFocusX, scaleFocusY))
       }
       else if (wheelDelta > 0) {
-        dispatch(decreaseScale(5, event.clientX, event.clientY - 18))
+        dispatch(decreaseScale(SCALE_STEP, scaleFocusX, scaleFocusY))
       }
     }
   }
@@ -63,8 +71,12 @@ export const Workspace = () => {
   React.useEffect(() => {
     workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false });
 
-    const defaultXOffset = DEFAULT_EMPTY_SPACE_WIDTH - vwToPx(50) + DEFAULT_CANVAS_WIDTH / 2
-    const defaultYOffset = DEFAULT_EMPTY_SPACE_HEIGHT - vhToPx(50) + DEFAULT_CANVAS_HEIGHT / 2 + 25
+    const workspaceBoundingClientRect = workspaceRef.current.getBoundingClientRect()
+
+    const workspaceHalfWidth = workspaceBoundingClientRect.width / 2
+
+    const defaultXOffset = DEFAULT_EMPTY_SPACE_WIDTH - workspaceHalfWidth + DEFAULT_CANVAS_WIDTH / 2 * getScale(Scale)
+    const defaultYOffset = DEFAULT_EMPTY_SPACE_HEIGHT * 0.95
 
     dispatch(setOffsetX(defaultXOffset))
     dispatch(setOffsetY(defaultYOffset))
@@ -73,7 +85,9 @@ export const Workspace = () => {
   React.useEffect(() => {
     workspaceRef.current.scrollLeft = offsetX;
     workspaceRef.current.scrollTop = offsetY; 
-    setOffsetSyncScale(scale / 100)
+    if (Math.abs(offsetX - workspaceRef.current.scrollLeft) > 1) dispatch(setOffsetX(workspaceRef.current.scrollLeft))
+    if (Math.abs(offsetY - workspaceRef.current.scrollTop) > 1) dispatch(setOffsetY(workspaceRef.current.scrollTop))
+    setScrollSyncScale(getScale(Scale))
     setScrolledByOffset(true)
   }, [offsetX, offsetY])
 
@@ -87,11 +101,11 @@ export const Workspace = () => {
       <div className="canvas-wrapper" style={{
         height: DEFAULT_CANVAS_HEIGHT + 'px',
         width: DEFAULT_CANVAS_WIDTH + 'px',
-        borderRight: DEFAULT_EMPTY_SPACE_WIDTH / offsetSyncScale + 'px solid transparent',
-        borderLeft: DEFAULT_EMPTY_SPACE_WIDTH / offsetSyncScale + 'px solid transparent',
-        borderTop: DEFAULT_EMPTY_SPACE_HEIGHT / offsetSyncScale + 'px solid transparent',
-        borderBottom: DEFAULT_EMPTY_SPACE_HEIGHT / offsetSyncScale + 'px solid transparent',
-        transform: `scale(${offsetSyncScale})`,
+        borderRight: DEFAULT_EMPTY_SPACE_WIDTH / scrollSyncScale + 'px solid transparent',
+        borderLeft: DEFAULT_EMPTY_SPACE_WIDTH / scrollSyncScale + 'px solid transparent',
+        borderTop: DEFAULT_EMPTY_SPACE_HEIGHT / scrollSyncScale + 'px solid transparent',
+        borderBottom: DEFAULT_EMPTY_SPACE_HEIGHT / scrollSyncScale + 'px solid transparent',
+        transform: `Scale(${scrollSyncScale})`,
         transformOrigin: `0 0`,
       }}>
         <Canvas>

@@ -21,13 +21,15 @@ export type SET_XOFFSET = typeof SET_XOFFSET
 export const SET_YOFFSET = 'SET_YOFFSET'
 export type SET_YOFFSET = typeof SET_YOFFSET
 
-export const MAX_SCALE = 300
+export const MAX_SCALE = 31
 
-export const MIN_SCALE = 100
+export const MIN_SCALE = 1
 
-export const DEFAULT_CANVAS_WIDTH = vhToPx(64)
+export const SCALE_STEP = 1
 
-export const DEFAULT_CANVAS_HEIGHT = vhToPx(90)
+export const DEFAULT_CANVAS_WIDTH = vwToPx(20)
+
+export const DEFAULT_CANVAS_HEIGHT = vwToPx(28)
 
 export const DEFAULT_EMPTY_SPACE_WIDTH = vwToPx(60)
 
