@@ -2,8 +2,6 @@ import { Store } from '../stores';
 import { Action } from '../actions';
 import { 
   SET_SCALE, 
-  SET_SCALE_FOCUS_X,
-  SET_SCALE_FOCUS_Y,
   SET_XOFFSET, 
   SET_YOFFSET, 
   INCREASE_SCALE, 
@@ -25,7 +23,7 @@ export const mainReducer = (state: Store, action: Action) : Store => {
         action.scaleFocusY,
         action.Scale,
         state.Scale)
-
+      
       return { ...state, prevScale: +state.Scale, Scale: +action.Scale, offsetX: _offsetX, offsetY: _offsetY }
     case INCREASE_SCALE:
       if (state.Scale + action.Scale <= MAX_SCALE) {

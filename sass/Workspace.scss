@@ -8,14 +8,14 @@
   transition: color 0.2s;
 
   &::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 1.4vh;
+    height: 1.4vh;
     background-color: transparent;
   } 
 
   &::-webkit-scrollbar-thumb {
     background-color: $transparent-main-color;
-    border-radius: 5px;
+    border-radius: 1.4vh;
 
 
     &:hover {
@@ -30,11 +30,4 @@
 
 .canvas-wrapper {
   position: relative;
-}
-
-#debug {
-  position: absolute;
-  left: 0;
-  top: 20;
-  z-index: 1000;
 }

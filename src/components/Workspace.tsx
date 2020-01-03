@@ -27,19 +27,20 @@ export const Workspace = () => {
   const dispatch = useDispatch()
 
   const [scrolledByOffset, setScrolledByOffset] = React.useState<boolean>(false)
+  const [offsettedByMouseMove, setOffsettedByMouseMove] = React.useState<boolean>(false)
   const [scrollSyncScale, setScrollSyncScale] = React.useState<number>(getScale(Scale))
 
   const mouseMoveHandler = (event: any) => {
     if (event.buttons === LEFT_MOUSE_BUTTON) {
       dispatch(setOffsetX(Math.round(offsetX - event.movementX)))
       dispatch(setOffsetY(Math.round(offsetY - event.movementY)))
+      setOffsettedByMouseMove(true)
     }
   }
 
   const scrollHandler = (event: any) => {
     if (!scrolledByOffset)
     {
-      console.log(1)
       dispatch(setOffsetX(workspaceRef.current.scrollLeft))
       dispatch(setOffsetY(workspaceRef.current.scrollTop))
     }
@@ -83,10 +84,33 @@ export const Workspace = () => {
   }, [])
 
   React.useEffect(() => {
+    if (Math.abs(offsetX - workspaceRef.current.scrollLeft) > 1) {
+      workspaceRef.current.scrollLeft = offsetX
+      dispatch(setOffsetX(workspaceRef.current.scrollLeft))
+    }
+    if (Math.abs(offsetY - workspaceRef.current.scrollTop) > 1) {
+      workspaceRef.current.scrollTop = offsetY
+      dispatch(setOffsetY(workspaceRef.current.scrollTop))
+    }
+  }, [scrollSyncScale])
+
+  React.useEffect(() => {
     workspaceRef.current.scrollLeft = offsetX;
     workspaceRef.current.scrollTop = offsetY; 
-    if (Math.abs(offsetX - workspaceRef.current.scrollLeft) > 1) dispatch(setOffsetX(workspaceRef.current.scrollLeft))
-    if (Math.abs(offsetY - workspaceRef.current.scrollTop) > 1) dispatch(setOffsetY(workspaceRef.current.scrollTop))
+
+    if (offsettedByMouseMove)
+    {
+      if (Math.abs(offsetX - workspaceRef.current.scrollLeft) > 1) {
+        workspaceRef.current.scrollLeft = offsetX
+        dispatch(setOffsetX(workspaceRef.current.scrollLeft))
+      }
+      if (Math.abs(offsetY - workspaceRef.current.scrollTop) > 1) {
+        workspaceRef.current.scrollTop = offsetY
+        dispatch(setOffsetY(workspaceRef.current.scrollTop))
+      }
+      setOffsettedByMouseMove(false)
+    }
+
     setScrollSyncScale(getScale(Scale))
     setScrolledByOffset(true)
   }, [offsetX, offsetY])
