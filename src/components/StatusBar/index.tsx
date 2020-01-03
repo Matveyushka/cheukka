@@ -61,11 +61,9 @@ export const StatusBar = (props: StatusBarProps) => {
 
   const fitWindow = () => {
     const workspace = document.getElementsByClassName('workspace')[0]
-    const canvas = document.getElementsByClassName('canvas-wrapper')[0]
     if (workspace)
     {
       const workspaceRect = workspace.getBoundingClientRect()
-      const canvasRect = canvas.getBoundingClientRect()
 
       const scaleSteps = [...Array(MAX_SCALE - MIN_SCALE + 1).keys()].map(x => x + MIN_SCALE)
       const perfectXScale = scaleSteps.filter(s => DEFAULT_CANVAS_WIDTH * getScale(s) <= workspaceRect.width).reverse()[0]
@@ -74,6 +72,20 @@ export const StatusBar = (props: StatusBarProps) => {
       dispatch(setScale(newScale, workspaceRect.x / 2, workspaceRect.y / 2))
       dispatch(setOffsetX((DEFAULT_CANVAS_WIDTH * getScale(newScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2) / 2 - workspaceRect.width / 2))
       dispatch(setOffsetY((DEFAULT_CANVAS_HEIGHT * getScale(newScale) + DEFAULT_EMPTY_SPACE_HEIGHT * 2) / 2 - workspaceRect.height / 2))
+    }
+  }
+
+  const fitWidth = () => {
+    const workspace = document.getElementsByClassName('workspace')[0]
+    if (workspace)
+    {
+      const workspaceRect = workspace.getBoundingClientRect()
+
+      const scaleSteps = [...Array(MAX_SCALE - MIN_SCALE + 1).keys()].map(x => x + MIN_SCALE)
+      const newScale = scaleSteps.filter(s => DEFAULT_CANVAS_WIDTH * getScale(s) <= workspaceRect.width).reverse()[0]
+      dispatch(setScale(newScale, workspaceRect.x / 2, workspaceRect.y / 2))
+      dispatch(setOffsetX((DEFAULT_CANVAS_WIDTH * getScale(newScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2) / 2 - workspaceRect.width / 2))
+      dispatch(setOffsetY(DEFAULT_EMPTY_SPACE_HEIGHT * 0.98))
     }
   }
 
@@ -111,7 +123,9 @@ export const StatusBar = (props: StatusBarProps) => {
           />
       </div>
 
-      <button className="status-bar-fit-window status-bar-element" onClick={fitWindow}><img className="svg-button" src="full-size.svg"/></button>
+      <button className="status-bar-fit-window status-bar-button status-bar-element" onClick={fitWindow}><img src="full-size.svg"/></button>
+
+      <button className="status-bar-fit-width status-bar-button status-bar-element" onClick={fitWidth}><img src="full-width.svg"/></button>
     </div>
   )
 }

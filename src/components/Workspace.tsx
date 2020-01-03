@@ -12,7 +12,7 @@ import {
   SCALE_STEP
 } from '../constants'
 import {
-  getScale
+  getScale, vwToPx, vhToPx
 } from '../utils'
 
 export interface DiagramCanvasProps { }
@@ -26,12 +26,23 @@ export const Workspace = () => {
 
   const dispatch = useDispatch()
 
+  const keyPressHandler = (event: KeyboardEvent) => {
+    if (event.ctrlKey && event.key === '+') {
+      event.preventDefault()
+      dispatch(increaseScale(SCALE_STEP, vwToPx(50), vhToPx(50)))
+    }
+    if (event.ctrlKey && event.key === '-') {
+      event.preventDefault()
+      dispatch(decreaseScale(SCALE_STEP, vwToPx(50), vhToPx(50)))
+    }
+  }
+
   const [scrolledByOffset, setScrolledByOffset] = React.useState<boolean>(false)
   const [offsettedByMouseMove, setOffsettedByMouseMove] = React.useState<boolean>(false)
   const [scrollSyncScale, setScrollSyncScale] = React.useState<number>(getScale(scale))
   const [scrollScaleBlock, setScrollScaleBlock] = React.useState<boolean>(false)
 
-  const mouseMoveHandler = (event: any) => {
+  const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.buttons === LEFT_MOUSE_BUTTON) {
       dispatch(setOffsetX(Math.round(offsetX - event.movementX)))
       dispatch(setOffsetY(Math.round(offsetY - event.movementY)))
@@ -39,7 +50,7 @@ export const Workspace = () => {
     }
   }
 
-  const scrollHandler = (event: any) => {
+  const scrollHandler = () => {
     if (!scrolledByOffset)
     {
       dispatch(setOffsetX(workspaceRef.current.scrollLeft))
@@ -52,7 +63,7 @@ export const Workspace = () => {
     event.preventDefault()
   }
 
-  const onWheelHandler = (event: any) => {
+  const onWheelHandler = (event: WheelEvent) => {
     if (event.ctrlKey && !scrollScaleBlock) {
       event.preventDefault()
       
@@ -73,6 +84,8 @@ export const Workspace = () => {
   }
 
   React.useEffect(() => {
+    window.addEventListener('keydown', keyPressHandler);
+
     workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false });
 
     const workspaceBoundingClientRect = workspaceRef.current.getBoundingClientRect()
