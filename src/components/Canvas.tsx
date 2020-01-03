@@ -5,7 +5,7 @@ import { Store } from '../stores'
 export interface CanvasProps { }
 
 export const Canvas = (props: CanvasProps) => {
-  const Scale = useSelector((state: Store) => state.Scale)
+  const scale = useSelector((state: Store) => state.scale)
 
   return (
     <div className="diagram-canvas">

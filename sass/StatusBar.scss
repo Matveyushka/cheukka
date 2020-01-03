@@ -9,8 +9,8 @@
 
   display: grid;
   grid-template: 
-    "statuslabel . diagramtypechooser scaleslider scalechooser" auto
-    / auto 1fr auto auto;
+    "statuslabel . diagramtypechooser scaleslider scalechooser fitbutton" auto
+    / auto 1fr auto auto auto;
   align-items: center;
 
   &-element {
@@ -80,8 +80,18 @@
 
   &-scalechooser {
     grid-area: scalechooser;
-    margin-right: 0.4em;
     width: 4em;
     text-align: right;
+  }
+
+  &-fit-window {
+    grid-area: fitbutton;
+    color: $second-color;
+    background-color: $main-color;
+    padding: 0;
+    width: 1em;
+    height: 1em;
+    border: 0;
+    margin-right: 0.8em;
   }
 }

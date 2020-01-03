@@ -1,11 +1,19 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setScale, increaseScale, decreaseScale } from '../../actions'
+import { setScale, increaseScale, decreaseScale, setOffsetX, setOffsetY } from '../../actions'
 import { Store } from '../../stores'
-import { MIN_SCALE, MAX_SCALE, SCALE_STEP } from '../../constants'
+import { 
+  MIN_SCALE,
+  MAX_SCALE,
+  SCALE_STEP,
+  DEFAULT_EMPTY_SPACE_WIDTH,
+  DEFAULT_EMPTY_SPACE_HEIGHT,
+  DEFAULT_CANVAS_WIDTH,
+  DEFAULT_CANVAS_HEIGHT
+} from '../../constants'
 import { vhToPx, vwToPx, getScale } from '../../utils'
 import { OptionTypeBase } from 'react-select'
-import { CustomSelect, CustomSelectProps } from './CustomSelect'
+import { CustomSelect } from './CustomSelect'
 
 export interface StatusBarProps {
 
@@ -14,7 +22,7 @@ export interface StatusBarProps {
 export const StatusBar = (props: StatusBarProps) => {
   const [selectedDiagramType, sdt] = React.useState<OptionTypeBase>({ value: 'class', label: 'Class diagram' })
 
-  const scale = useSelector<Store, number>((state: Store) => state.Scale)
+  const scale = useSelector<Store, number>((state: Store) => state.scale)
   const dispatch = useDispatch()
 
   const diagramTypes = [
@@ -51,6 +59,24 @@ export const StatusBar = (props: StatusBarProps) => {
     dispatch(decreaseScale(SCALE_STEP, vwToPx(50), vhToPx(50)))
   }
 
+  const fitWindow = () => {
+    const workspace = document.getElementsByClassName('workspace')[0]
+    const canvas = document.getElementsByClassName('canvas-wrapper')[0]
+    if (workspace)
+    {
+      const workspaceRect = workspace.getBoundingClientRect()
+      const canvasRect = canvas.getBoundingClientRect()
+
+      const scaleSteps = [...Array(MAX_SCALE - MIN_SCALE + 1).keys()].map(x => x + MIN_SCALE)
+      const perfectXScale = scaleSteps.filter(s => DEFAULT_CANVAS_WIDTH * getScale(s) <= workspaceRect.width).reverse()[0]
+      const perfectYScale = scaleSteps.filter(s => DEFAULT_CANVAS_HEIGHT * getScale(s) <= workspaceRect.height).reverse()[0]
+      const newScale = perfectXScale < perfectYScale ? perfectXScale : perfectYScale
+      dispatch(setScale(newScale, workspaceRect.x / 2, workspaceRect.y / 2))
+      dispatch(setOffsetX((DEFAULT_CANVAS_WIDTH * getScale(newScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2) / 2 - workspaceRect.width / 2))
+      dispatch(setOffsetY((DEFAULT_CANVAS_HEIGHT * getScale(newScale) + DEFAULT_EMPTY_SPACE_HEIGHT * 2) / 2 - workspaceRect.height / 2))
+    }
+  }
+
   return (
     <div className="status-bar">
       <div className="status-bar-label status-bar-element">Status bar</div>
@@ -77,13 +103,15 @@ export const StatusBar = (props: StatusBarProps) => {
         <div className="status-bar-scaler-label" onClick={plusClickHandler}>+</div>
       </div>
 
-      <div className="status-bar-scalechooser">
+      <div className="status-bar-scalechooser status-bar-element">
         <CustomSelect
             value={{ value: 'profile', label: Math.round(getScale(scale) / getScale(16) * 100) + '%' }}
             onSelect={onScaleSelected}
             options={scaleSelectVariants}
           />
       </div>
+
+      <button className="status-bar-fit-window status-bar-element" onClick={fitWindow}><img className="svg-button" src="full-size.svg"/></button>
     </div>
   )
 }

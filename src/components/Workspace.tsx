@@ -20,7 +20,7 @@ export interface DiagramCanvasProps { }
 export const Workspace = () => {
   const workspaceRef = React.useRef(null)
 
-  const Scale = useSelector<Store, number>((state: Store) => state.Scale)
+  const scale = useSelector<Store, number>((state: Store) => state.scale)
   const offsetX = useSelector<Store, number>((state: Store) => state.offsetX)
   const offsetY = useSelector<Store, number>((state: Store) => state.offsetY)
 
@@ -28,7 +28,8 @@ export const Workspace = () => {
 
   const [scrolledByOffset, setScrolledByOffset] = React.useState<boolean>(false)
   const [offsettedByMouseMove, setOffsettedByMouseMove] = React.useState<boolean>(false)
-  const [scrollSyncScale, setScrollSyncScale] = React.useState<number>(getScale(Scale))
+  const [scrollSyncScale, setScrollSyncScale] = React.useState<number>(getScale(scale))
+  const [scrollScaleBlock, setScrollScaleBlock] = React.useState<boolean>(false)
 
   const mouseMoveHandler = (event: any) => {
     if (event.buttons === LEFT_MOUSE_BUTTON) {
@@ -52,7 +53,7 @@ export const Workspace = () => {
   }
 
   const onWheelHandler = (event: any) => {
-    if (event.ctrlKey) {
+    if (event.ctrlKey && !scrollScaleBlock) {
       event.preventDefault()
       
       const workspaceBoundingClientRect = workspaceRef.current.getBoundingClientRect()
@@ -66,6 +67,8 @@ export const Workspace = () => {
       else if (wheelDelta > 0) {
         dispatch(decreaseScale(SCALE_STEP, scaleFocusX, scaleFocusY))
       }
+
+      setScrollScaleBlock(true)
     }
   }
 
@@ -76,7 +79,7 @@ export const Workspace = () => {
 
     const workspaceHalfWidth = workspaceBoundingClientRect.width / 2
 
-    const defaultXOffset = DEFAULT_EMPTY_SPACE_WIDTH - workspaceHalfWidth + DEFAULT_CANVAS_WIDTH / 2 * getScale(Scale)
+    const defaultXOffset = DEFAULT_EMPTY_SPACE_WIDTH - workspaceHalfWidth + DEFAULT_CANVAS_WIDTH / 2 * getScale(scale)
     const defaultYOffset = DEFAULT_EMPTY_SPACE_HEIGHT * 0.95
 
     dispatch(setOffsetX(defaultXOffset))
@@ -92,6 +95,7 @@ export const Workspace = () => {
       workspaceRef.current.scrollTop = offsetY
       dispatch(setOffsetY(workspaceRef.current.scrollTop))
     }
+    setScrollScaleBlock(false)
   }, [scrollSyncScale])
 
   React.useEffect(() => {
@@ -111,7 +115,7 @@ export const Workspace = () => {
       setOffsettedByMouseMove(false)
     }
 
-    setScrollSyncScale(getScale(Scale))
+    setScrollSyncScale(getScale(scale))
     setScrolledByOffset(true)
   }, [offsetX, offsetY])
 
