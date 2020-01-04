@@ -8,9 +8,7 @@ export interface IncreaseScale { type: Constants.INCREASE_SCALE; scale: number; 
 
 export interface DecreaseScale { type: Constants.DECREASE_SCALE; scale: number; scaleFocusX: number; scaleFocusY: number; }
 
-export interface SetScaleFocusX { type: Constants.SET_SCALE_FOCUS_X; coordinate: number; }
-
-export interface SetScaleFocusY { type: Constants.SET_SCALE_FOCUS_Y; coordinate: number; }
+export interface SetDiagramType { type: Constants.SET_DIAGRAM_TYPE; diagramType: string; }
 
 export interface SetOffsetX { type: Constants.SET_XOFFSET; offset: number; }
 
@@ -39,15 +37,10 @@ export const decreaseScale = (scale: number, scaleFocusX: number, scaleFocusY: n
   scaleFocusY: scaleFocusY
 });
 
-export const setScaleFocusX = (coordinate: number) : SetScaleFocusX => ({
-  type: Constants.SET_SCALE_FOCUS_X,
-  coordinate: coordinate
-});
-
-export const setScaleFocusY = (coordinate: number) : SetScaleFocusY => ({
-  type: Constants.SET_SCALE_FOCUS_Y,
-  coordinate: coordinate
-});
+export const setDiagramType = (diagramType: string) => ({
+  type: Constants.SET_DIAGRAM_TYPE,
+  diagramType: diagramType
+})
 
 export const setOffsetX = (offset: number) : SetOffsetX => ({
   type: Constants.SET_XOFFSET,
@@ -59,4 +52,4 @@ export const setOffsetY = (offset: number) : SetOffsetY => ({
   offset: offset
 });
 
-export type Action = SetScale | IncreaseScale | DecreaseScale | SetOffsetX | SetOffsetY;
+export type Action = SetScale | IncreaseScale | DecreaseScale | SetDiagramType | SetOffsetX | SetOffsetY

@@ -1,10 +1,10 @@
 import { createStore } from 'redux'
 import { mainReducer } from '../reducers'
+import { START_SCALE } from '../constants' 
 
 export interface Store {
   scale: number;
-  scaleFocusX: number;
-  scaleFocusY: number;
+  diagramType: string;
   prevScale: number;
   offsetX: number;
   offsetY: number;
@@ -12,10 +12,9 @@ export interface Store {
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
   { 
-    scale: 16,
-    scaleFocusX: 0,
-    scaleFocusY: 0,
-    prevScale: 16,
+    scale: START_SCALE,
+    diagramType: 'Class diagram',
+    prevScale: START_SCALE,
     offsetX: 0,
     offsetY: 0,
   })

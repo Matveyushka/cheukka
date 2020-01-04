@@ -1,8 +1,7 @@
 import {
-  DEFAULT_CANVAS_WIDTH,
-  DEFAULT_CANVAS_HEIGHT,
   DEFAULT_EMPTY_SPACE_WIDTH,
   DEFAULT_EMPTY_SPACE_HEIGHT,
+  START_SCALE
 } from '../constants'
 
 export const vwToPx = (vw: number) => {
@@ -25,6 +24,10 @@ export const getScale = (scaleStep: number) => {
   return 1.1**scaleStep - 0.1
 }
 
+export const getScalePercent = (scaleStep: number) => {
+  return Math.round(getScale(scaleStep) / getScale(START_SCALE) * 100) + '%'
+}
+
 export const getScaledOffsets = (
   prevOffsetX: number,
   prevOffsetY: number,
@@ -33,20 +36,16 @@ export const getScaledOffsets = (
   newScale: number,
   oldScale: number,
   ) => {
-    const mfxo = scaleFocusX + prevOffsetX
-    const mfyo = scaleFocusY + prevOffsetY
+    const oldFocusPointX = scaleFocusX + prevOffsetX
+    const oldFocusPointY = scaleFocusY + prevOffsetY
 
-    const wid = DEFAULT_CANVAS_WIDTH * getScale(newScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2
-    const hei = DEFAULT_CANVAS_HEIGHT * getScale(newScale) + DEFAULT_EMPTY_SPACE_HEIGHT * 2
+    const scalesRatio = getScale(newScale) / getScale(oldScale)
 
-    const prevwid = DEFAULT_CANVAS_WIDTH * getScale(oldScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2
-    const prevhei = DEFAULT_CANVAS_HEIGHT * getScale(oldScale) + DEFAULT_EMPTY_SPACE_HEIGHT * 2
+    const newFocusPointX = (oldFocusPointX - DEFAULT_EMPTY_SPACE_WIDTH) * scalesRatio + DEFAULT_EMPTY_SPACE_WIDTH
+    const newFocusPointY = (oldFocusPointY - DEFAULT_EMPTY_SPACE_HEIGHT) * scalesRatio + DEFAULT_EMPTY_SPACE_HEIGHT
 
-    const mfxn = (mfxo - DEFAULT_EMPTY_SPACE_WIDTH) * (wid - DEFAULT_EMPTY_SPACE_WIDTH * 2) / (prevwid - DEFAULT_EMPTY_SPACE_WIDTH * 2) + DEFAULT_EMPTY_SPACE_WIDTH
-    const mfyn = (mfyo - DEFAULT_EMPTY_SPACE_HEIGHT) * (hei - DEFAULT_EMPTY_SPACE_HEIGHT * 2) / (prevhei - DEFAULT_EMPTY_SPACE_HEIGHT * 2) + DEFAULT_EMPTY_SPACE_HEIGHT
-
-    const _offsetX = mfxn - scaleFocusX
-    const _offsetY = mfyn - scaleFocusY
+    const _offsetX = newFocusPointX - scaleFocusX
+    const _offsetY = newFocusPointY - scaleFocusY
 
     return {
       _offsetX,

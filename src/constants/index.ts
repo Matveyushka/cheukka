@@ -9,11 +9,8 @@ export type INCREASE_SCALE = typeof INCREASE_SCALE
 export const DECREASE_SCALE = 'DECREASE_SCALE'
 export type DECREASE_SCALE = typeof DECREASE_SCALE
 
-export const SET_SCALE_FOCUS_X = 'SET_SCALE_FOCUS_X'
-export type SET_SCALE_FOCUS_X = typeof SET_SCALE_FOCUS_X
-
-export const SET_SCALE_FOCUS_Y = 'SET_SCALE_FOCUS_Y'
-export type SET_SCALE_FOCUS_Y = typeof SET_SCALE_FOCUS_Y
+export const SET_DIAGRAM_TYPE = 'SET_DIAGRAM_TYPE'
+export type SET_DIAGRAM_TYPE = typeof SET_DIAGRAM_TYPE
 
 export const SET_XOFFSET = 'SET_XOFFSET'
 export type SET_XOFFSET = typeof SET_XOFFSET
@@ -22,6 +19,8 @@ export const SET_YOFFSET = 'SET_YOFFSET'
 export type SET_YOFFSET = typeof SET_YOFFSET
 
 export const MAX_SCALE = 31
+
+export const START_SCALE = 16
 
 export const MIN_SCALE = 1
 

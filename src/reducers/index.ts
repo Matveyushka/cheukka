@@ -8,7 +8,8 @@ import {
   DECREASE_SCALE,
 
   MAX_SCALE,
-  MIN_SCALE
+  MIN_SCALE,
+  SET_DIAGRAM_TYPE
 } from '../constants';
 import { getScaledOffsets } from '../utils'
 
@@ -51,8 +52,8 @@ export const mainReducer = (state: Store, action: Action) : Store => {
         return { ...state, prevScale: +state.scale,  scale: +state.scale - action.scale, offsetX: _offsetX, offsetY: _offsetY }
       }
       return state
-    case SET_SCALE:
-      return { ...state, prevScale: state.scale, scale: action.scale }
+    case SET_DIAGRAM_TYPE:
+      return { ...state, diagramType: action.diagramType }
     case SET_XOFFSET:
       return { ...state, offsetX: action.offset }
     case SET_YOFFSET:
