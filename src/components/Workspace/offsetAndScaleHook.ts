@@ -26,17 +26,6 @@ export const useWorkspaceOffsetAndScale = () => {
   const [scrollSyncScale, setScrollSyncScale] = React.useState<number>(getScale(scale))
   const [scrollScaleBlock, setScrollScaleBlock] = React.useState<boolean>(false)
 
-  const checkOffsetsBounds = () => {
-    if (Math.abs(offsetX - workspaceRef.current.scrollLeft) > 1) {
-      workspaceRef.current.scrollLeft = offsetX
-      dispatch(setOffsetX(workspaceRef.current.scrollLeft))
-    }
-    if (Math.abs(offsetY - workspaceRef.current.scrollTop) > 1) {
-      workspaceRef.current.scrollTop = offsetY
-      dispatch(setOffsetY(workspaceRef.current.scrollTop))
-    }
-  }
-
   const keyPressHandler = (event: KeyboardEvent) => {
     if (event.ctrlKey && event.key === '+') {
       event.preventDefault()
@@ -95,9 +84,9 @@ export const useWorkspaceOffsetAndScale = () => {
   }
 
   React.useEffect(() => {
-    window.addEventListener('keydown', keyPressHandler);
+    window.addEventListener('keydown', keyPressHandler)
 
-    workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false });
+    workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false })
 
     const workspaceHalfWidth = workspaceRef.current.clientWidth / 2
 
@@ -109,7 +98,14 @@ export const useWorkspaceOffsetAndScale = () => {
   }, [])
 
   React.useEffect(() => {
-    checkOffsetsBounds()
+    if (Math.abs(offsetX - workspaceRef.current.scrollLeft) > 1) {
+      workspaceRef.current.scrollLeft = offsetX
+      dispatch(setOffsetX(workspaceRef.current.scrollLeft))
+    }
+    if (Math.abs(offsetY - workspaceRef.current.scrollTop) > 1) {
+      workspaceRef.current.scrollTop = offsetY
+      dispatch(setOffsetY(workspaceRef.current.scrollTop))
+    }
     setScrollScaleBlock(false)
   }, [scrollSyncScale])
 

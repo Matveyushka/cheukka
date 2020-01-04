@@ -72,9 +72,9 @@ export const StatusBar = (props: StatusBarProps) => {
           />
       </div>
 
-      <button className="status-bar-fit-window status-bar-button status-bar-element" onClick={onFitWindowClickHandler}><img src="full-size.svg"/></button>
+      <button className="status-bar-fit-window status-bar-button status-bar-element" onClick={onFitWindowClickHandler}><img src="assets/svg/full-size.svg"/></button>
 
-      <button className="status-bar-fit-width status-bar-button status-bar-element" onClick={onFitWidthClickHandler}><img src="full-width.svg"/></button>
+      <button className="status-bar-fit-width status-bar-button status-bar-element" onClick={onFitWidthClickHandler}><img src="assets/svg/full-width.svg"/></button>
     </div>
   )
 }
