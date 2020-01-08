@@ -90,6 +90,7 @@ export const useWorkspaceOffsetAndScale = () => {
 
     const workspaceHalfWidth = workspaceRef.current.clientWidth / 2
 
+
     const defaultXOffset = DEFAULT_EMPTY_SPACE_WIDTH - workspaceHalfWidth + DEFAULT_CANVAS_WIDTH / 2 * getScale(START_SCALE)
     const defaultYOffset = DEFAULT_EMPTY_SPACE_HEIGHT * 0.95
 

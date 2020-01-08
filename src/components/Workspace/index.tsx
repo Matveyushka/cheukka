@@ -29,14 +29,12 @@ export const Workspace = () => {
       ref={workspaceRef}
     >
       <div className="canvas-wrapper" style={{
-        height: DEFAULT_CANVAS_HEIGHT + 'px',
-        width: DEFAULT_CANVAS_WIDTH + 'px',
-        borderRight: DEFAULT_EMPTY_SPACE_WIDTH / scale + 'px solid transparent',
-        borderLeft: DEFAULT_EMPTY_SPACE_WIDTH / scale + 'px solid transparent',
-        borderTop: DEFAULT_EMPTY_SPACE_HEIGHT / scale + 'px solid transparent',
-        borderBottom: DEFAULT_EMPTY_SPACE_HEIGHT / scale + 'px solid transparent',
-        transform: `Scale(${scale})`,
-        transformOrigin: `0 0`,
+        height: DEFAULT_CANVAS_HEIGHT * scale + 'px',
+        width: DEFAULT_CANVAS_WIDTH * scale + 'px',
+        borderRight: DEFAULT_EMPTY_SPACE_WIDTH + 'px solid transparent',
+        borderLeft: DEFAULT_EMPTY_SPACE_WIDTH + 'px solid transparent',
+        borderTop: DEFAULT_EMPTY_SPACE_HEIGHT + 'px solid transparent',
+        borderBottom: DEFAULT_EMPTY_SPACE_HEIGHT + 'px solid transparent',
       }}>
         <Canvas>
         </Canvas>
