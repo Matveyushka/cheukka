@@ -10,7 +10,7 @@ module.exports = {
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx", ".js", ".sass"]
+        extensions: [".ts", ".tsx", ".js", ".sass", ".svg"]
     },
 
     module: {
@@ -40,6 +40,10 @@ module.exports = {
                 enforce: "pre",
                 test: /\.js$/,
                 loader: "source-map-loader"
+            },
+            {
+                test: /\.svg$/,
+                loader: 'svg-url-loader',
             }
         ]
     },
