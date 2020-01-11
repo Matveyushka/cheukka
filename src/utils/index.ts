@@ -1,4 +1,5 @@
 import {
+  DEFAULT_CANVAS_WIDTH,
   DEFAULT_EMPTY_SPACE_WIDTH,
   DEFAULT_EMPTY_SPACE_HEIGHT,
   START_SCALE
@@ -27,6 +28,19 @@ export const getScale = (scaleStep: number) => {
 export const getScalePercent = (scaleStep: number) => {
   return Math.round(getScale(scaleStep) / getScale(START_SCALE) * 100) + '%'
 }
+
+export const roundCoordinateOrSize = (value: number) => {
+  return Math.round(value / (DEFAULT_CANVAS_WIDTH / 100)) * (DEFAULT_CANVAS_WIDTH / 100)
+}
+
+export const isPointInRectangle = (
+  pointX: number, 
+  pointY: number, 
+  rectangleX: number, 
+  rectangleY: number, 
+  rectangleWidth: number, 
+  rectangleHeight: number) => rectangleX <= pointX && (rectangleX + rectangleWidth) >= pointX &&
+                              rectangleY <= pointY && (rectangleY + rectangleHeight) >= pointY
 
 export const getScaledOffsets = (
   prevOffsetX: number,

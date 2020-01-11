@@ -1,116 +1,109 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux'
 import { Store } from '../../stores'
-import { getScale } from '../../utils'
+import { getScale, roundCoordinateOrSize, isPointInRectangle } from '../../utils'
 import { DEFAULT_CANVAS_WIDTH } from '../../constants'
 import { getBackgroundSvg } from './Background'
-
-interface Block {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  content: string,
-}
+import { BlockInfo } from '../../types'
+import { Block } from './Block'
 
 export interface CanvasProps { }
+
+enum MouseMode {
+  default,
+  dragging,
+}
 
 export const Canvas = (props: CanvasProps) => {
   const scale = useSelector((state: Store) => state.scale)
 
-  const [ blocks, setBlocks ] = React.useState<Array<Block>>([])
-  const [ mode, setMode ] = React.useState<string>('default')
+  const [ blocks, setBlocks ] = React.useState<Array<BlockInfo>>([])
+  const [ mode, setMode ] = React.useState<MouseMode>(MouseMode.default)
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const setBlockAtIndex = (block: BlockInfo, index: number) => {
+    setBlocks(blocks.map((b, i) => i === index ? block : b))
+  }
+
+  const getCanvasX = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const clientRect = event.currentTarget.getBoundingClientRect()
-    const clientX = (event.clientX - clientRect.left) / getScale(scale)
-    const clientY = (event.clientY - clientRect.top) / getScale(scale)
+    return (event.clientX - clientRect.left) / getScale(scale)
+  }
 
-    const choosedBlocks = blocks.filter(block => {
-      return block.x <= clientX && (block.x + block.width) >= clientX &&
-      block.y <= clientY && (block.y + block.height) >= clientY}
-    )
+  const getCanvasY = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const clientRect = event.currentTarget.getBoundingClientRect()
+    return (event.clientY - clientRect.top) / getScale(scale)
+  }
 
-    if (choosedBlocks.length > 0) {
-      return;
-    }
+  const getHoveredBlock = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const clientX = getCanvasX(event)
+    const clientY = getCanvasY(event)
 
-    setBlocks([...blocks, {
-      x: clientX - DEFAULT_CANVAS_WIDTH * 0.1 / 2,
-      y: clientY - DEFAULT_CANVAS_WIDTH * 0.066 / 2,
-      width: DEFAULT_CANVAS_WIDTH * 0.1,
-      height: DEFAULT_CANVAS_WIDTH * 0.066,
-      content: '123',
-    }])
+    return blocks.filter(block => 
+      isPointInRectangle(clientX, clientY, block.x, block.y, block.width, block.height)
+    )[0] || null
+  }
+
+  const getHoveredBlockIndex = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) : null | number => {
+    const clientX = getCanvasX(event)
+    const clientY = getCanvasY(event)
+
+    const result = blocks.reduce((desiredIndex, block, currentIndex) => 
+    isPointInRectangle(clientX, clientY, block.x, block.y, block.width, block.height) ? currentIndex : desiredIndex
+    , -1)
+
+    return result === -1 ? null : result
+  }
+
+  const doubleClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (mode !== MouseMode.default) return;
+    if (getHoveredBlock(event) !== null) return;
+    const width = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH * 0.1)
+    const height = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH * 0.066)
+
+    const x = roundCoordinateOrSize(getCanvasX(event) - width / 2)
+    const y = roundCoordinateOrSize(getCanvasY(event) - height / 2)
+
+    setBlocks([...blocks, {x, y, width, height, content: 'Write text here', selected: false}])
   } 
 
+  const mouseDownHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const hoveredBlockIndex = getHoveredBlockIndex(event)
+    if (hoveredBlockIndex !== null) {
+      setBlockAtIndex({...getHoveredBlock(event), selected: true}, hoveredBlockIndex)
+    }
+  }
+
+  const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    blocks.forEach((block, index) => { if (block.selected) setBlockAtIndex({...block, selected: false}, index)})
+  }
+
+  const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    blocks.forEach((block, index) => { 
+      if (block.selected) {
+        const width = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH * 0.1)
+        const height = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH * 0.066)
+    
+        const x = roundCoordinateOrSize(getCanvasX(event) - width / 2)
+        const y = roundCoordinateOrSize(getCanvasY(event) - height / 2)
+        setBlockAtIndex({...block, x, y}, index)
+      }
+    })
+  }
+
   const getBlocks = () => {
-    return blocks.map((block, index) => (
-      <g key={index + 'g'}
-      onClick={(e: React.MouseEvent<SVGGElement, MouseEvent>)=>e.currentTarget}>
-        <rect 
-          x={block.x * getScale(scale) + 'px'}
-          y={block.y * getScale(scale) + 'px'}
-          width={block.width * getScale(scale) + 'px'}
-          height={block.height * getScale(scale) + 'px'}
-          stroke={`black`}
-          strokeWidth={1}
-          fill={'white'}
-        >
-        </rect>
-        <foreignObject
-          x={block.x * getScale(scale) + 'px'}
-          y={block.y * getScale(scale) + 'px'}
-          style={{overflow: 'visible'}}
-        >
-          <div 
-            className='editable'
-            contentEditable='true'
-            onBlur={(e: React.FormEvent<HTMLDivElement>)=>{
-              setBlocks(blocks.map((block, _index) => {
-                if (index === _index) {
-                  return ({
-                    ...block,
-                    content: e.currentTarget.innerText
-                  })
-                }
-                return block
-              }))
-            }}
-            style={{        
-              position: 'absolute',      
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              left: `${(block.width / 2) * getScale(scale)}px`,
-              top: `${(block.height / 2) * getScale(scale)}px`,
-              transform: 'translateX(-50%) translateY(-50%)',
-              border: 0,
-              background: 'none',
-              fontSize: 0.2 * getScale(scale) + 'em',
-            }}
-          >
-            {block.content}
-          </div>
-        </foreignObject>
-        <foreignObject
-          x={(block.x + block.width - 3) * getScale(scale) + 'px'}
-          y={block.y * getScale(scale) + 'px'}
-          width={3 * getScale(scale) + 'px'}
-          height={3 * getScale(scale) + 'px'}
-        >
-          <button 
-            className="delete-button"
-            style={{
-              width: `${3 * getScale(scale)}px`,
-              height: `${3 * getScale(scale)}px`,
-            }}
-            onClick={() => setBlocks(blocks.filter((_, _index) => _index != index))}
-          />
-        </foreignObject>
-      </g>
-    ))
+    return blocks.map((block, index) => <Block key={index}
+      block={{  
+        x: block.x,
+        y: block.y,
+        width: block.width,
+        height: block.height,
+        content: block.content,
+        selected: block.selected}} 
+      deleteBlock={() => {setBlocks([...blocks.slice(0, index), ...blocks.slice(index + 1)])}}
+      setContent={(newContent) => {
+          setBlocks(blocks.map((b, i) => index === i ? {...b, content: newContent} : b))
+        }
+      } />)
   }
 
   const backgroundBlocksAmountInWidth = (() => {
@@ -121,10 +114,12 @@ export const Canvas = (props: CanvasProps) => {
 
   return (
     <div className="canvas-main">
-      <div className="background-canvas"></div>
       <div 
+        onDoubleClick={doubleClickHandler}
+        onMouseDown={mouseDownHandler}
+        onMouseUp={mouseUpHandler}
+        onMouseMove={mouseMoveHandler}
         className="diagram-canvas" 
-        onDoubleClick={clickHandler}
         style={{ 
           backgroundImage: `url('data:image/svg+xml;base64,${getBackgroundSvg(scale, backgroundBlocksAmountInWidth)}')`,
           backgroundSize: `${100 / backgroundBlocksAmountInWidth}%`,
