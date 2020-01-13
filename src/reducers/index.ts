@@ -6,12 +6,20 @@ import {
   SET_YOFFSET, 
   INCREASE_SCALE, 
   DECREASE_SCALE,
-
+  SET_DIAGRAM_TYPE,
+  ADD_ENTITY,
+  REMOVE_ENTITY,
+  UPDATE_ENTITY,
+} from '../constants/actions'
+import { 
   MAX_SCALE,
-  MIN_SCALE,
-  SET_DIAGRAM_TYPE
+  MIN_SCALE,  
 } from '../constants';
 import { getScaledOffsets } from '../utils'
+
+const getNextDiagramId = (diagramEntities: Map<number, any>) => diagramEntities.size === 0 ?
+  0 :
+  Math.max(...Array.from(diagramEntities.keys())) + 1
 
 export const mainReducer = (state: Store, action: Action) : Store => {
   
@@ -58,6 +66,18 @@ export const mainReducer = (state: Store, action: Action) : Store => {
       return { ...state, offsetX: action.offset }
     case SET_YOFFSET:
       return { ...state, offsetY: action.offset }
+    case ADD_ENTITY:
+      const newAddDiagramEntities = new Map(state.diagramEntities)
+      newAddDiagramEntities.set(getNextDiagramId(state.diagramEntities), action.entity)
+      return { ...state, diagramEntities: newAddDiagramEntities }
+    case REMOVE_ENTITY:
+      const newRemoveDiagramEntities = new Map(state.diagramEntities)
+      newRemoveDiagramEntities.delete(action.id)
+      return { ...state, diagramEntities: newRemoveDiagramEntities }
+    case UPDATE_ENTITY:
+      const updatedDiagramEntities = new Map(state.diagramEntities)
+      updatedDiagramEntities.set(action.id, action.entity)
+      return { ...state, diagramEntities: updatedDiagramEntities }
   }
 
   return state

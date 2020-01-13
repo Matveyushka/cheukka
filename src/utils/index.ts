@@ -4,6 +4,10 @@ import {
   DEFAULT_EMPTY_SPACE_HEIGHT,
   START_SCALE
 } from '../constants'
+import {
+  Entity,
+  EntityBlock
+} from '../types'
 
 export const vwToPx = (vw: number) => {
   return vw * (window.innerWidth / 100)
@@ -65,4 +69,12 @@ export const getScaledOffsets = (
       _offsetX,
       _offsetY
     }
+}
+
+export const getBlockX = (entity: Entity, block: EntityBlock ) => {
+
+}
+
+export const getBlockY = () => {
+
 }
