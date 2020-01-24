@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Entity } from '../../../types'
+import { Entity, MouseMode } from '../../../types'
 import { getScale } from '../../../utils'
-import { updateEntity } from '../../../actions'
+import { updateEntity, setMouseMode } from '../../../actions'
 import { Store } from '../../../stores'
+import {  } from '../../../constants'
 
 export enum SizeControlType {
   top,
@@ -69,6 +70,7 @@ export const SizeController = (props: SizeControllerProps) => {
         })()}
         onMouseDown={(event) => {
           event.stopPropagation()
+          dispatch(setMouseMode(MouseMode.dragging))
           dispatch(updateEntity(props.entityId, {
             ...props.entity, 
             selected: true,

@@ -15,8 +15,6 @@
 
 .delete-button {
   position: absolute;
-  right: 0;
-  top: 0;
   z-index: 1000;
   border: 0;
   margin: 0;
@@ -36,7 +34,7 @@
     transform: translateX(-50%) translateY(-50%);
     border: 0;
     background: 'none';
-    user-select: 'none';
+    cursor: default;
     white-space: pre
   }
 

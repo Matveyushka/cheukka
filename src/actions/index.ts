@@ -1,5 +1,5 @@
 import * as Constants from '../constants/actions'
-import { Entity } from '../types'
+import { Entity, Connection, MouseMode } from '../types'
 
 //interfaces
 
@@ -20,6 +20,16 @@ export interface AddEntity { type: Constants.ADD_ENTITY; entity: Entity }
 export interface RemoveEntity { type: Constants.REMOVE_ENTITY; id: number }
 
 export interface UpdateEntity { type: Constants.UPDATE_ENTITY; id: number; entity: Entity }
+
+export interface AddConnection { type: Constants.ADD_CONNECTION; connection: Connection }
+
+export interface RemoveConnection { type: Constants.REMOVE_CONNECTION; id: number }
+
+export interface UpdateConnection { type: Constants.UPDATE_CONNECTION; id: number; connection: Connection }
+
+export interface SetMouseMode { type: Constants.SET_MOUSE_MODE; mouseMode: MouseMode }
+
+export interface SetCurrentDiagramConnection { type: Constants.SET_CURRENT_DIAGRAM_CONNECTION; connection: Connection }
 
 //actions
 
@@ -75,6 +85,32 @@ export const updateEntity = (id: number, entity: Entity) : UpdateEntity => ({
   entity,
 })
 
+export const addConnection = (connection: Connection) : AddConnection => ({
+  type: Constants.ADD_CONNECTION,
+  connection,
+})
+
+export const removeConnection = (id: number) : RemoveConnection => ({
+  type: Constants.REMOVE_CONNECTION,
+  id,
+})
+
+export const updateConnection = (id: number, connection: Connection) : UpdateConnection => ({
+  type: Constants.UPDATE_CONNECTION,
+  id,
+  connection,
+})
+
+export const setMouseMode = (mouseMode: MouseMode) : SetMouseMode => ({
+  type: Constants.SET_MOUSE_MODE,
+  mouseMode,
+})
+
+export const setCurrentDiagramConnection = (connection: Connection) : SetCurrentDiagramConnection => ({
+  type: Constants.SET_CURRENT_DIAGRAM_CONNECTION,
+  connection,
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -85,3 +121,8 @@ export type Action =
   | AddEntity
   | RemoveEntity
   | UpdateEntity
+  | AddConnection
+  | RemoveConnection
+  | UpdateConnection
+  | SetMouseMode
+  | SetCurrentDiagramConnection
