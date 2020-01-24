@@ -14,7 +14,7 @@ export interface EntityContainerProps {
 }
 
 export const EntityContainer = (props: EntityContainerProps) => {
-  const [isHovered, setIsHovered] = React.useState<boolean>(false)
+  const [isHovered, setIsHovered] = React.useState<boolean>(true)
 
   const [scale, mouseMode] = useSelector((state: Store) => [getScale(state.scale), state.mouseMode])
   const dispatch = useDispatch()
@@ -45,21 +45,22 @@ export const EntityContainer = (props: EntityContainerProps) => {
         fill='transparent'
       />
       {
-        isHovered ?
-        props.entity.connectionAreas.map((area, index) => <ConnectionAreaContainer 
+        isHovered && !(mouseMode === MouseMode.dragging) ?
+        props.entity.connectionAreaCreators.map((area, index) => <ConnectionAreaContainer 
+          key={index}
           width={connectionAreaWidth}
           entity={props.entity} 
           entityId={props.entityId}
-          area={area}
+          area={area(props.entity)}
           areaId={index}/>)
         : ''
       }
       {props.entity.render(props.entity)}
       {
-        isHovered && !(mouseMode === MouseMode.connecting) ?
+        props.entity.selected || (isHovered && !(mouseMode === MouseMode.connecting)) ?
         <>
         <rect
-          className={`block-decoration ${props.entity.selected ? '' : 'on-hover-visible'}`}
+          className={`block-decoration`}
           x={props.entity.x * scale}
           y={props.entity.y * scale}
           width={realWidth}

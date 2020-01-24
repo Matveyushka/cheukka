@@ -1,5 +1,7 @@
 import * as React from 'react'
-import { Entity, Connection, ConnectionAreaPoint, FreeConnectionPoint } from '../../../types'
+import { Connection } from '../../../types/Connection'
+import { ConnectionAreaPoint } from '../../../types/ConnectionAreaPoint'
+import { FreeConnectionPoint } from '../../../types/FreeConnectionPoint'
 import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../../stores'
 import { getScale } from '../../../utils'
@@ -16,7 +18,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   const getPointX = (point: ConnectionAreaPoint | FreeConnectionPoint) => {
     if (point instanceof ConnectionAreaPoint) {
       const entity = entities.get(point.entityId)
-      const area = entity.connectionAreas[point.areaId]
+      const area = entity.connectionAreaCreators[point.areaId](entity)
       return entity.x + area.xBegin + (area.xEnd - area.xBegin) * point.positionPercent
     } else if (point instanceof FreeConnectionPoint) {
       return point.x
@@ -26,7 +28,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   const getPointY = (point: ConnectionAreaPoint | FreeConnectionPoint) => {
     if (point instanceof ConnectionAreaPoint) {
       const entity = entities.get(point.entityId)
-      const area = entity.connectionAreas[point.areaId]
+      const area = entity.connectionAreaCreators[point.areaId](entity)
       return entity.y + area.yBegin + (area.yEnd - area.yBegin) * point.positionPercent
     } else if (point instanceof FreeConnectionPoint) {
       return point.y

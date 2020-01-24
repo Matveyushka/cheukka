@@ -15,6 +15,7 @@ import {
   UPDATE_CONNECTION,
   SET_MOUSE_MODE,
   SET_CURRENT_DIAGRAM_CONNECTION,
+  SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -95,10 +96,7 @@ export const mainReducer = (state: Store, action: Action): Store => {
     case UPDATE_ENTITY:
       const updatedDiagramEntities = new Map(state.diagramEntities)
       const newEntity = {
-        ...action.entity, 
-        connectionAreas: action.entity.connectionAreas.map(
-          area => area.entityResizeHandler(action.entity)
-        )
+        ...action.entity,
       }
       updatedDiagramEntities.set(action.id, newEntity)
       return { ...state, diagramEntities: updatedDiagramEntities }
@@ -118,7 +116,8 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, mouseMode: action.mouseMode }
     case SET_CURRENT_DIAGRAM_CONNECTION:
       return { ...state, currentDiagramConnection: action.connection }
-
+    case SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE:
+      return { ...state, diagramEntityTypeChooserState: action.state }
   }
 
   return state

@@ -4,17 +4,24 @@ import { Store } from '../../stores'
 import { getBackgroundSvg } from '../../svg'
 import { EntityContainer } from './EntityContainer'
 import { ConnectionContainer } from './ConnectionContainer'
-import { MouseMode } from '../../types'
+import { MouseMode, DiagramEntityType } from '../../types'
 import { useCanvasHandlers } from './handlers'
+import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
+import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityType'
 
 export interface CanvasProps { }
 
 export const Canvas = (props: CanvasProps) => {
+  const [
+    diagramEntityTypeChooserState,
+    diagramType,
+  ] = useSelector((state: Store) => [state.diagramEntityTypeChooserState, state.diagramType])
+
   const {
     doubleClickHandler,
     mouseDownHandler,
     mouseUpHandler,
-    mouseMoveHandler
+    mouseMoveHandler,
   } = useCanvasHandlers()
 
   const [
@@ -76,6 +83,15 @@ export const Canvas = (props: CanvasProps) => {
               </g>
             ) : ''}
         </svg>
+        {
+          diagramEntityTypeChooserState.isActive ?
+          <DiagramEntityTypeChooser
+            x={diagramEntityTypeChooserState.x}
+            y={diagramEntityTypeChooserState.y}
+            diagramEntityTypes={diagramEntityGroups.get(diagramType).types}
+          />
+          : ''
+        }
       </div>
     </div>
   )

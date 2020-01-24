@@ -64,13 +64,13 @@ export const ConnectionAreaContainer = (props: ConnectionAreaContainerProps) => 
   }
 
   return <line
-    x1={(props.entity.x + props.area.xBegin) * scale}
-    y1={(props.entity.y + props.area.yBegin) * scale}
-    x2={(props.entity.x + props.area.xEnd) * scale}
-    y2={(props.entity.y + props.area.yEnd) * scale}
+    x1={(props.entity.x + props.area.xBegin + props.area.visualOffsetX * props.width / 2) * scale}
+    y1={(props.entity.y + props.area.yBegin + props.area.visualOffseyY * props.width / 2) * scale}
+    x2={(props.entity.x + props.area.xEnd + props.area.visualOffsetX * props.width / 2) * scale}
+    y2={(props.entity.y + props.area.yEnd + props.area.visualOffseyY * props.width / 2) * scale}
     stroke="green"
     opacity={0.5}
-    strokeWidth={props.width * 2 * scale}
+    strokeWidth={props.width * scale}
     onMouseDown={mouseDownHandler}
     onMouseUp={mouseUpHandler}
   />

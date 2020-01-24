@@ -5,13 +5,15 @@ import { MIN_SCALE, MAX_SCALE, SCALE_STEP } from '../../constants'
 import { getScalePercent } from '../../utils'
 import { CustomSelect } from './CustomSelect'
 import { useStatusBarHandlers } from './handlers'
+import { DiagramType } from '../../types'
+import { diagramEntityGroups } from '../../types/DiagramEntityType'
 
 export interface StatusBarProps {
 
 }
 
 export const StatusBar = (props: StatusBarProps) => {
-  const diagramType = useSelector<Store, string>((state: Store) => state.diagramType)
+  const diagramType = useSelector<Store, DiagramType>((state: Store) => state.diagramType)
   const scale = useSelector<Store, number>((state: Store) => state.scale)
 
   const {
@@ -24,15 +26,9 @@ export const StatusBar = (props: StatusBarProps) => {
     onFitWidthClickHandler
   } = useStatusBarHandlers()
 
-  const diagramTypes = [
-    { value: 'Class diagram', label: 'Class diagram' },
-    { value: 'Component diagram', label: 'Component diagram' },
-    { value: 'Composite structure diagram', label: 'Composite structure diagram' },
-    { value: 'Deployment diagram', label: 'Deployment diagram' },
-    { value: 'Object diagram', label: 'Object diagram' },
-    { value: 'Package diagram', label: 'Package diagram' },
-    { value: 'Profile diagram', label: 'Profile diagram' }
-  ]
+  const diagramTypes = Array.from(diagramEntityGroups.entries()).map((entrie, index) => ({
+    value: entrie[0], label: entrie[1].name
+  }))
 
   const scaleSelectVariants = [1, 7, 10, 12, 14, 16, 18, 20, 22, 25, 31].map(x => (
     { value: x, label: getScalePercent(x) }
@@ -44,7 +40,7 @@ export const StatusBar = (props: StatusBarProps) => {
 
       <div className="status-bar-chooser status-bar-element">
         <CustomSelect
-          value={{value: diagramType, label: diagramType}}
+          value={{value: diagramType, label: diagramEntityGroups.get(diagramType).name}}
           onSelect={onDiagramTypeSelectedHandler}
           options={diagramTypes}
         />

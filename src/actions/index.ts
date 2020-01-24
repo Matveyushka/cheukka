@@ -1,5 +1,5 @@
 import * as Constants from '../constants/actions'
-import { Entity, Connection, MouseMode } from '../types'
+import { Entity, Connection, MouseMode, DiagramEntityTypeChooserState, DiagramType } from '../types'
 
 //interfaces
 
@@ -9,7 +9,7 @@ export interface IncreaseScale { type: Constants.INCREASE_SCALE; scale: number; 
 
 export interface DecreaseScale { type: Constants.DECREASE_SCALE; scale: number; scaleFocusX: number; scaleFocusY: number; }
 
-export interface SetDiagramType { type: Constants.SET_DIAGRAM_TYPE; diagramType: string; }
+export interface SetDiagramType { type: Constants.SET_DIAGRAM_TYPE; diagramType: DiagramType; }
 
 export interface SetOffsetX { type: Constants.SET_XOFFSET; offset: number; }
 
@@ -30,6 +30,8 @@ export interface UpdateConnection { type: Constants.UPDATE_CONNECTION; id: numbe
 export interface SetMouseMode { type: Constants.SET_MOUSE_MODE; mouseMode: MouseMode }
 
 export interface SetCurrentDiagramConnection { type: Constants.SET_CURRENT_DIAGRAM_CONNECTION; connection: Connection }
+
+export interface SetDiagramEntityTypeChooserState { type: Constants.SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE; state: DiagramEntityTypeChooserState}
 
 //actions
 
@@ -54,7 +56,7 @@ export const decreaseScale = (scale: number, scaleFocusX: number, scaleFocusY: n
   scaleFocusY: scaleFocusY
 });
 
-export const setDiagramType = (diagramType: string) => ({
+export const setDiagramType = (diagramType: DiagramType) => ({
   type: Constants.SET_DIAGRAM_TYPE,
   diagramType: diagramType
 })
@@ -111,6 +113,11 @@ export const setCurrentDiagramConnection = (connection: Connection) : SetCurrent
   connection,
 })
 
+export const setDiagramEntityTypeChooserState = (state: DiagramEntityTypeChooserState) : SetDiagramEntityTypeChooserState => ({
+  type: Constants.SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE,
+  state,
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -126,3 +133,4 @@ export type Action =
   | UpdateConnection
   | SetMouseMode
   | SetCurrentDiagramConnection
+  | SetDiagramEntityTypeChooserState

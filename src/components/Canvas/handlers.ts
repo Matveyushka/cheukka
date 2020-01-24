@@ -1,7 +1,8 @@
+import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { isPointInRectangle, roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
-import { addEntity, updateEntity, setMouseMode, addConnection, setCurrentDiagramConnection } from '../../actions'
+import { updateEntity, setMouseMode, addConnection, setCurrentDiagramConnection, setDiagramEntityTypeChooserState } from '../../actions'
 import { MouseMode, Connection, FreeConnectionPoint, } from '../../types'
 import { DEFAULT_CANVAS_WIDTH, LEFT_MOUSE_BUTTON } from '../../constants'
 import { ComponentDiagramModule } from '../DiagramEntities/ComponentDiagram/ComponentDiagramModule'
@@ -10,12 +11,10 @@ export const useCanvasHandlers = () => {
   const [
     scale,
     entities,
-    connections,
     mode,
     currentDiagramConnection] = useSelector((state: Store) => [
       state.scale,
       state.diagramEntities,
-      state.diagramConnections,
       state.mouseMode,
       state.currentDiagramConnection
     ])
@@ -33,16 +32,20 @@ export const useCanvasHandlers = () => {
   const doubleClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode !== MouseMode.default) return;
     if (getHoveredBlock(event) !== null) return;
-    const width = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH * 0.1)
-    const height = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH * 0.066)
 
-    const x = roundCoordinateOrSize(getCanvasX(event, getScale(scale)) - width / 2)
-    const y = roundCoordinateOrSize(getCanvasY(event, getScale(scale)) - height / 2)
-
-    dispatch(addEntity(new ComponentDiagramModule(x, y, width, height)))
+    dispatch(setDiagramEntityTypeChooserState({
+      isActive: true,
+      x: getCanvasX(event, getScale(scale)),
+      y: getCanvasY(event, getScale(scale)),
+    }))
   }
 
   const mouseDownHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    dispatch(setDiagramEntityTypeChooserState({
+      x: 0,
+      y: 0,
+      isActive: false,
+    }))
     if (event.button !== LEFT_MOUSE_BUTTON) {
       const hoveredBlock = getHoveredBlock(event)
       if (hoveredBlock !== null) {
@@ -199,6 +202,6 @@ export const useCanvasHandlers = () => {
     doubleClickHandler,
     mouseDownHandler,
     mouseUpHandler,
-    mouseMoveHandler
+    mouseMoveHandler,
   }
 }

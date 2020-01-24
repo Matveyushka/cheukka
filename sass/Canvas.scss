@@ -52,3 +52,31 @@
     visibility: hidden;
   }
 }
+
+.diagram-entity-type-chooser {
+  position: absolute;
+  background-color: $second-color;
+  border: 1px solid $main-color;
+  display: grid;
+  width: 8rem;
+  grid-template-columns: 2rem 2rem 2rem;
+  padding-top: 0.5rem;
+  justify-content: space-evenly;	
+  align-content: space-evenly;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 5px gray;
+
+  button {
+    background-color: white;
+    border: 1px solid $main-color;
+    margin-bottom: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    &:active {
+      background-color: $second-color;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+}
