@@ -14,7 +14,7 @@ export interface DiagramEntityTypeChooserProps {
 }
 
 export const DiagramEntityTypeChooser = (props: DiagramEntityTypeChooserProps) => {
-  const scale = useSelector((state: Store) => getScale(state.scale))
+  const scale = useSelector((state: Store) => getScale(state.scaleLevel))
   const dispatch = useDispatch()
 
   return (
@@ -31,8 +31,8 @@ export const DiagramEntityTypeChooser = (props: DiagramEntityTypeChooserProps) =
           <button
             key={index}
             onClick={() => {
-              const width = DEFAULT_CANVAS_WIDTH / 10
-              const height = DEFAULT_CANVAS_WIDTH / 10 * 0.666
+              const width = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10)
+              const height = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10 * 0.666)
               const x = roundCoordinateOrSize(props.x - width / 2)
               const y = roundCoordinateOrSize(props.y - height / 2)
 

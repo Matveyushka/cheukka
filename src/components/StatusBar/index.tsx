@@ -14,7 +14,7 @@ export interface StatusBarProps {
 
 export const StatusBar = (props: StatusBarProps) => {
   const diagramType = useSelector<Store, DiagramType>((state: Store) => state.diagramType)
-  const scale = useSelector<Store, number>((state: Store) => state.scale)
+  const scale = useSelector<Store, number>((state: Store) => state.scaleLevel)
 
   const {
     onDiagramTypeSelectedHandler,

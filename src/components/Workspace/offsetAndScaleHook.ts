@@ -18,7 +18,7 @@ export const useWorkspaceOffsetAndScale = () => {
 
   const workspaceRef = React.useRef(null)
 
-  const scale = useSelector<Store, number>((state: Store) => state.scale)
+  const scale = useSelector<Store, number>((state: Store) => state.scaleLevel)
   const offsetX = useSelector<Store, number>((state: Store) => state.offsetX)
   const offsetY = useSelector<Store, number>((state: Store) => state.offsetY)
 

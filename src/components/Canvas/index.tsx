@@ -28,11 +28,13 @@ export const Canvas = (props: CanvasProps) => {
 
   const [
     scale,
+    scaleLevel,
     entities,
     connections,
     mode,
     currentDiagramConnection] = useSelector((state: Store) => [
-      state.scale,
+      getScale(state.scaleLevel),
+      state.scaleLevel,
       state.diagramEntities,
       state.diagramConnections,
       state.mouseMode,
@@ -64,10 +66,10 @@ export const Canvas = (props: CanvasProps) => {
 
     return (
       <rect
-        x={x * getScale(scale)}
-        y={y * getScale(scale)}
-        width={width * getScale(scale)}
-        height={height * getScale(scale)}
+        x={x * scale}
+        y={y * scale}
+        width={width * scale}
+        height={height * scale}
         stroke={'#777799'}
         strokeWidth={1}
         fill={'#77779977'}
@@ -76,8 +78,8 @@ export const Canvas = (props: CanvasProps) => {
   }
 
   const backgroundBlocksAmountInWidth = (() => {
-    if (scale > 10) return 10
-    if (scale > 5) return 5
+    if (scaleLevel > 10) return 10
+    if (scaleLevel > 5) return 5
     return 2
   })()
 

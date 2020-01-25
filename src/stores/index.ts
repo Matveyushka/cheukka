@@ -7,7 +7,7 @@ import {
   DiagramType } from '../types'
 
 export interface Store {
-  scale: number;
+  scaleLevel: number;
   diagramType: DiagramType;
   prevScale: number;
   offsetX: number;
@@ -21,7 +21,7 @@ export interface Store {
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
   { 
-    scale: START_SCALE,
+    scaleLevel: START_SCALE,
     diagramType: DiagramType.BlockScheme,
     prevScale: START_SCALE,
     offsetX: 0,

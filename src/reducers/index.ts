@@ -52,33 +52,33 @@ export const mainReducer = (state: Store, action: Action): Store => {
         action.scaleFocusX,
         action.scaleFocusY,
         action.scale,
-        state.scale)
+        state.scaleLevel)
 
-      return { ...state, prevScale: +state.scale, scale: +action.scale, offsetX: _offsetX, offsetY: _offsetY }
+      return { ...state, prevScale: +state.scaleLevel, scaleLevel: +action.scale, offsetX: _offsetX, offsetY: _offsetY }
     case INCREASE_SCALE:
-      if (state.scale + action.scale <= MAX_SCALE) {
+      if (state.scaleLevel + action.scale <= MAX_SCALE) {
         const { _offsetX, _offsetY } = getScaledOffsets(
           state.offsetX,
           state.offsetY,
           action.scaleFocusX,
           action.scaleFocusY,
-          state.scale + action.scale,
-          state.scale)
+          state.scaleLevel + action.scale,
+          state.scaleLevel)
 
-        return { ...state, prevScale: +state.scale, scale: +state.scale + action.scale, offsetX: _offsetX, offsetY: _offsetY }
+        return { ...state, prevScale: +state.scaleLevel, scaleLevel: +state.scaleLevel + action.scale, offsetX: _offsetX, offsetY: _offsetY }
       }
       return state
     case DECREASE_SCALE:
-      if (state.scale - action.scale >= MIN_SCALE) {
+      if (state.scaleLevel - action.scale >= MIN_SCALE) {
         const { _offsetX, _offsetY } = getScaledOffsets(
           state.offsetX,
           state.offsetY,
           action.scaleFocusX,
           action.scaleFocusY,
-          state.scale - action.scale,
-          state.scale)
+          state.scaleLevel - action.scale,
+          state.scaleLevel)
 
-        return { ...state, prevScale: +state.scale, scale: +state.scale - action.scale, offsetX: _offsetX, offsetY: _offsetY }
+        return { ...state, prevScale: +state.scaleLevel, scaleLevel: +state.scaleLevel - action.scale, offsetX: _offsetX, offsetY: _offsetY }
       }
       return state
     case SET_DIAGRAM_TYPE:

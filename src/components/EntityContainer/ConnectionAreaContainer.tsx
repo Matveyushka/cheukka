@@ -17,7 +17,7 @@ export interface ConnectionAreaContainerProps {
 
 export const ConnectionAreaContainer = (props: ConnectionAreaContainerProps) => {
   const [ scale, mouseMode, currentConnection ] = useSelector((state: Store) => [
-    getScale(state.scale),
+    getScale(state.scaleLevel),
     state.mouseMode,
     state.currentDiagramConnection
   ])

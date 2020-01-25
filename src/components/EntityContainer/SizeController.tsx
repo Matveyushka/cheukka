@@ -27,7 +27,7 @@ export interface SizeControllerProps {
 }
 
 export const SizeController = (props: SizeControllerProps) => {
-  const scale = useSelector((state: Store) => getScale(state.scale))
+  const scale = useSelector((state: Store) => getScale(state.scaleLevel))
   const dispatch = useDispatch()
 
   const possibleCoordinates = new Map<SizeControlType, [number, number]>([

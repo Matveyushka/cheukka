@@ -12,7 +12,7 @@ export interface ConnectionContainerProps {
 }
 
 export const ConnectionContainer = (props: ConnectionContainerProps) => {
-  const scale = useSelector((state: Store) => getScale(state.scale))
+  const scale = useSelector((state: Store) => getScale(state.scaleLevel))
   const entities = useSelector((state: Store) => state.diagramEntities)
 
   const getPointX = (point: ConnectionAreaPoint | FreeConnectionPoint) => {

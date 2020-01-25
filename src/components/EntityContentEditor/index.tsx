@@ -13,7 +13,7 @@ export interface EntityContentEditorProps {
 }
 
 export const EntityContentEditor = (props: EntityContentEditorProps) => {
-  const scale = useSelector((state: Store) => getScale(state.scale))
+  const scale = useSelector((state: Store) => getScale(state.scaleLevel))
 
   const editorRef = React.useRef<HTMLDivElement>(null)
 

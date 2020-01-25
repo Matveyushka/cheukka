@@ -18,11 +18,11 @@ export const getBackgroundSvg = (scale: number, backgroundBlocksAmountInWidth: n
   <defs>
      <pattern id='smallGrid' width='10' height='10' patternUnits='userSpaceOnUse'>
        <rect width='10' height='10' fill='white'/>
-       <path d='M 10 0 L 0 0 0 10' fill='none' stroke='gray' stroke-width='${1 * strokeWidthMultiplier}'/>
+       <path d='M 10 0 L 0 0 0 10' fill='none' stroke='gray' stroke-width='${0.5 * strokeWidthMultiplier}'/>
      </pattern>
      <pattern id='grid' width='100' height='100' patternUnits='userSpaceOnUse'>
        <rect width='100' height='100' fill='url(#smallGrid)'/>
-       <path d='M 100 0 L 0 0 0 100' fill='none' stroke='gray' stroke-width='${2 * strokeWidthMultiplier}'/>
+       <path d='M 100 0 L 0 0 0 100' fill='none' stroke='gray' stroke-width='${1 * strokeWidthMultiplier}'/>
      </pattern>
    </defs>
    <rect width='100' height='100' fill='url(#grid)' />

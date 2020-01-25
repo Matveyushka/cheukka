@@ -8,7 +8,8 @@ import { getBackgroundSvgImage, getSvgExit } from '../../svg'
 import { SizeController, SizeControlType } from './SizeController'
 import { ConnectionAreaContainer } from './ConnectionAreaContainer'
 import { DiagramEntityBlock } from '../DiagramEntities/DiagramEntityBlock'
-import { EntityBlock, EntityPart } from '../../types/EntityPart'
+import { EntityPart } from '../../types/EntityPart'
+import { useEntityContainerHandlers } from './handlers'
 
 export interface EntityContainerProps {
   entityId: number,
@@ -16,9 +17,14 @@ export interface EntityContainerProps {
 }
 
 export const EntityContainer = (props: EntityContainerProps) => {
-  const [isHovered, setIsHovered] = React.useState<boolean>(true)
+  const {
+    onMouseDownHandler,
+    onMouseEnterHandler,
+    onMouseLeaveHandler,
+    isHovered
+  } = useEntityContainerHandlers(props.entityId)
 
-  const [scale, mouseMode] = useSelector((state: Store) => [getScale(state.scale), state.mouseMode])
+  const [scale, mouseMode] = useSelector((state: Store) => [getScale(state.scaleLevel), state.mouseMode])
   const dispatch = useDispatch()
 
   const interfaceControlElementSize = 10 / scale
@@ -37,8 +43,8 @@ export const EntityContainer = (props: EntityContainerProps) => {
 
   return (
     <g className='block'
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
+      onMouseEnter={onMouseEnterHandler}
+      onMouseLeave={onMouseLeaveHandler}>
       <rect
         x={(props.entity.x - hoverExtraAreaWidth) * scale}
         y={(props.entity.y - hoverExtraAreaWidth) * scale}
@@ -57,35 +63,37 @@ export const EntityContainer = (props: EntityContainerProps) => {
             areaId={index} />)
           : ''
       }
-      {
-        props.entity.parts.map((part, index) => {
-          const block = part.renderer(props.entity)
+      <g onMouseDown={onMouseDownHandler}>
+        {
+          props.entity.parts.map((part, index) => {
+            const block = part.renderer(props.entity)
 
-          return (<DiagramEntityBlock
-            key={index}
-            parentEntity={props.entity}
-            relativeX={block.relativeX}
-            relativeY={block.relativeY}
-            width={block.width}
-            height={block.height}
-            contentEditable={part.contentEditable}
-            svgComponent={block.svgComponent}
-            content={part.content}
-            updateContent={(newContent: string) => {
-              dispatch(updateEntity(props.entityId, {
-                ...props.entity,
-                parts: props.entity.parts.map((p,i)=>{
-                  if (index === i) {
-                    return new EntityPart(p.renderer, p.contentEditable, newContent)
-                  } else {
-                    return p
-                  }
-                })
-              }))
-            }}
-          />)
-        })
-      }
+            return (<DiagramEntityBlock
+              key={index}
+              parentEntity={props.entity}
+              relativeX={block.relativeX}
+              relativeY={block.relativeY}
+              width={block.width}
+              height={block.height}
+              contentEditable={part.contentEditable}
+              svgComponent={block.svgComponent}
+              content={part.content}
+              updateContent={(newContent: string) => {
+                dispatch(updateEntity(props.entityId, {
+                  ...props.entity,
+                  parts: props.entity.parts.map((p, i) => {
+                    if (index === i) {
+                      return new EntityPart(p.renderer, p.contentEditable, newContent)
+                    } else {
+                      return p
+                    }
+                  })
+                }))
+              }}
+            />)
+          })
+        }
+      </g>
       {
         props.entity.selected || (isHovered && !(mouseMode === MouseMode.connecting)) ?
           <>

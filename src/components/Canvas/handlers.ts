@@ -7,7 +7,7 @@ import { MouseMode, Connection, FreeConnectionPoint, Entity, } from '../../types
 import { LEFT_MOUSE_BUTTON } from '../../constants'
 
 export const useCanvasHandlers = () => {
-  const [ selectingState, setSelectingState ] = React.useState({
+  const [selectingState, setSelectingState] = React.useState({
     beginX: 0,
     beginY: 0,
     endX: 0,
@@ -19,30 +19,20 @@ export const useCanvasHandlers = () => {
     entities,
     mode,
     currentDiagramConnection] = useSelector((state: Store) => [
-      state.scale,
+      getScale(state.scaleLevel),
       state.diagramEntities,
       state.mouseMode,
       state.currentDiagramConnection
     ])
   const dispatch = useDispatch()
 
-  const getHoveredBlock = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const clientX = getCanvasX(event, getScale(scale))
-    const clientY = getCanvasY(event, getScale(scale))
-
-    return Array.from(entities.entries()).filter(enitity =>
-      isPointInRectangle(clientX, clientY, enitity[1].x, enitity[1].y, enitity[1].width, enitity[1].height)
-    ).reverse()[0] || null
-  }
-
   const doubleClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode !== MouseMode.default) return;
-    if (getHoveredBlock(event) !== null) return;
 
     dispatch(setDiagramEntityTypeChooserState({
       isActive: true,
-      x: getCanvasX(event, getScale(scale)),
-      y: getCanvasY(event, getScale(scale)),
+      x: getCanvasX(event, scale),
+      y: getCanvasY(event, scale),
     }))
   }
 
@@ -53,42 +43,18 @@ export const useCanvasHandlers = () => {
       isActive: false,
     }))
     if (event.button !== LEFT_MOUSE_BUTTON) {
-      const hoveredBlock = getHoveredBlock(event)
-      if (hoveredBlock !== null) {
-        dispatch(setMouseMode(MouseMode.dragging))
-        Array.from(entities.entries()).forEach(entrie => {
-          if (entrie[0] === hoveredBlock[0]) {
-            dispatch(updateEntity(entrie[0], {
-              ...entrie[1], selected: true, moved: true,
-              movementOriginX: getCanvasX(event, getScale(scale)) - entrie[1].x,
-              movementOriginY: getCanvasY(event, getScale(scale)) - entrie[1].y,
-            }))
-          } else {
-            if ((hoveredBlock[1].selected || event.ctrlKey) && entrie[1].selected) {
-              dispatch(updateEntity(entrie[0], {
-                ...entrie[1], moved: true,
-                movementOriginX: getCanvasX(event, getScale(scale)) - entrie[1].x,
-                movementOriginY: getCanvasY(event, getScale(scale)) - entrie[1].y,
-              }))
-            } else if (!event.ctrlKey) {
-              dispatch(updateEntity(entrie[0], { ...entrie[1], selected: false }))
-            }
-          }
-        })
-      } else {
-        setSelectingState({
-          beginX: getCanvasX(event, getScale(scale)),
-          beginY: getCanvasY(event, getScale(scale)),
-          endX: getCanvasX(event, getScale(scale)),
-          endY: getCanvasY(event, getScale(scale)),
-        })
-        dispatch(setMouseMode(MouseMode.selecting))
-        Array.from(entities.entries()).forEach(entrie => {
-          if (!event.ctrlKey) {
-            dispatch(updateEntity(entrie[0], { ...entrie[1], selected: false }))
-          }
-        })
-      }
+      setSelectingState({
+        beginX: getCanvasX(event, scale),
+        beginY: getCanvasY(event, scale),
+        endX: getCanvasX(event, scale),
+        endY: getCanvasY(event, scale),
+      })
+      dispatch(setMouseMode(MouseMode.selecting))
+      Array.from(entities.entries()).forEach(entrie => {
+        if (!event.ctrlKey) {
+          dispatch(updateEntity(entrie[0], { ...entrie[1], selected: false }))
+        }
+      })
     }
   }
 
@@ -139,52 +105,55 @@ export const useCanvasHandlers = () => {
         dispatch(setCurrentDiagramConnection(
           new Connection(
             currentDiagramConnection.begin,
-            new FreeConnectionPoint(getCanvasX(event, getScale(scale)), getCanvasY(event, getScale(scale))))
+            new FreeConnectionPoint(getCanvasX(event, scale), getCanvasY(event, scale)))
         ))
       }
       if (mode === MouseMode.selecting) {
         setSelectingState({
           ...selectingState,
-          endX: getCanvasX(event, getScale(scale)),
-          endY: getCanvasY(event, getScale(scale))
+          endX: getCanvasX(event, scale),
+          endY: getCanvasY(event, scale)
         })
       }
       if (mode === MouseMode.dragging) {
-        Array.from(entities.entries()).forEach(entrie => {
-          const possibleNewX = roundCoordinateOrSize(getCanvasX(event, getScale(scale)))
+        Array.from(entities.entries()).filter(entrie => (
+          entrie[1].sizeChangedOnBottom || entrie[1].sizeChangedOnLeft || 
+          entrie[1].sizeChangedOnTop || entrie[1].sizeChangedOnRight || entrie[1].moved
+          )).forEach(entrie => {
+          const possibleNewX = getCanvasX(event, scale)
           const rightX = entrie[1].x + entrie[1].width
-          const possibleNewY = roundCoordinateOrSize(getCanvasY(event, getScale(scale)))
+          const possibleNewY = getCanvasY(event, scale)
           const bottomY = entrie[1].y + entrie[1].height
 
           const newX = (() => {
-            if (entrie[1].moved) return roundCoordinateOrSize(getCanvasX(event, getScale(scale)) - entrie[1].movementOriginX)
+            if (entrie[1].moved) return getCanvasX(event, scale) - entrie[1].movementOriginX
             if (entrie[1].sizeChangedOnLeft) {
               return possibleNewX > rightX ? rightX : possibleNewX
             }
             if (entrie[1].sizeChangedOnRight) {
-              return getCanvasX(event, getScale(scale)) < entrie[1].x ? getCanvasX(event, getScale(scale)) : entrie[1].x
+              return getCanvasX(event, scale) < entrie[1].x ? getCanvasX(event, scale) : entrie[1].x
             }
             return entrie[1].x
           })()
 
           const newY = (() => {
-            if (entrie[1].moved) return roundCoordinateOrSize(getCanvasY(event, getScale(scale)) - entrie[1].movementOriginY)
+            if (entrie[1].moved) return getCanvasY(event, scale) - entrie[1].movementOriginY
             if (entrie[1].sizeChangedOnTop) {
               return possibleNewY > bottomY ? bottomY : possibleNewY
             }
             if (entrie[1].sizeChangedOnBottom) {
-              return getCanvasY(event, getScale(scale)) < entrie[1].y ? getCanvasY(event, getScale(scale)) : entrie[1].y
+              return getCanvasY(event, scale) < entrie[1].y ? getCanvasY(event, scale) : entrie[1].y
             }
             return entrie[1].y
           })()
 
           const newWidth = (() => {
             if (entrie[1].sizeChangedOnLeft) {
-              const possibleNewWidth = roundCoordinateOrSize(rightX - getCanvasX(event, getScale(scale)))
+              const possibleNewWidth = rightX - getCanvasX(event, scale)
               return possibleNewWidth > 0 ? possibleNewWidth : -possibleNewWidth
             }
             if (entrie[1].sizeChangedOnRight) {
-              const possibleNewWidth = roundCoordinateOrSize(getCanvasX(event, getScale(scale)) - entrie[1].x)
+              const possibleNewWidth = getCanvasX(event, scale) - entrie[1].x
               return possibleNewWidth > 0 ? possibleNewWidth : -possibleNewWidth
             }
             return entrie[1].width
@@ -192,11 +161,11 @@ export const useCanvasHandlers = () => {
 
           const newHeight = (() => {
             if (entrie[1].sizeChangedOnTop) {
-              const possibleNewHeight = roundCoordinateOrSize(bottomY - getCanvasY(event, getScale(scale)))
+              const possibleNewHeight = bottomY - getCanvasY(event, scale)
               return possibleNewHeight > 0 ? possibleNewHeight : -possibleNewHeight
             }
             if (entrie[1].sizeChangedOnBottom) {
-              const possibleNewHeight = roundCoordinateOrSize(getCanvasY(event, getScale(scale)) - entrie[1].y)
+              const possibleNewHeight = getCanvasY(event, scale) - entrie[1].y
               return possibleNewHeight > 0 ? possibleNewHeight : -possibleNewHeight
             }
             return entrie[1].height
@@ -230,8 +199,8 @@ export const useCanvasHandlers = () => {
             ...entrie[1],
             x: roundCoordinateOrSize(newX),
             y: roundCoordinateOrSize(newY),
-            width: newWidth,
-            height: newHeight,
+            width: roundCoordinateOrSize(newWidth),
+            height: roundCoordinateOrSize(newHeight),
             sizeChangedOnTop: newSizeChangedOnTop,
             sizeChangedOnBottom: newSizeChangedOnBottom,
             sizeChangedOnLeft: newSizeChangedOnLeft,

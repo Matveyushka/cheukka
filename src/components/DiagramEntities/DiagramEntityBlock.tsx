@@ -21,9 +21,10 @@ export interface DiagramEntityBlockProps {
 export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
   const [ isEditingContent, setIsEditingContent ] = React.useState<boolean>(false)
 
-  const scale = useSelector((state: Store) => getScale(state.scale))
+  const scale = useSelector((state: Store) => getScale(state.scaleLevel))
 
   const doubleClickHandler = (event: React.MouseEvent) => {
+    event.stopPropagation()
     if (props.contentEditable) {
       setIsEditingContent(true)
     }
