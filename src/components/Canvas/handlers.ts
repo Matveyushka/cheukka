@@ -4,8 +4,7 @@ import { Store } from '../../stores'
 import { isPointInRectangle, roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
 import { updateEntity, setMouseMode, addConnection, setCurrentDiagramConnection, setDiagramEntityTypeChooserState } from '../../actions'
 import { MouseMode, Connection, FreeConnectionPoint, Entity, } from '../../types'
-import { DEFAULT_CANVAS_WIDTH, LEFT_MOUSE_BUTTON } from '../../constants'
-import { ComponentDiagramModule } from '../DiagramEntities/ComponentDiagram/ComponentDiagramModule'
+import { LEFT_MOUSE_BUTTON } from '../../constants'
 
 export const useCanvasHandlers = () => {
   const [ selectingState, setSelectingState ] = React.useState({
@@ -108,13 +107,6 @@ export const useCanvasHandlers = () => {
     const b = (entity.x + entity.width) < (x + width)
     const c = entity.y >= y
     const d = (entity.y + entity.height) < (y + height)
-
-    console.log('------')
-    console.log(entity.x + ' ' + x)
-    console.log((entity.x + entity.width) + ' ' + (x + width))
-    console.log(entity.y + ' ' + y)
-    console.log((entity.y + entity.height) + ' ' + (y + height))
-
 
     if (a && b && c && d) return true
     return false
