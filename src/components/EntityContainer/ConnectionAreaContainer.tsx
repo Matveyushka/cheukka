@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Store } from '../../../stores'
-import { Entity, ConnectionArea, Connection, ConnectionAreaPoint } from '../../../types'
-import { getScale, getCanvasX, getCanvasY } from '../../../utils'
-import { getTheClosestSegmentPointToFreePoint } from '../../../utils/geometry'
-import { setMouseMode, setCurrentDiagramConnection, addConnection } from '../../../actions'
-import { MouseMode } from '../../../types'
+import { Store } from '../../stores'
+import { Entity, ConnectionArea, Connection, ConnectionAreaPoint } from '../../types'
+import { getScale, getCanvasX, getCanvasY } from '../../utils'
+import { getTheClosestSegmentPointToFreePoint } from '../../utils/geometry'
+import { setMouseMode, setCurrentDiagramConnection, addConnection } from '../../actions'
+import { MouseMode } from '../../types'
 
 export interface ConnectionAreaContainerProps {
   width: number;

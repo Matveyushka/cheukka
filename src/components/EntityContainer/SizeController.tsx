@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Entity, MouseMode } from '../../../types'
-import { getScale } from '../../../utils'
-import { updateEntity, setMouseMode } from '../../../actions'
-import { Store } from '../../../stores'
-import {  } from '../../../constants'
+import { Entity, MouseMode } from '../../types'
+import { getScale } from '../../utils'
+import { updateEntity, setMouseMode } from '../../actions'
+import { Store } from '../../stores'
+import {  } from '../../constants'
 
 export enum SizeControlType {
   top,

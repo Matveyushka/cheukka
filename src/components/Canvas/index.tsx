@@ -2,12 +2,13 @@ import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../stores'
 import { getBackgroundSvg } from '../../svg'
-import { EntityContainer } from './EntityContainer'
-import { ConnectionContainer } from './ConnectionContainer'
+import { EntityContainer } from '../EntityContainer'
+import { ConnectionContainer } from '../ConnectionContainer'
 import { MouseMode, DiagramEntityType } from '../../types'
 import { useCanvasHandlers } from './handlers'
 import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
 import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityType'
+import { getScale } from '../../utils'
 
 export interface CanvasProps { }
 
@@ -22,6 +23,7 @@ export const Canvas = (props: CanvasProps) => {
     mouseDownHandler,
     mouseUpHandler,
     mouseMoveHandler,
+    selectingState,
   } = useCanvasHandlers()
 
   const [
@@ -54,6 +56,25 @@ export const Canvas = (props: CanvasProps) => {
     ))
   }
 
+  const renderSelection = () => {
+    const x = Math.min(selectingState.beginX, selectingState.endX)
+    const y = Math.min(selectingState.beginY, selectingState.endY)
+    const width = Math.max(selectingState.beginX - x, selectingState.endX - x)
+    const height = Math.max(selectingState.beginY - y, selectingState.endY - y)
+
+    return (
+      <rect
+        x={x * getScale(scale)}
+        y={y * getScale(scale)}
+        width={width * getScale(scale)}
+        height={height * getScale(scale)}
+        stroke={'#777799'}
+        strokeWidth={1}
+        fill={'#77779977'}
+      />
+    )
+  }
+
   const backgroundBlocksAmountInWidth = (() => {
     if (scale > 10) return 10
     if (scale > 5) return 5
@@ -79,18 +100,23 @@ export const Canvas = (props: CanvasProps) => {
           {mode === MouseMode.connecting ?
             (
               <g pointerEvents="none">
-                <ConnectionContainer connection={currentDiagramConnection}/>
+                <ConnectionContainer connection={currentDiagramConnection} />
               </g>
             ) : ''}
+          {
+            mode === MouseMode.selecting ?
+              renderSelection()
+              : ''
+          }
         </svg>
         {
           diagramEntityTypeChooserState.isActive ?
-          <DiagramEntityTypeChooser
-            x={diagramEntityTypeChooserState.x}
-            y={diagramEntityTypeChooserState.y}
-            diagramEntityTypes={diagramEntityGroups.get(diagramType).types}
-          />
-          : ''
+            <DiagramEntityTypeChooser
+              x={diagramEntityTypeChooserState.x}
+              y={diagramEntityTypeChooserState.y}
+              diagramEntityTypes={diagramEntityGroups.get(diagramType).types}
+            />
+            : ''
         }
       </div>
     </div>

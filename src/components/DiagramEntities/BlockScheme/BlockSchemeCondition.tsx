@@ -12,7 +12,7 @@ export class BlockSchemeCondition extends Entity {
     this.parts = [
       new EntityPart((entity: Entity) => new EntityBlock(
         0, 0, entity.width, entity.height, EntityBlockRombus
-      ), true, 'Action')
+      ), true, 'Condition')
     ]
 
     this.connectionAreaCreators = [

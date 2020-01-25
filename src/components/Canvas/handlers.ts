@@ -3,11 +3,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { isPointInRectangle, roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
 import { updateEntity, setMouseMode, addConnection, setCurrentDiagramConnection, setDiagramEntityTypeChooserState } from '../../actions'
-import { MouseMode, Connection, FreeConnectionPoint, } from '../../types'
+import { MouseMode, Connection, FreeConnectionPoint, Entity, } from '../../types'
 import { DEFAULT_CANVAS_WIDTH, LEFT_MOUSE_BUTTON } from '../../constants'
 import { ComponentDiagramModule } from '../DiagramEntities/ComponentDiagram/ComponentDiagramModule'
 
 export const useCanvasHandlers = () => {
+  const [ selectingState, setSelectingState ] = React.useState({
+    beginX: 0,
+    beginY: 0,
+    endX: 0,
+    endY: 0,
+  })
+
   const [
     scale,
     entities,
@@ -70,6 +77,13 @@ export const useCanvasHandlers = () => {
           }
         })
       } else {
+        setSelectingState({
+          beginX: getCanvasX(event, getScale(scale)),
+          beginY: getCanvasY(event, getScale(scale)),
+          endX: getCanvasX(event, getScale(scale)),
+          endY: getCanvasY(event, getScale(scale)),
+        })
+        dispatch(setMouseMode(MouseMode.selecting))
         Array.from(entities.entries()).forEach(entrie => {
           if (!event.ctrlKey) {
             dispatch(updateEntity(entrie[0], { ...entrie[1], selected: false }))
@@ -77,6 +91,33 @@ export const useCanvasHandlers = () => {
         })
       }
     }
+  }
+
+  const isEntityInArea = (entity: Entity, area: {
+    beginX: number,
+    beginY: number,
+    endX: number,
+    endY: number,
+  }) => {
+    const x = Math.min(area.beginX, area.endX)
+    const y = Math.min(area.beginY, area.endY)
+    const width = Math.max(area.beginX - x, area.endX - x)
+    const height = Math.max(area.beginY - y, area.endY - y)
+
+    const a = entity.x >= x
+    const b = (entity.x + entity.width) < (x + width)
+    const c = entity.y >= y
+    const d = (entity.y + entity.height) < (y + height)
+
+    console.log('------')
+    console.log(entity.x + ' ' + x)
+    console.log((entity.x + entity.width) + ' ' + (x + width))
+    console.log(entity.y + ' ' + y)
+    console.log((entity.y + entity.height) + ' ' + (y + height))
+
+
+    if (a && b && c && d) return true
+    return false
   }
 
   const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -87,6 +128,7 @@ export const useCanvasHandlers = () => {
     Array.from(entities.entries()).forEach(entrie => {
       dispatch(updateEntity(entrie[0], {
         ...entrie[1],
+        selected: (mode === MouseMode.selecting && isEntityInArea(entrie[1], selectingState)) ? true : entrie[1].selected,
         moved: false,
         sizeChangedOnBottom: false,
         sizeChangedOnLeft: false,
@@ -94,6 +136,9 @@ export const useCanvasHandlers = () => {
         sizeChangedOnTop: false,
       }))
     })
+    if (mode === MouseMode.selecting) {
+      dispatch(setMouseMode(MouseMode.default))
+    }
   }
 
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -104,6 +149,13 @@ export const useCanvasHandlers = () => {
             currentDiagramConnection.begin,
             new FreeConnectionPoint(getCanvasX(event, getScale(scale)), getCanvasY(event, getScale(scale))))
         ))
+      }
+      if (mode === MouseMode.selecting) {
+        setSelectingState({
+          ...selectingState,
+          endX: getCanvasX(event, getScale(scale)),
+          endY: getCanvasY(event, getScale(scale))
+        })
       }
       if (mode === MouseMode.dragging) {
         Array.from(entities.entries()).forEach(entrie => {
@@ -203,5 +255,6 @@ export const useCanvasHandlers = () => {
     mouseDownHandler,
     mouseUpHandler,
     mouseMoveHandler,
+    selectingState,
   }
 }

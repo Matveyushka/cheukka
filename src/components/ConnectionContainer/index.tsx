@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { Connection } from '../../../types/Connection'
-import { ConnectionAreaPoint } from '../../../types/ConnectionAreaPoint'
-import { FreeConnectionPoint } from '../../../types/FreeConnectionPoint'
+import { Connection } from '../../types/Connection'
+import { ConnectionAreaPoint } from '../../types/ConnectionAreaPoint'
+import { FreeConnectionPoint } from '../../types/FreeConnectionPoint'
 import { useSelector, useDispatch } from 'react-redux'
-import { Store } from '../../../stores'
-import { getScale } from '../../../utils'
+import { Store } from '../../stores'
+import { getScale } from '../../utils'
 import { ConnectionPath } from './ConnectionPath'
 
 export interface ConnectionContainerProps {

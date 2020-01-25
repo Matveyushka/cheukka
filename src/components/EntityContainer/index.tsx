@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getScale } from '../../../utils'
-import { Store } from '../../../stores'
-import { Entity, Connection, ConnectionAreaPoint, FreeConnectionPoint, MouseMode } from '../../../types'
-import { removeEntity, addConnection, updateEntity } from '../../../actions'
-import { getBackgroundSvgImage, getSvgExit } from '../../../svg'
+import { getScale } from '../../utils'
+import { Store } from '../../stores'
+import { Entity, Connection, ConnectionAreaPoint, FreeConnectionPoint, MouseMode } from '../../types'
+import { removeEntity, addConnection, updateEntity } from '../../actions'
+import { getBackgroundSvgImage, getSvgExit } from '../../svg'
 import { SizeController, SizeControlType } from './SizeController'
 import { ConnectionAreaContainer } from './ConnectionAreaContainer'
-import { DiagramEntityBlock } from '../../DiagramEntities/DiagramEntityBlock'
-import { EntityBlock, EntityPart } from '../../../types/EntityPart'
+import { DiagramEntityBlock } from '../DiagramEntities/DiagramEntityBlock'
+import { EntityBlock, EntityPart } from '../../types/EntityPart'
 
 export interface EntityContainerProps {
   entityId: number,
@@ -22,7 +22,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const dispatch = useDispatch()
 
   const interfaceControlElementSize = 10 / scale
-  const connectionAreaWidth = interfaceControlElementSize * 1.5
+  const connectionAreaWidth = interfaceControlElementSize * 2
   const interfaceColor = props.entity.moved ? 'red' : props.entity.selected ? 'red' : isHovered ? 'red' : 'black'
 
   const isResized = props.entity.sizeChangedOnBottom
@@ -62,6 +62,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
           const block = part.renderer(props.entity)
 
           return (<DiagramEntityBlock
+            key={index}
             parentEntity={props.entity}
             relativeX={block.relativeX}
             relativeY={block.relativeY}
