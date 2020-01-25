@@ -35,7 +35,8 @@
     border: 0;
     background: 'none';
     cursor: default;
-    white-space: pre
+    white-space: pre;
+    font-size: 1rem;
   }
 
   .on-hover-visible {
@@ -79,4 +80,8 @@
       outline: none;
     }
   }
+}
+
+.entity-content-editor {
+  position: absolute;
 }

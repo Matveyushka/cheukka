@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getScale } from '../../../utils'
 import { Store } from '../../../stores'
 import { Entity, Connection, ConnectionAreaPoint, FreeConnectionPoint, MouseMode } from '../../../types'
-import { removeEntity, addConnection } from '../../../actions'
+import { removeEntity, addConnection, updateEntity } from '../../../actions'
 import { getBackgroundSvgImage, getSvgExit } from '../../../svg'
 import { SizeController, SizeControlType } from './SizeController'
 import { ConnectionAreaContainer } from './ConnectionAreaContainer'
+import { DiagramEntityBlock } from '../../DiagramEntities/DiagramEntityBlock'
+import { EntityBlock, EntityPart } from '../../../types/EntityPart'
 
 export interface EntityContainerProps {
   entityId: number,
@@ -46,51 +48,78 @@ export const EntityContainer = (props: EntityContainerProps) => {
       />
       {
         isHovered && !(mouseMode === MouseMode.dragging) ?
-        props.entity.connectionAreaCreators.map((area, index) => <ConnectionAreaContainer 
-          key={index}
-          width={connectionAreaWidth}
-          entity={props.entity} 
-          entityId={props.entityId}
-          area={area(props.entity)}
-          areaId={index}/>)
-        : ''
+          props.entity.connectionAreaCreators.map((area, index) => <ConnectionAreaContainer
+            key={index}
+            width={connectionAreaWidth}
+            entity={props.entity}
+            entityId={props.entityId}
+            area={area(props.entity)}
+            areaId={index} />)
+          : ''
       }
-      {props.entity.render(props.entity)}
+      {
+        props.entity.parts.map((part, index) => {
+          const block = part.renderer(props.entity)
+
+          return (<DiagramEntityBlock
+            parentEntity={props.entity}
+            relativeX={block.relativeX}
+            relativeY={block.relativeY}
+            width={block.width}
+            height={block.height}
+            contentEditable={part.contentEditable}
+            svgComponent={block.svgComponent}
+            content={part.content}
+            updateContent={(newContent: string) => {
+              dispatch(updateEntity(props.entityId, {
+                ...props.entity,
+                parts: props.entity.parts.map((p,i)=>{
+                  if (index === i) {
+                    return new EntityPart(p.renderer, p.contentEditable, newContent)
+                  } else {
+                    return p
+                  }
+                })
+              }))
+            }}
+          />)
+        })
+      }
       {
         props.entity.selected || (isHovered && !(mouseMode === MouseMode.connecting)) ?
-        <>
-        <rect
-          className={`block-decoration`}
-          x={props.entity.x * scale}
-          y={props.entity.y * scale}
-          width={realWidth}
-          height={realHeight}
-          stroke={interfaceColor}
-          strokeWidth={4}
-          strokeDasharray="4,4"
-          fill={'transparent'}
-          pointerEvents='none'
-        />
-        <foreignObject
-          x={(props.entity.x + props.entity.width - interfaceControlElementSize * 1.5) * scale}
-          y={(props.entity.y + interfaceControlElementSize * 0.5) * scale}
-          width={interfaceControlElementSize * scale}
-          height={interfaceControlElementSize * scale}
-        >
-          {(realWidth >= interfaceControlElementSize * 3 * scale && realHeight >= interfaceControlElementSize * 3 * scale) ?
-            <div
-              className={`delete-button ${isResized ? 'invisible' : 'on-hover-visible'}`}
-              style={{
-                width: interfaceControlElementSize * scale,
-                height: interfaceControlElementSize * scale,
-                backgroundImage: getBackgroundSvgImage(getSvgExit(scale, interfaceColor)),
-              }}
-              onMouseDown={(event) => { event.stopPropagation() }}
-              onClick={(event) => { dispatch(removeEntity(props.entityId)) }}
-            /> : ''
-          }
-        </foreignObject> 
-        </>: ''
+          <>
+            <rect
+              className={`block-decoration`}
+              x={props.entity.x * scale}
+              y={props.entity.y * scale}
+              width={realWidth}
+              height={realHeight}
+              stroke={interfaceColor}
+              strokeWidth={4}
+              strokeDasharray="4,4"
+              fill={'transparent'}
+              pointerEvents='none'
+            />
+            <foreignObject
+              x={(props.entity.x + props.entity.width - interfaceControlElementSize * 1.5) * scale}
+              y={(props.entity.y + interfaceControlElementSize * 0.5) * scale}
+              width={interfaceControlElementSize * scale}
+              height={interfaceControlElementSize * scale}
+            >
+              {(realWidth >= interfaceControlElementSize * 3 * scale && realHeight >= interfaceControlElementSize * 3 * scale) ?
+                <div
+                  className={`delete-button ${isResized ? 'invisible' : 'on-hover-visible'}`}
+                  style={{
+                    width: interfaceControlElementSize * scale,
+                    height: interfaceControlElementSize * scale,
+                    backgroundImage: getBackgroundSvgImage(getSvgExit(scale, interfaceColor)),
+                  }}
+                  onMouseDown={(event) => { event.stopPropagation() }}
+                  onClick={(event) => { dispatch(removeEntity(props.entityId)) }}
+                /> : ''
+              }
+            </foreignObject>
+          </> : ''
       }
       {
         isHovered && !(mouseMode === MouseMode.connecting) ?

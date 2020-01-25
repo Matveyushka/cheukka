@@ -1,4 +1,5 @@
 import { ConnectionArea } from './ConnectionArea'
+import { EntityPart } from './EntityPart'
 
 export abstract class Entity {
   constructor (x: number, y: number, width: number, height: number) {
@@ -20,6 +21,6 @@ export abstract class Entity {
   moved = false;
   movementOriginX: number;
   movementOriginY: number;
+  parts: Array<EntityPart>;
   connectionAreaCreators: Array<(entity: Entity) => ConnectionArea>;
-  render: (entity: Entity) => React.ReactElement
 }

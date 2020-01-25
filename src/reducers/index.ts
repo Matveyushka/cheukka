@@ -95,10 +95,7 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return removeEntity(state, action.id)
     case UPDATE_ENTITY:
       const updatedDiagramEntities = new Map(state.diagramEntities)
-      const newEntity = {
-        ...action.entity,
-      }
-      updatedDiagramEntities.set(action.id, newEntity)
+      updatedDiagramEntities.set(action.id, action.entity)
       return { ...state, diagramEntities: updatedDiagramEntities }
     case ADD_CONNECTION:
       const newAddDiagramConnections = new Map(state.diagramConnections)

@@ -71,14 +71,6 @@ export const getScaledOffsets = (
     }
 }
 
-export const getBlockX = (entity: Entity, block: EntityPart) => {
-  return entity.x + block.x
-}
-
-export const getBlockY = (entity: Entity, block: EntityPart) => {
-  return entity.y + block.y
-}
-
 export const getCanvasX = (event: React.MouseEvent, scale: number) => {
   const clientRect = document.getElementsByClassName('diagram-canvas')[0].getBoundingClientRect()
   return (event.clientX - clientRect.left) / scale
