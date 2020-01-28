@@ -1,5 +1,6 @@
 import { ConnectionArea } from './ConnectionArea'
 import { EntityPart } from './EntityPart'
+import { ConnectionType } from './ConnectionType'
 
 export abstract class Entity {
   constructor (x: number, y: number, width: number, height: number) {
@@ -9,18 +10,20 @@ export abstract class Entity {
     this.height = height
   }
 
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  selected = false;
-  sizeChangedOnTop = false;
-  sizeChangedOnLeft = false;
-  sizeChangedOnRight = false;
-  sizeChangedOnBottom = false;
-  moved = false;
-  movementOriginX: number;
-  movementOriginY: number;
-  parts: Array<EntityPart>;
-  connectionAreaCreators: Array<(entity: Entity) => ConnectionArea>;
+  x: number
+  y: number
+  width: number
+  height: number
+  selected = false
+  sizeChangedOnTop = false
+  sizeChangedOnLeft = false
+  sizeChangedOnRight = false
+  sizeChangedOnBottom = false
+  moved = false
+  movementOriginX: number
+  movementOriginY: number
+  parts: Array<EntityPart>
+  connectionAreaCreators: Array<(entity: Entity) => ConnectionArea>
+  validConnectionToBegin: Array<ConnectionType> = []
+  validConnectionToEnd: Array<ConnectionType> = []
 }

@@ -1,12 +1,18 @@
-import { ConnectionAreaPoint } from './ConnectionAreaPoint'
-import { FreeConnectionPoint } from './FreeConnectionPoint'
+import { ConnectionPoint } from './ConnectionPoint'
+import { ConnectionType } from './ConnectionType'
 
 export class Connection {
-  constructor (beginPoint: ConnectionAreaPoint | FreeConnectionPoint, endPoint: ConnectionAreaPoint | FreeConnectionPoint) {
+  constructor (
+    beginPoint: ConnectionPoint,
+    endPoint: ConnectionPoint,
+    type: ConnectionType
+  ) {
     this.begin = beginPoint
     this.end = endPoint
+    this.type = type
   }
 
-  begin: ConnectionAreaPoint | FreeConnectionPoint
-  end: ConnectionAreaPoint | FreeConnectionPoint
+  begin: ConnectionPoint
+  end: ConnectionPoint
+  type: ConnectionType
 }

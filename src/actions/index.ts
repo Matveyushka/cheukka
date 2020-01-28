@@ -1,5 +1,5 @@
 import * as Constants from '../constants/actions'
-import { Entity, Connection, MouseMode, DiagramEntityTypeChooserState, DiagramType } from '../types'
+import { Entity, Connection, MouseMode, DiagramEntityTypeChooserState, DiagramType, ConnectionTypeChooserState } from '../types'
 
 //interfaces
 
@@ -32,6 +32,8 @@ export interface SetMouseMode { type: Constants.SET_MOUSE_MODE; mouseMode: Mouse
 export interface SetCurrentDiagramConnection { type: Constants.SET_CURRENT_DIAGRAM_CONNECTION; connection: Connection }
 
 export interface SetDiagramEntityTypeChooserState { type: Constants.SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE; state: DiagramEntityTypeChooserState}
+
+export interface SetConnectionTypeChooserState { type: Constants.SET_CONNECTION_TYPE_CHOOSER_STATE; state: ConnectionTypeChooserState}
 
 //actions
 
@@ -118,6 +120,11 @@ export const setDiagramEntityTypeChooserState = (state: DiagramEntityTypeChooser
   state,
 })
 
+export const setConnectionTypeChooserState = (state: ConnectionTypeChooserState) : SetConnectionTypeChooserState => ({
+  type: Constants.SET_CONNECTION_TYPE_CHOOSER_STATE,
+  state,
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -134,3 +141,4 @@ export type Action =
   | SetMouseMode
   | SetCurrentDiagramConnection
   | SetDiagramEntityTypeChooserState
+  | SetConnectionTypeChooserState

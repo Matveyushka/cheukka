@@ -51,12 +51,12 @@
 
   .invisible {
     visibility: hidden;
-  }
+  } 
 }
 
 .diagram-entity-type-chooser {
   position: absolute;
-  background-color: $second-color;
+  background-color: $transparent-main-color;
   border: 1px solid $main-color;
   display: grid;
   width: 8rem;
@@ -84,4 +84,11 @@
 
 .entity-content-editor {
   position: absolute;
+}
+
+.connection-area {
+  stroke: green;
+  &:hover {
+    stroke: red;
+  }
 }

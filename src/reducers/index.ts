@@ -16,6 +16,7 @@ import {
   SET_MOUSE_MODE,
   SET_CURRENT_DIAGRAM_CONNECTION,
   SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE,
+  SET_CONNECTION_TYPE_CHOOSER_STATE,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -115,6 +116,8 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, currentDiagramConnection: action.connection }
     case SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE:
       return { ...state, diagramEntityTypeChooserState: action.state }
+    case SET_CONNECTION_TYPE_CHOOSER_STATE:
+      return { ...state, connectionTypeChooserState: action.state }
   }
 
   return state

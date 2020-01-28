@@ -1,12 +1,18 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
-import { isPointInRectangle, roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
-import { updateEntity, setMouseMode, addConnection, setCurrentDiagramConnection, setDiagramEntityTypeChooserState } from '../../actions'
-import { MouseMode, Connection, FreeConnectionPoint, Entity, } from '../../types'
+import { roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
+import { updateEntity, setMouseMode,
+  setCurrentDiagramConnection, 
+  setDiagramEntityTypeChooserState, 
+  setConnectionTypeChooserState } from '../../actions'
+import { MouseMode, Connection, FreeConnectionPoint, Entity, nonActiveConnectionTypeChooserState, ConnectionType} from '../../types'
 import { LEFT_MOUSE_BUTTON } from '../../constants'
+import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
 
 export const useCanvasHandlers = () => {
+  const currentConnectionController = useCurrentDiagramConnectionController()
+
   const [selectingState, setSelectingState] = React.useState({
     beginX: 0,
     beginY: 0,
@@ -42,6 +48,7 @@ export const useCanvasHandlers = () => {
       y: 0,
       isActive: false,
     }))
+    dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
     if (event.button !== LEFT_MOUSE_BUTTON) {
       setSelectingState({
         beginX: getCanvasX(event, scale),
@@ -80,7 +87,12 @@ export const useCanvasHandlers = () => {
 
   const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode === MouseMode.connecting) {
-      dispatch(addConnection(currentDiagramConnection))
+      dispatch(setConnectionTypeChooserState({
+        isActive: true,
+        x: getCanvasX(event, scale),
+        y: getCanvasY(event, scale),
+        endPoint: currentDiagramConnection.end,
+      }))
     }
     dispatch(setMouseMode(MouseMode.default))
     Array.from(entities.entries()).forEach(entrie => {
@@ -102,11 +114,10 @@ export const useCanvasHandlers = () => {
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.button !== LEFT_MOUSE_BUTTON) {
       if (mode === MouseMode.connecting) {
-        dispatch(setCurrentDiagramConnection(
-          new Connection(
-            currentDiagramConnection.begin,
-            new FreeConnectionPoint(getCanvasX(event, scale), getCanvasY(event, scale)))
-        ))
+        const newX = roundCoordinateOrSize(getCanvasX(event, scale))
+        const newY = roundCoordinateOrSize(getCanvasY(event, scale))
+
+        currentConnectionController.setEndFreePoint(newX, newY)
       }
       if (mode === MouseMode.selecting) {
         setSelectingState({

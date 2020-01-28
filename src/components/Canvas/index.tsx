@@ -9,15 +9,12 @@ import { useCanvasHandlers } from './handlers'
 import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
 import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityType'
 import { getScale } from '../../utils'
+import { ConnectionTypeChooser } from '../ConnectionTypeChooser'
+import { ConnectionType } from '../../types/ConnectionType'
 
 export interface CanvasProps { }
 
 export const Canvas = (props: CanvasProps) => {
-  const [
-    diagramEntityTypeChooserState,
-    diagramType,
-  ] = useSelector((state: Store) => [state.diagramEntityTypeChooserState, state.diagramType])
-
   const {
     doubleClickHandler,
     mouseDownHandler,
@@ -32,14 +29,21 @@ export const Canvas = (props: CanvasProps) => {
     entities,
     connections,
     mode,
-    currentDiagramConnection] = useSelector((state: Store) => [
-      getScale(state.scaleLevel),
-      state.scaleLevel,
-      state.diagramEntities,
-      state.diagramConnections,
-      state.mouseMode,
-      state.currentDiagramConnection
-    ])
+    currentDiagramConnection,
+    diagramEntityTypeChooserState,
+    diagramType,
+    connectionTypeChooserState,
+  ] = useSelector((state: Store) => [
+    getScale(state.scaleLevel),
+    state.scaleLevel,
+    state.diagramEntities,
+    state.diagramConnections,
+    state.mouseMode,
+    state.currentDiagramConnection,
+    state.diagramEntityTypeChooserState,
+    state.diagramType,
+    state.connectionTypeChooserState
+  ])
 
   const renderEntities = () => {
     return Array.from(entities.entries()).map((entity, index) => (
@@ -99,7 +103,7 @@ export const Canvas = (props: CanvasProps) => {
         <svg width="100%" height="100%">
           {renderConnections()}
           {renderEntities()}
-          {mode === MouseMode.connecting ?
+          {(mode === MouseMode.connecting || connectionTypeChooserState.isActive) ?
             (
               <g pointerEvents="none">
                 <ConnectionContainer connection={currentDiagramConnection} />
@@ -119,6 +123,14 @@ export const Canvas = (props: CanvasProps) => {
               diagramEntityTypes={diagramEntityGroups.get(diagramType).types}
             />
             : ''
+        }
+        {
+          connectionTypeChooserState.isActive ?
+            <ConnectionTypeChooser
+              x={connectionTypeChooserState.x}
+              y={connectionTypeChooserState.y}
+              endPoint={connectionTypeChooserState.endPoint}
+            /> : ''
         }
       </div>
     </div>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Entity, EntityPart } from '../../../types'
+import { Entity, EntityPart, ConnectionType } from '../../../types'
 import { ConnectionArea, ConnectionAreaDirection } from '../../../types/ConnectionArea'
 import { DiagramEntityBlock } from '../DiagramEntityBlock'
 import { EntityBlockRectangle } from '../../../svg'
@@ -21,5 +21,8 @@ export class BlockSchemeAction extends Entity {
       (entity: Entity) => new ConnectionArea(entity.width, entity.height, 0, entity.height, [ConnectionAreaDirection.Bottom]),
       (entity: Entity) => new ConnectionArea(0, 0, 0, entity.height, [ConnectionAreaDirection.Left]),
     ]
+
+    this.validConnectionToBegin = [ConnectionType.BlockSchemeArrow]
+    this.validConnectionToEnd = [ConnectionType.BlockSchemeArrow]
   }
 }

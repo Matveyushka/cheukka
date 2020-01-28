@@ -6,8 +6,14 @@ import {
 } from '../constants'
 import {
   Entity,
-  EntityPart
+  ConnectionArea,
+  ConnectionPoint,
+  FreeConnectionPoint
 } from '../types'
+import {
+  getTheClosestSegmentPointToFreePoint
+} from './geometry'
+import { ConnectionAreaContainer } from '../components/ConnectionAreaContainer'
 
 export const vwToPx = (vw: number) => {
   return vw * (window.innerWidth / 100)
@@ -26,7 +32,7 @@ export const pxToVh = (px: number) => {
 }
 
 export const getScale = (scaleStep: number) => {
-  return 1.1**scaleStep - 0.1
+  return 1.1 ** scaleStep - 0.1
 }
 
 export const getScalePercent = (scaleStep: number) => {
@@ -38,13 +44,13 @@ export const roundCoordinateOrSize = (value: number) => {
 }
 
 export const isPointInRectangle = (
-  pointX: number, 
-  pointY: number, 
-  rectangleX: number, 
-  rectangleY: number, 
-  rectangleWidth: number, 
+  pointX: number,
+  pointY: number,
+  rectangleX: number,
+  rectangleY: number,
+  rectangleWidth: number,
   rectangleHeight: number) => rectangleX <= pointX && (rectangleX + rectangleWidth) >= pointX &&
-                              rectangleY <= pointY && (rectangleY + rectangleHeight) >= pointY
+  rectangleY <= pointY && (rectangleY + rectangleHeight) >= pointY
 
 export const getScaledOffsets = (
   prevOffsetX: number,
@@ -53,22 +59,22 @@ export const getScaledOffsets = (
   scaleFocusY: number,
   newScale: number,
   oldScale: number,
-  ) => {
-    const oldFocusPointX = scaleFocusX + prevOffsetX
-    const oldFocusPointY = scaleFocusY + prevOffsetY
+) => {
+  const oldFocusPointX = scaleFocusX + prevOffsetX
+  const oldFocusPointY = scaleFocusY + prevOffsetY
 
-    const scalesRatio = getScale(newScale) / getScale(oldScale)
+  const scalesRatio = getScale(newScale) / getScale(oldScale)
 
-    const newFocusPointX = (oldFocusPointX - DEFAULT_EMPTY_SPACE_WIDTH) * scalesRatio + DEFAULT_EMPTY_SPACE_WIDTH
-    const newFocusPointY = (oldFocusPointY - DEFAULT_EMPTY_SPACE_HEIGHT) * scalesRatio + DEFAULT_EMPTY_SPACE_HEIGHT
+  const newFocusPointX = (oldFocusPointX - DEFAULT_EMPTY_SPACE_WIDTH) * scalesRatio + DEFAULT_EMPTY_SPACE_WIDTH
+  const newFocusPointY = (oldFocusPointY - DEFAULT_EMPTY_SPACE_HEIGHT) * scalesRatio + DEFAULT_EMPTY_SPACE_HEIGHT
 
-    const _offsetX = newFocusPointX - scaleFocusX
-    const _offsetY = newFocusPointY - scaleFocusY
+  const _offsetX = newFocusPointX - scaleFocusX
+  const _offsetY = newFocusPointY - scaleFocusY
 
-    return {
-      _offsetX,
-      _offsetY
-    }
+  return {
+    _offsetX,
+    _offsetY
+  }
 }
 
 export const getCanvasX = (event: React.MouseEvent, scale: number) => {
@@ -79,4 +85,29 @@ export const getCanvasX = (event: React.MouseEvent, scale: number) => {
 export const getCanvasY = (event: React.MouseEvent, scale: number) => {
   const clientRect = document.getElementsByClassName('diagram-canvas')[0].getBoundingClientRect()
   return (event.clientY - clientRect.top) / scale
+}
+
+export const getTheClosestSegmentPointPosition = (
+  sourcePointX: number,
+  sourcePointY: number,
+  entity: Entity,
+  area: ConnectionArea,
+) => {
+  const freePoint = { x: sourcePointX, y: sourcePointY }
+  const segmentBegin = { x: entity.x + area.xBegin, y: entity.y + area.yBegin }
+  const segmentEnd = { x: entity.x + area.xEnd, y: entity.y + area.yEnd }
+
+  const { x, y } = getTheClosestSegmentPointToFreePoint(
+    freePoint,
+    segmentBegin,
+    segmentEnd,
+  )
+
+  const costyl1 = x === Infinity ? 0 : (x - segmentBegin.x) ** 2
+  const costyl2 = y === Infinity ? 0 : (y - segmentBegin.y) ** 2
+
+  const segmentLength = Math.sqrt((segmentEnd.x - segmentBegin.x) ** 2 + (segmentEnd.y - segmentBegin.y) ** 2)
+  const pointDistantionFromBegin = Math.sqrt(costyl1 + costyl2)
+
+  return segmentLength === 0 ? 0.5 : Math.abs(pointDistantionFromBegin / segmentLength)
 }

@@ -4,7 +4,9 @@ import { START_SCALE } from '../constants'
 import { 
   Entity, Connection, MouseMode,
   DiagramEntityTypeChooserState,
-  DiagramType } from '../types'
+  ConnectionTypeChooserState,
+  DiagramType, 
+  nonActiveConnectionTypeChooserState} from '../types'
 
 export interface Store {
   scaleLevel: number;
@@ -17,6 +19,7 @@ export interface Store {
   mouseMode: MouseMode;
   currentDiagramConnection: Connection | null;
   diagramEntityTypeChooserState: DiagramEntityTypeChooserState;
+  connectionTypeChooserState: ConnectionTypeChooserState;
 }
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
@@ -34,5 +37,6 @@ export const store = createStore<Store, any, any, any>(mainReducer,
       isActive: false,
       x: 0,
       y: 0,
-    }
+    },
+    connectionTypeChooserState: nonActiveConnectionTypeChooserState
   })
