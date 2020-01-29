@@ -22,6 +22,6 @@ export class BlockSchemeCondition extends Entity {
       (entity: Entity) => new ConnectionArea(0, entity.height / 2, entity.width / 2, entity.height, [ConnectionAreaDirection.Bottom, ConnectionAreaDirection.Left]),
     ]
 
-    this.validConnectionToBegin = [ConnectionType.Default]
+    this.validConnectionToBegin = [ConnectionType.BlockSchemeArrow]
   }
 }

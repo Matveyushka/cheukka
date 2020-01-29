@@ -8,6 +8,7 @@ export abstract class Entity {
     this.y = y
     this.width = width
     this.height = height
+    this.isHovered = false
   }
 
   x: number
@@ -26,4 +27,5 @@ export abstract class Entity {
   connectionAreaCreators: Array<(entity: Entity) => ConnectionArea>
   validConnectionToBegin: Array<ConnectionType> = []
   validConnectionToEnd: Array<ConnectionType> = []
+  isHovered: boolean
 }

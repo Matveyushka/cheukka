@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { ConnectionPoint } from './ConnectionPoint'
 import { ConnectionType } from './ConnectionType'
 

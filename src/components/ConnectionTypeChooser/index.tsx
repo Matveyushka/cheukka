@@ -7,9 +7,7 @@ import {
   Connection,
   nonActiveConnectionTypeChooserState,
   ConnectionPoint,
-  FreeConnectionPoint,
   ConnectionAreaPoint,
-  EntityConnectionPoint,
  } from '../../types'
 import { addConnection, setConnectionTypeChooserState, setMouseMode } from '../../actions'
 
@@ -55,8 +53,10 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
     return possibleBegins.filter(type => possibleEnds.indexOf(type) >= 0)
   }
 
+  const possibleConnectionTypes = getPossibleConnectionTypes()
+
   const renderChooser = () => {
-    return getPossibleConnectionTypes().map((type, index) => {
+    return possibleConnectionTypes.map((type, index) => {
       return <button
         key={index}
         onClick={() => {
@@ -71,6 +71,15 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
     })
   }
 
+  if (possibleConnectionTypes.length === 1) {
+    dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
+    dispatch(addConnection(new Connection(
+      currentDiagramConnection.begin,
+      props.endPoint,
+      possibleConnectionTypes[0]
+    )))
+  }
+  
   return (
     <div
       className='diagram-entity-type-chooser'

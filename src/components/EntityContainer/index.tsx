@@ -5,11 +5,11 @@ import { Store } from '../../stores'
 import { Entity, Connection, ConnectionAreaPoint, FreeConnectionPoint, MouseMode, allConnectionTypes } from '../../types'
 import { removeEntity, addConnection, updateEntity } from '../../actions'
 import { getBackgroundSvgImage, getSvgExit } from '../../svg'
-import { SizeController, SizeControlType } from './SizeController'
 import { ConnectionAreaContainer } from '../ConnectionAreaContainer'
 import { DiagramEntityBlock } from '../DiagramEntities/DiagramEntityBlock'
 import { EntityPart } from '../../types/EntityPart'
 import { useEntityContainerHandlers } from './handlers'
+import { EntitySizeController } from '../EntitySizeController'
 
 export interface EntityContainerProps {
   entityId: number,
@@ -156,21 +156,11 @@ export const EntityContainer = (props: EntityContainerProps) => {
           </> : ''
       }
       {
-        isHovered && !(mouseMode === MouseMode.connecting) ?
-          [
-            SizeControlType.top, SizeControlType.topRight, SizeControlType.right, SizeControlType.bottomRight,
-            SizeControlType.bottom, SizeControlType.bottomLeft, SizeControlType.left, SizeControlType.topLeft,
-          ].map((direction, index) => (
-            <SizeController
-              key={index}
-              entityId={props.entityId}
-              entity={props.entity}
-              radius={interfaceControlElementSize}
-              decorationRadius={interfaceControlElementSize / 2}
-              color={interfaceColor}
-              sizeControlType={direction}
-            />
-          )) : ''
+        isHovered ? 
+        <EntitySizeController
+          entity={props.entity}
+          entityId={props.entityId}
+        /> : ''
       }
     </g>
   )

@@ -49,19 +49,23 @@ export const ConnectionAreaContainer = (props: ConnectionAreaContainerProps) => 
   const mouseUpHandler = (event: React.MouseEvent) => {
     event.stopPropagation()
     if (mouseMode === MouseMode.connecting) {
-      const position = getTheClosestSegmentPointPosition(
-        getCanvasX(event, scale),
-        getCanvasY(event, scale),
-        props.entity,
-        props.area
-      )
-      dispatch(setMouseMode(MouseMode.default))
-      dispatch(setConnectionTypeChooserState({
-        isActive: true,
-        x: getCanvasX(event, scale),
-        y: getCanvasY(event, scale),
-        endPoint: new ConnectionAreaPoint(props.entityId, props.areaId, position),
-      }))
+      if (event.button !== LEFT_MOUSE_BUTTON) {
+        const position = getTheClosestSegmentPointPosition(
+          getCanvasX(event, scale),
+          getCanvasY(event, scale),
+          props.entity,
+          props.area
+        )
+        dispatch(setMouseMode(MouseMode.default))
+        dispatch(setConnectionTypeChooserState({
+          isActive: true,
+          x: getCanvasX(event, scale),
+          y: getCanvasY(event, scale),
+          endPoint: new ConnectionAreaPoint(props.entityId, props.areaId, position),
+        }))
+      } else {
+        dispatch(setMouseMode(MouseMode.default))
+      }
     }
   }
 

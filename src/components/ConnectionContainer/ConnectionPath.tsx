@@ -1,12 +1,15 @@
 import * as React from 'react'
 
 interface Point {
-  x: number,
-  y: number,
+  x: number;
+  y: number;
 }
 
 export interface ConnectionPathProps {
-  points: Array<Point>
+  points: Array<Point>;
+  width: number;
+  color: string;
+  dashed: boolean;
 }
 
 export const ConnectionPath = (props: ConnectionPathProps) => {
@@ -17,8 +20,9 @@ export const ConnectionPath = (props: ConnectionPathProps) => {
   return (
     <path
       d={path}
-      stroke="black"
-      strokeWidth={1}
+      stroke={props.color}
+      strokeWidth={props.width}
+      strokeDasharray={props.dashed ? '4 4' : '1 0'}
     />
   )
 }

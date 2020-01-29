@@ -4,7 +4,7 @@ import {
   ConnectionPoint,
   ConnectionAreaPoint,
   FreeConnectionPoint,
-  ConnectionType,
+ 
   EntityConnectionPoint,
   Entity
 } from '../../types'
@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../stores'
 import { getScale, roundCoordinateOrSize, getTheClosestSegmentPointPosition } from '../../utils'
 import { ConnectionPath } from './ConnectionPath'
+import { ConnectionTypeArrows } from '../../constants/dictionaries'
 
 export interface ConnectionContainerProps {
   connection: Connection,
@@ -20,6 +21,8 @@ export interface ConnectionContainerProps {
 export const ConnectionContainer = (props: ConnectionContainerProps) => {
   const scale = useSelector((state: Store) => getScale(state.scaleLevel))
   const entities = useSelector((state: Store) => state.diagramEntities)
+
+  const [h, sh] = React.useState(false)
 
   const getConnectionPointCoordinates = (point: ConnectionPoint) => {
     if (point instanceof FreeConnectionPoint) {
@@ -92,29 +95,75 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
     }
   }
 
+  const radsToDegrees = (rads: number) => rads * 180 / Math.PI
+
+  const getSegmentAngle = (beginX: number, beginY: number, endX: number, endY: number) => {
+    const xDifference = endX - beginX
+    const yDifference = endY - beginY
+    const distance = Math.sqrt(xDifference ** 2 + yDifference ** 2)
+
+    if (distance === 0) {
+      return 0
+    } else if (xDifference >= 0 && yDifference < 0) {
+      return radsToDegrees(Math.asin(xDifference / distance))
+    } else if (xDifference > 0 && yDifference >= 0) {
+      return 90 + radsToDegrees(Math.asin(yDifference / distance))
+    } else if (xDifference <= 0 && yDifference > 0) {
+      return 180 - radsToDegrees(Math.asin(xDifference / distance))
+    } else if (xDifference < 0 && yDifference <= 0) {
+      return 270 - radsToDegrees(Math.asin(yDifference / distance))
+    }
+  }
+
+  const beginX = getPointX(props.connection.begin)
+  const beginY = getPointY(props.connection.begin)
+  const endX = getPointX(props.connection.end)
+  const endY = getPointY(props.connection.end)
+
+  const pathPoints = [
+    { x: beginX * scale, y: beginY * scale },
+    { x: endX * scale, y: endY * scale }
+  ]
+
   return (
     <>
-      <ConnectionPath points={[
-        { x: getPointX(props.connection.begin) * scale, y: getPointY(props.connection.begin) * scale },
-        { x: getPointX(props.connection.end) * scale, y: getPointY(props.connection.end) * scale }
-      ]} />
+      <ConnectionPath
+        points={pathPoints}
+        width={1}
+        color='black'
+        dashed={false}
+      />
       {
-        (() => {
-          if (props.connection.type === ConnectionType.Connecting) return (<circle
-            cx={getPointX(props.connection.end) * scale}
-            cy={getPointY(props.connection.end) * scale}
-            r={5}
-            fill='black'
-          />)
-          if (props.connection.type === ConnectionType.BlockSchemeArrow) return (<circle
-            cx={getPointX(props.connection.end) * scale}
-            cy={getPointY(props.connection.end) * scale}
-            r={10}
-            fill='black'
-          />)
-        })()
+        <g transform={`rotate(${getSegmentAngle(
+          beginX,
+          beginY,
+          endX,
+          endY)} ${endX * scale} ${endY * scale})`}>
+          {ConnectionTypeArrows.get(props.connection.type)(endX, endY, scale)}
+        </g>
       }
-
+      {
+        h ?
+          <ConnectionPath
+            points={pathPoints}
+            width={4}
+            color='red'
+            dashed={true}
+          />
+          : ''
+      }
+      <g
+        onMouseEnter={() => sh(true)}
+        onMouseMove={() => sh(true)}
+        onMouseLeave={() => sh(false)}
+      >
+        <ConnectionPath
+          points={pathPoints}
+          width={25}
+          color='transparent'
+          dashed={false}
+        />
+      </g>
     </>
   )
 }

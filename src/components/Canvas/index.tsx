@@ -10,7 +10,6 @@ import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
 import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityType'
 import { getScale } from '../../utils'
 import { ConnectionTypeChooser } from '../ConnectionTypeChooser'
-import { ConnectionType } from '../../types/ConnectionType'
 
 export interface CanvasProps { }
 

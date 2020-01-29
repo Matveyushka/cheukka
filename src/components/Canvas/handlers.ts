@@ -2,11 +2,13 @@ import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
-import { updateEntity, setMouseMode,
-  setCurrentDiagramConnection, 
-  setDiagramEntityTypeChooserState, 
-  setConnectionTypeChooserState } from '../../actions'
-import { MouseMode, Connection, FreeConnectionPoint, Entity, nonActiveConnectionTypeChooserState, ConnectionType} from '../../types'
+import {
+  updateEntity, setMouseMode,
+  setCurrentDiagramConnection,
+  setDiagramEntityTypeChooserState,
+  setConnectionTypeChooserState
+} from '../../actions'
+import { MouseMode, Connection, FreeConnectionPoint, Entity, nonActiveConnectionTypeChooserState, ConnectionType } from '../../types'
 import { LEFT_MOUSE_BUTTON } from '../../constants'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
 
@@ -39,6 +41,7 @@ export const useCanvasHandlers = () => {
       isActive: true,
       x: getCanvasX(event, scale),
       y: getCanvasY(event, scale),
+      withConnecting: false,
     }))
   }
 
@@ -47,6 +50,7 @@ export const useCanvasHandlers = () => {
       x: 0,
       y: 0,
       isActive: false,
+      withConnecting: false,
     }))
     dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
     if (event.button !== LEFT_MOUSE_BUTTON) {
@@ -87,12 +91,16 @@ export const useCanvasHandlers = () => {
 
   const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode === MouseMode.connecting) {
-      dispatch(setConnectionTypeChooserState({
-        isActive: true,
-        x: getCanvasX(event, scale),
-        y: getCanvasY(event, scale),
-        endPoint: currentDiagramConnection.end,
-      }))
+      if (event.button !== LEFT_MOUSE_BUTTON) {
+        dispatch(setDiagramEntityTypeChooserState({
+          isActive: true,
+          x: getCanvasX(event, scale),
+          y: getCanvasY(event, scale),
+          withConnecting: true,
+        }))
+      } else {
+        dispatch(setMouseMode(MouseMode.default))
+      }
     }
     dispatch(setMouseMode(MouseMode.default))
     Array.from(entities.entries()).forEach(entrie => {
@@ -128,9 +136,9 @@ export const useCanvasHandlers = () => {
       }
       if (mode === MouseMode.dragging) {
         Array.from(entities.entries()).filter(entrie => (
-          entrie[1].sizeChangedOnBottom || entrie[1].sizeChangedOnLeft || 
+          entrie[1].sizeChangedOnBottom || entrie[1].sizeChangedOnLeft ||
           entrie[1].sizeChangedOnTop || entrie[1].sizeChangedOnRight || entrie[1].moved
-          )).forEach(entrie => {
+        )).forEach(entrie => {
           const possibleNewX = getCanvasX(event, scale)
           const rightX = entrie[1].x + entrie[1].width
           const possibleNewY = getCanvasY(event, scale)

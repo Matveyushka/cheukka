@@ -54,13 +54,13 @@ export const SizeController = (props: SizeControllerProps) => {
         className={isResized ? '' : 'on-hover-visible'}
         cx={x * scale + 'px'}
         cy={y * scale + 'px'}
-        r={props.decorationRadius * scale + 'px'}
+        r={props.decorationRadius + 'px'}
         fill={props.color}
       />
       <circle
         cx={x * scale + 'px'}
         cy={y * scale + 'px'}
-        r={props.radius * scale + 'px'}
+        r={props.radius + 'px'}
         fill='transparent'
         cursor={(() => {
           if (props.sizeControlType === SizeControlType.top || props.sizeControlType === SizeControlType.bottom) return 'ns-resize'
