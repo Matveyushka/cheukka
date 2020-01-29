@@ -7,7 +7,7 @@ import { ConnectionContainer } from '../ConnectionContainer'
 import { MouseMode, DiagramEntityType } from '../../types'
 import { useCanvasHandlers } from './handlers'
 import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
-import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityType'
+import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityTypes/DiagramEntityType'
 import { getScale } from '../../utils'
 import { ConnectionTypeChooser } from '../ConnectionTypeChooser'
 
@@ -55,7 +55,9 @@ export const Canvas = (props: CanvasProps) => {
 
   const renderConnections = () => {
     return Array.from(connections.entries()).map((connection, index) => (
-      <ConnectionContainer key={index}
+      <ConnectionContainer
+        key={index}
+        connectionId={connection[0]}
         connection={connection[1]}
       />
     ))
@@ -105,7 +107,10 @@ export const Canvas = (props: CanvasProps) => {
           {(mode === MouseMode.connecting || connectionTypeChooserState.isActive) ?
             (
               <g pointerEvents="none">
-                <ConnectionContainer connection={currentDiagramConnection} />
+                <ConnectionContainer
+                  connectionId={null}
+                  connection={currentDiagramConnection}
+                />
               </g>
             ) : ''}
           {

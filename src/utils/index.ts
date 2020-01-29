@@ -7,7 +7,7 @@ import {
 import {
   Entity,
   ConnectionArea,
-  ConnectionPoint,
+  ConnectionPathPoint,
   FreeConnectionPoint
 } from '../types'
 import {
@@ -87,7 +87,7 @@ export const getCanvasY = (event: React.MouseEvent, scale: number) => {
   return (event.clientY - clientRect.top) / scale
 }
 
-export const getTheClosestSegmentPointPosition = (
+export const getTheClosestAreaPointPosition = (
   sourcePointX: number,
   sourcePointY: number,
   entity: Entity,

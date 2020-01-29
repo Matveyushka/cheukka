@@ -1,7 +1,7 @@
 import { Entity } from './Entity'
-import { ComponentDiagramModule } from '../components/DiagramEntities/ComponentDiagram/ComponentDiagramModule'
-import { BlockSchemeAction } from '../components/DiagramEntities/BlockScheme/BlockSchemeAction'
-import { BlockSchemeCondition } from '../components/DiagramEntities/BlockScheme/BlockSchemeCondition'
+import { ComponentDiagramModule } from '../../components/DiagramEntities/ComponentDiagram/ComponentDiagramModule'
+import { BlockSchemeAction } from '../../components/DiagramEntities/BlockScheme/BlockSchemeAction'
+import { BlockSchemeCondition } from '../../components/DiagramEntities/BlockScheme/BlockSchemeCondition'
 import { DiagramType } from './DiagramType'
 
 export enum DiagramEntityType {

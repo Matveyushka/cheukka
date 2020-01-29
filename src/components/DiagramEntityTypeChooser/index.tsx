@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { DiagramEntityType } from '../../types'
-import { diagramEntityCreators } from '../../types/DiagramEntityType'
+import { diagramEntityCreators } from '../../types/DiagramEntityTypes/DiagramEntityType'
 import { useDispatch, useSelector } from 'react-redux'
 import { addEntity, setDiagramEntityTypeChooserState, setConnectionTypeChooserState } from '../../actions'
 import { DEFAULT_CANVAS_WIDTH } from '../../constants'

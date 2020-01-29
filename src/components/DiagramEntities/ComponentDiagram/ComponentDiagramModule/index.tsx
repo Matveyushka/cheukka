@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { Entity } from '../../../../types/Entity'
-import { ConnectionArea, ConnectionAreaDirection } from '../../../../types/ConnectionArea'
+import { Entity } from '../../../../types/DiagramEntityTypes/Entity'
+import { ConnectionArea, ConnectionAreaDirection } from '../../../../types/DiagramConnectionTypes/ConnectionArea'
 import { DiagramEntityBlock } from '../../DiagramEntityBlock'
 import { EntityBlockRectangle } from '../../../../svg'
 import { EntityPart } from '../../../../types'
-import { EntityBlock } from '../../../../types/EntityPart'
+import { EntityBlock } from '../../../../types/DiagramEntityTypes/EntityPart'
 
 export class ComponentDiagramModule extends Entity {
   constructor(x: number, y: number, width: number, height: number) {

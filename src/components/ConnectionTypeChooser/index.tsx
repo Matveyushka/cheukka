@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { allConnectionTypes } from '../../types/ConnectionType'
+import { allConnectionTypes } from '../../types/DiagramConnectionTypes/ConnectionType'
 import { useSelector, useDispatch } from 'react-redux'
 import { getScale } from '../../utils'
 import { Store } from '../../stores'
 import { 
   Connection,
   nonActiveConnectionTypeChooserState,
-  ConnectionPoint,
+  ConnectionPathPoint,
   ConnectionAreaPoint,
  } from '../../types'
 import { addConnection, setConnectionTypeChooserState, setMouseMode } from '../../actions'
@@ -14,7 +14,7 @@ import { addConnection, setConnectionTypeChooserState, setMouseMode } from '../.
 export interface ConnectionTypeChooserProps {
   x: number
   y: number
-  endPoint: ConnectionPoint
+  endPoint: ConnectionPathPoint
 }
 
 export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {

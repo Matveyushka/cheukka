@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { ConnectionPoint } from './ConnectionPoint'
+import { ConnectionPathPoint } from './ConnectionPathPoint'
 import { ConnectionType } from './ConnectionType'
 
 export class Connection {
   constructor (
-    beginPoint: ConnectionPoint,
-    endPoint: ConnectionPoint,
+    beginPoint: ConnectionPathPoint,
+    endPoint: ConnectionPathPoint,
     type: ConnectionType
   ) {
     this.begin = beginPoint
@@ -13,7 +13,8 @@ export class Connection {
     this.type = type
   }
 
-  begin: ConnectionPoint
-  end: ConnectionPoint
+  begin: ConnectionPathPoint
+  end: ConnectionPathPoint
   type: ConnectionType
+  isHovered: boolean
 }

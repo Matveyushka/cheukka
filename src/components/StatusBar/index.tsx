@@ -6,7 +6,7 @@ import { getScalePercent } from '../../utils'
 import { CustomSelect } from './CustomSelect'
 import { useStatusBarHandlers } from './handlers'
 import { DiagramType } from '../../types'
-import { diagramEntityGroups } from '../../types/DiagramEntityType'
+import { diagramEntityGroups } from '../../types/DiagramEntityTypes/DiagramEntityType'
 
 export interface StatusBarProps {
 

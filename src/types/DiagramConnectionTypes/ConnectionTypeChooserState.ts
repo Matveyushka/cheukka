@@ -1,10 +1,10 @@
-import { ConnectionPoint } from './ConnectionPoint/'
+import { ConnectionPathPoint } from './ConnectionPathPoint/'
 
 export interface ConnectionTypeChooserState {
   isActive: boolean;
   x: number;
   y: number;
-  endPoint: ConnectionPoint | null
+  endPoint: ConnectionPathPoint | null
 }
 
 export const nonActiveConnectionTypeChooserState : ConnectionTypeChooserState = {

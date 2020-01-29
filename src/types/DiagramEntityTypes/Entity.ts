@@ -1,6 +1,7 @@
-import { ConnectionArea } from './ConnectionArea'
+import { ConnectionArea } from '../DiagramConnectionTypes/ConnectionArea'
 import { EntityPart } from './EntityPart'
-import { ConnectionType } from './ConnectionType'
+import { ConnectionType } from '../DiagramConnectionTypes/ConnectionType'
+import { ConnectionPoint } from '../DiagramConnectionTypes/ConnectionPoint'
 
 export abstract class Entity {
   constructor (x: number, y: number, width: number, height: number) {
@@ -24,7 +25,9 @@ export abstract class Entity {
   movementOriginX: number
   movementOriginY: number
   parts: Array<EntityPart>
-  connectionAreaCreators: Array<(entity: Entity) => ConnectionArea>
+  connectionAreaCreators: Array<(entity: Entity) => ConnectionArea> = []
+  connectionPointCreators: Array<(entity: Entity) => ConnectionPoint> = []
+  areaConnectionMode: boolean = true
   validConnectionToBegin: Array<ConnectionType> = []
   validConnectionToEnd: Array<ConnectionType> = []
   isHovered: boolean

@@ -92,11 +92,11 @@ export const useCanvasHandlers = () => {
   const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode === MouseMode.connecting) {
       if (event.button !== LEFT_MOUSE_BUTTON) {
-        dispatch(setDiagramEntityTypeChooserState({
+        dispatch(setConnectionTypeChooserState({
           isActive: true,
           x: getCanvasX(event, scale),
           y: getCanvasY(event, scale),
-          withConnecting: true,
+          endPoint: currentConnectionController.getEnd(),
         }))
       } else {
         dispatch(setMouseMode(MouseMode.default))

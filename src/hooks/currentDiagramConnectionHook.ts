@@ -5,7 +5,7 @@ import {
   FreeConnectionPoint,
   ConnectionAreaPoint,
   EntityConnectionPoint,
-  ConnectionPoint,
+  ConnectionPathPoint,
   ConnectionType
 } from '../types'
 import { setCurrentDiagramConnection } from '../actions'
@@ -20,14 +20,14 @@ export const useCurrentDiagramConnectionController = () => {
     dispatch(setCurrentDiagramConnection(connection))
   }
 
-  const setBeginPoint = (point: ConnectionPoint) => {
+  const setBeginPoint = (point: ConnectionPathPoint) => {
     dispatch(setCurrentDiagramConnection({
       ...currentConnection,
       begin: point,
     }))
   }
 
-  const setEndPoint = (point: ConnectionPoint) => {
+  const setEndPoint = (point: ConnectionPathPoint) => {
     dispatch(setCurrentDiagramConnection({
       ...currentConnection,
       end: point,

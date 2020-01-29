@@ -88,7 +88,9 @@
 
 .connection-area {
   stroke: green;
+  fill: green;
   &:hover {
     stroke: red;
+    fill: red;
   }
 }

@@ -1,4 +1,4 @@
-import { Entity } from './Entity'
+import { Entity } from '../DiagramEntityTypes/Entity'
 
 export enum ConnectionAreaDirection {
   Top,
@@ -7,7 +7,7 @@ export enum ConnectionAreaDirection {
   Left,
 }
 
-const getOffsetsByConnectionAreaDirections = (directions: Array<ConnectionAreaDirection>) => {
+export const getOffsetsByConnectionAreaDirections = (directions: Array<ConnectionAreaDirection>) => {
   const offsetX = (()=>{
     if (directions.indexOf(ConnectionAreaDirection.Right) >= 0 &&
         directions.indexOf(ConnectionAreaDirection.Left) < 0) return 1

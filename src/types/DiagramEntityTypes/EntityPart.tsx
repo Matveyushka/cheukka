@@ -1,5 +1,5 @@
 import { Entity } from './Entity'
-import { EntityBlockSvg } from '../svg'
+import { EntityBlockSvg } from '../../svg'
 
 export class EntityBlock {
   constructor (
