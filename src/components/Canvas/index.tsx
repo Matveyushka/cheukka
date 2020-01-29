@@ -4,10 +4,10 @@ import { Store } from '../../stores'
 import { getBackgroundSvg } from '../../svg'
 import { EntityContainer } from '../EntityContainer'
 import { ConnectionContainer } from '../ConnectionContainer'
-import { MouseMode, DiagramEntityType } from '../../types'
+import { MouseMode } from '../../types'
 import { useCanvasHandlers } from './handlers'
 import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
-import { diagramEntityGroups, diagramEntityCreators } from '../../types/DiagramEntityTypes/DiagramEntityType'
+import { entityGroups } from '../../types/DiagramEntityTypes/EntityType'
 import { getScale } from '../../utils'
 import { ConnectionTypeChooser } from '../ConnectionTypeChooser'
 
@@ -29,7 +29,7 @@ export const Canvas = (props: CanvasProps) => {
     connections,
     mode,
     currentDiagramConnection,
-    diagramEntityTypeChooserState,
+    EntityTypeChooserState,
     diagramType,
     connectionTypeChooserState,
   ] = useSelector((state: Store) => [
@@ -39,29 +39,18 @@ export const Canvas = (props: CanvasProps) => {
     state.diagramConnections,
     state.mouseMode,
     state.currentDiagramConnection,
-    state.diagramEntityTypeChooserState,
+    state.entityTypeChooserState,
     state.diagramType,
     state.connectionTypeChooserState
   ])
 
-  const renderEntities = () => {
-    return Array.from(entities.entries()).map((entity, index) => (
-      <EntityContainer key={index}
-        entityId={entity[0]}
-        entity={entity[1]}
-      />
-    ))
-  }
+  const renderEntities = () => Array.from(entities.entries()).map((entity, index) => (
+    <EntityContainer key={index} entityId={entity[0]} entity={entity[1]} />
+  ))
 
-  const renderConnections = () => {
-    return Array.from(connections.entries()).map((connection, index) => (
-      <ConnectionContainer
-        key={index}
-        connectionId={connection[0]}
-        connection={connection[1]}
-      />
-    ))
-  }
+  const renderConnections = () => Array.from(connections.entries()).map((connection, index) => (
+    <ConnectionContainer key={index} connectionId={connection[0]} connection={connection[1]} />
+  ))
 
   const renderSelection = () => {
     const x = Math.min(selectingState.beginX, selectingState.endX)
@@ -104,27 +93,22 @@ export const Canvas = (props: CanvasProps) => {
         <svg width="100%" height="100%">
           {renderConnections()}
           {renderEntities()}
-          {(mode === MouseMode.connecting || connectionTypeChooserState.isActive) ?
+          {(mode === MouseMode.connecting ||
+            connectionTypeChooserState.isActive ||
+            EntityTypeChooserState.isActive && EntityTypeChooserState.withConnecting) ?
             (
               <g pointerEvents="none">
-                <ConnectionContainer
-                  connectionId={null}
-                  connection={currentDiagramConnection}
-                />
+                <ConnectionContainer connectionId={null} connection={currentDiagramConnection}/>
               </g>
             ) : ''}
-          {
-            mode === MouseMode.selecting ?
-              renderSelection()
-              : ''
-          }
+          { mode === MouseMode.selecting ? renderSelection() : '' }
         </svg>
         {
-          diagramEntityTypeChooserState.isActive ?
+          EntityTypeChooserState.isActive ?
             <DiagramEntityTypeChooser
-              x={diagramEntityTypeChooserState.x}
-              y={diagramEntityTypeChooserState.y}
-              diagramEntityTypes={diagramEntityGroups.get(diagramType).types}
+              x={EntityTypeChooserState.x}
+              y={EntityTypeChooserState.y}
+              diagramEntityTypes={entityGroups.get(diagramType).types}
             />
             : ''
         }

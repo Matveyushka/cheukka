@@ -1,8 +1,8 @@
 export { Entity } from './DiagramEntityTypes/Entity'
 export { EntityPart } from './DiagramEntityTypes/EntityPart'
-export { DiagramType } from './DiagramEntityTypes/DiagramType'
-export { DiagramEntityType } from './DiagramEntityTypes/DiagramEntityType'
-export { DiagramEntityTypeChooserState } from './DiagramEntityTypes/DiagramEntityTypeChooserState'
+export { DiagramType } from './DiagramType'
+export { EntityType } from './DiagramEntityTypes/EntityType'
+export { EntityTypeChooserState } from './DiagramEntityTypes/EntityTypeChooserState'
 
 export { Connection } from './DiagramConnectionTypes/Connection'
 export { ConnectionArea } from './DiagramConnectionTypes/ConnectionArea'

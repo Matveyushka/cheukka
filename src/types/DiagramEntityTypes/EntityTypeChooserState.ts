@@ -1,4 +1,4 @@
-export interface DiagramEntityTypeChooserState {
+export interface EntityTypeChooserState {
   isActive: boolean;
   x: number;
   y: number;

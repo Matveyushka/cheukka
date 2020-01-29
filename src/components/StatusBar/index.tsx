@@ -6,7 +6,7 @@ import { getScalePercent } from '../../utils'
 import { CustomSelect } from './CustomSelect'
 import { useStatusBarHandlers } from './handlers'
 import { DiagramType } from '../../types'
-import { diagramEntityGroups } from '../../types/DiagramEntityTypes/DiagramEntityType'
+import { entityGroups } from '../../types/DiagramEntityTypes/EntityType'
 
 export interface StatusBarProps {
 
@@ -26,7 +26,7 @@ export const StatusBar = (props: StatusBarProps) => {
     onFitWidthClickHandler
   } = useStatusBarHandlers()
 
-  const diagramTypes = Array.from(diagramEntityGroups.entries()).map((entrie, index) => ({
+  const diagramTypes = Array.from(entityGroups.entries()).map((entrie, index) => ({
     value: entrie[0], label: entrie[1].name
   }))
 
@@ -40,7 +40,7 @@ export const StatusBar = (props: StatusBarProps) => {
 
       <div className="status-bar-chooser status-bar-element">
         <CustomSelect
-          value={{value: diagramType, label: diagramEntityGroups.get(diagramType).name}}
+          value={{value: diagramType, label: entityGroups.get(diagramType).name}}
           onSelect={onDiagramTypeSelectedHandler}
           options={diagramTypes}
         />

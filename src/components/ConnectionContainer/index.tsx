@@ -7,8 +7,7 @@ import { Store } from '../../stores'
 import { getScale } from '../../utils'
 import { ConnectionPath } from './ConnectionPath'
 import { ConnectionTypeArrows } from '../../constants/dictionaries'
-import { updateConnection } from '../../actions'
-import { getPointX, getPointY, getSegmentAngle } from './utils'
+import { getPointX, getPointY, getSegmentAngle } from '../../utils/geometry'
 import { useConnectionHandlers } from './handlers'
 
 export interface ConnectionContainerProps {

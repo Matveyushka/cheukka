@@ -15,7 +15,7 @@ import {
   UPDATE_CONNECTION,
   SET_MOUSE_MODE,
   SET_CURRENT_DIAGRAM_CONNECTION,
-  SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE,
+  SET_ENTITY_TYPE_CHOOSER_STATE,
   SET_CONNECTION_TYPE_CHOOSER_STATE,
 } from '../constants/actions'
 import {
@@ -23,7 +23,7 @@ import {
   MIN_SCALE,
 } from '../constants';
 import { getScaledOffsets } from '../utils'
-import { ConnectionAreaPoint } from '../types';
+import { ConnectionAreaPoint, EntityConnectionPoint } from '../types';
 
 const getNextMapId = (anyMap: Map<number, any>) => anyMap.size === 0 ?
   0 :
@@ -37,6 +37,10 @@ const removeEntity = (state: Store, entityId: number) => {
     if (entrie[1].begin instanceof ConnectionAreaPoint && entrie[1].begin.entityId === entityId) {
       newDiagramConnections.delete(entrie[0])
     } else if (entrie[1].end instanceof ConnectionAreaPoint && entrie[1].end.entityId === entityId) {
+      newDiagramConnections.delete(entrie[0])
+    } else if (entrie[1].begin instanceof EntityConnectionPoint && entrie[1].begin.entityId === entityId) {
+      newDiagramConnections.delete(entrie[0])
+    } else if (entrie[1].end instanceof EntityConnectionPoint && entrie[1].end.entityId === entityId) {
       newDiagramConnections.delete(entrie[0])
     }
   })
@@ -114,8 +118,8 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, mouseMode: action.mouseMode }
     case SET_CURRENT_DIAGRAM_CONNECTION:
       return { ...state, currentDiagramConnection: action.connection }
-    case SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE:
-      return { ...state, diagramEntityTypeChooserState: action.state }
+    case SET_ENTITY_TYPE_CHOOSER_STATE:
+      return { ...state, entityTypeChooserState: action.state }
     case SET_CONNECTION_TYPE_CHOOSER_STATE:
       return { ...state, connectionTypeChooserState: action.state }
   }

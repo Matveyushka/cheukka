@@ -1,5 +1,5 @@
 import * as Constants from '../constants/actions'
-import { Entity, Connection, MouseMode, DiagramEntityTypeChooserState, DiagramType, ConnectionTypeChooserState } from '../types'
+import { Entity, Connection, MouseMode, EntityTypeChooserState, DiagramType, ConnectionTypeChooserState } from '../types'
 
 //interfaces
 
@@ -31,7 +31,7 @@ export interface SetMouseMode { type: Constants.SET_MOUSE_MODE; mouseMode: Mouse
 
 export interface SetCurrentDiagramConnection { type: Constants.SET_CURRENT_DIAGRAM_CONNECTION; connection: Connection }
 
-export interface SetDiagramEntityTypeChooserState { type: Constants.SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE; state: DiagramEntityTypeChooserState}
+export interface SetEntityTypeChooserState { type: Constants.SET_ENTITY_TYPE_CHOOSER_STATE; state: EntityTypeChooserState}
 
 export interface SetConnectionTypeChooserState { type: Constants.SET_CONNECTION_TYPE_CHOOSER_STATE; state: ConnectionTypeChooserState}
 
@@ -115,8 +115,8 @@ export const setCurrentDiagramConnection = (connection: Connection) : SetCurrent
   connection,
 })
 
-export const setDiagramEntityTypeChooserState = (state: DiagramEntityTypeChooserState) : SetDiagramEntityTypeChooserState => ({
-  type: Constants.SET_DIAGRAM_ENTITY_TYPE_CHOOSER_STATE,
+export const setEntityTypeChooserState = (state: EntityTypeChooserState) : SetEntityTypeChooserState => ({
+  type: Constants.SET_ENTITY_TYPE_CHOOSER_STATE,
   state,
 })
 
@@ -140,5 +140,5 @@ export type Action =
   | UpdateConnection
   | SetMouseMode
   | SetCurrentDiagramConnection
-  | SetDiagramEntityTypeChooserState
+  | SetEntityTypeChooserState
   | SetConnectionTypeChooserState

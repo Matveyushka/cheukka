@@ -4,16 +4,16 @@ import { Store } from '../../stores'
 import { roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
 import {
   updateEntity, setMouseMode,
-  setCurrentDiagramConnection,
-  setDiagramEntityTypeChooserState,
   setConnectionTypeChooserState
 } from '../../actions'
-import { MouseMode, Connection, FreeConnectionPoint, Entity, nonActiveConnectionTypeChooserState, ConnectionType } from '../../types'
+import { MouseMode, Entity, nonActiveConnectionTypeChooserState } from '../../types'
 import { LEFT_MOUSE_BUTTON } from '../../constants'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
+import { useEntityTypeChooserController } from '../../hooks/entityTypeChooserHook'
 
 export const useCanvasHandlers = () => {
   const currentConnectionController = useCurrentDiagramConnectionController()
+  const entityTypeChooserController = useEntityTypeChooserController()
 
   const [selectingState, setSelectingState] = React.useState({
     beginX: 0,
@@ -25,33 +25,22 @@ export const useCanvasHandlers = () => {
   const [
     scale,
     entities,
-    mode,
-    currentDiagramConnection] = useSelector((state: Store) => [
+    mode
+  ] = useSelector((state: Store) => [
       getScale(state.scaleLevel),
       state.diagramEntities,
       state.mouseMode,
-      state.currentDiagramConnection
     ])
   const dispatch = useDispatch()
 
   const doubleClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode !== MouseMode.default) return;
 
-    dispatch(setDiagramEntityTypeChooserState({
-      isActive: true,
-      x: getCanvasX(event, scale),
-      y: getCanvasY(event, scale),
-      withConnecting: false,
-    }))
+    entityTypeChooserController.activate(getCanvasX(event, scale), getCanvasY(event, scale), false)
   }
 
   const mouseDownHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    dispatch(setDiagramEntityTypeChooserState({
-      x: 0,
-      y: 0,
-      isActive: false,
-      withConnecting: false,
-    }))
+    entityTypeChooserController.deactivate()
     dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
     if (event.button !== LEFT_MOUSE_BUTTON) {
       setSelectingState({
@@ -80,29 +69,24 @@ export const useCanvasHandlers = () => {
     const width = Math.max(area.beginX - x, area.endX - x)
     const height = Math.max(area.beginY - y, area.endY - y)
 
-    const a = entity.x >= x
-    const b = (entity.x + entity.width) < (x + width)
-    const c = entity.y >= y
-    const d = (entity.y + entity.height) < (y + height)
-
-    if (a && b && c && d) return true
+    if ((entity.x >= x) &&
+      ((entity.x + entity.width) < (x + width)) &&
+      (entity.y >= y) &&
+      ((entity.y + entity.height) < (y + height))) return true
     return false
   }
 
   const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (mode === MouseMode.connecting) {
       if (event.button !== LEFT_MOUSE_BUTTON) {
-        dispatch(setConnectionTypeChooserState({
-          isActive: true,
-          x: getCanvasX(event, scale),
-          y: getCanvasY(event, scale),
-          endPoint: currentConnectionController.getEnd(),
-        }))
+        entityTypeChooserController.activate(getCanvasX(event, scale), getCanvasY(event, scale), true)
       } else {
         dispatch(setMouseMode(MouseMode.default))
       }
     }
+    
     dispatch(setMouseMode(MouseMode.default))
+
     Array.from(entities.entries()).forEach(entrie => {
       dispatch(updateEntity(entrie[0], {
         ...entrie[1],
@@ -114,9 +98,6 @@ export const useCanvasHandlers = () => {
         sizeChangedOnTop: false,
       }))
     })
-    if (mode === MouseMode.selecting) {
-      dispatch(setMouseMode(MouseMode.default))
-    }
   }
 
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

@@ -24,10 +24,6 @@ export class BlockSchemeCondition extends Entity {
       (entity: Entity) => new ConnectionPoint(0, entity.height / 2, [ConnectionAreaDirection.Left]),
     ]
 
-    this.connectionPointCreators = [
-
-    ]
-
     this.validConnectionToBegin = [ConnectionType.BlockSchemeArrow]
   }
 }

@@ -3,7 +3,7 @@ import { mainReducer } from '../reducers'
 import { START_SCALE } from '../constants' 
 import { 
   Entity, Connection, MouseMode,
-  DiagramEntityTypeChooserState,
+  EntityTypeChooserState,
   ConnectionTypeChooserState,
   DiagramType, 
   nonActiveConnectionTypeChooserState} from '../types'
@@ -18,7 +18,7 @@ export interface Store {
   diagramConnections: Map<number, Connection>;
   mouseMode: MouseMode;
   currentDiagramConnection: Connection | null;
-  diagramEntityTypeChooserState: DiagramEntityTypeChooserState;
+  entityTypeChooserState: EntityTypeChooserState;
   connectionTypeChooserState: ConnectionTypeChooserState;
 }
 
@@ -33,7 +33,7 @@ export const store = createStore<Store, any, any, any>(mainReducer,
     diagramConnections: new Map([]),
     mouseMode: MouseMode.default,
     currentDiagramConnection: null,
-    diagramEntityTypeChooserState: {
+    entityTypeChooserState: {
       isActive: false,
       x: 0,
       y: 0,

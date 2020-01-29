@@ -85,7 +85,6 @@ export const EntityContainer = (props: EntityContainerProps) => {
       const block = part.renderer(props.entity)
 
       return (
-        <g>
           <DiagramEntityBlock
             key={index}
             parentEntity={props.entity}
@@ -108,8 +107,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
                 })
               }))
             }}
-          />
-        </g>)
+          />)
     })
   }
 

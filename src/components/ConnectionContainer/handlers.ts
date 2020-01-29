@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { getCanvasX, getScale, getCanvasY } from '../../utils'
-import { getFreePointToConnectionDistance } from './utils'
+import { getFreePointToConnectionDistance } from '../../utils/geometry'
 import { updateConnection } from '../../actions'
 import { Connection } from '../../types'
 
