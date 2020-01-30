@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../stores'
 import { getScale } from '../../utils'
 import { ConnectionPath } from './ConnectionPath'
-import { ConnectionTypeArrows } from '../../constants/dictionaries'
+import { connectionTypeArrows } from '../../constants/dictionaries/connectionTypeArrows'
 import { getPointX, getPointY, getSegmentAngle } from '../../utils/geometry'
 import { useConnectionHandlers } from './handlers'
 
@@ -48,7 +48,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
           beginY,
           endX,
           endY)} ${endX * scale} ${endY * scale})`}>
-          {ConnectionTypeArrows.get(props.connection.type)(endX, endY, scale)}
+          {connectionTypeArrows.get(props.connection.type)(endX, endY, scale)}
         </g>
       }
       {

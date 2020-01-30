@@ -38,6 +38,7 @@ export const store = createStore<Store, any, any, any>(mainReducer,
       x: 0,
       y: 0,
       withConnecting: false,
+      diagramEntityTypes: [],
     },
     connectionTypeChooserState: nonActiveConnectionTypeChooserState
   })

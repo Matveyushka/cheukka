@@ -2,14 +2,17 @@ import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getScale } from '../../utils'
 import { Store } from '../../stores'
-import { Entity, Connection, ConnectionAreaPoint, FreeConnectionPoint, MouseMode, allConnectionTypes } from '../../types'
-import { removeEntity, addConnection, updateEntity } from '../../actions'
+import { Entity, ConnectionAreaPoint, MouseMode, allConnectionTypes, EntityPart, EntityConnectionPoint } from '../../types'
+import { removeEntity, updateEntity } from '../../actions'
 import { getBackgroundSvgImage, getSvgExit } from '../../svg'
 import { ConnectionAreaContainer } from '../ConnectionAreaContainer'
-import { DiagramEntityBlock } from '../DiagramEntities/DiagramEntityBlock'
-import { EntityPart } from '../../types/DiagramEntityTypes/EntityPart'
+import { DiagramEntityBlock } from '../DiagramEntityBlock'
 import { useEntityContainerHandlers } from './handlers'
 import { EntitySizeController } from '../EntitySizeController'
+import { 
+  validEntityConnectionsBegin, 
+  validEntityConnectionsEnd 
+} from '../../constants/dictionaries/validEntityConnections'
 
 export interface EntityContainerProps {
   entityId: number,
@@ -23,7 +26,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
     onMouseLeaveHandler,
     onMouseMoveHandler,
     onMouseUpHandler,
-    isHovered
+    isConnectable,
   } = useEntityContainerHandlers(props.entityId)
 
   const [
@@ -31,12 +34,18 @@ export const EntityContainer = (props: EntityContainerProps) => {
     mouseMode,
     currentDiagramConnection,
     diagramEntities
-  ] = useSelector((state: Store) => [getScale(state.scaleLevel), state.mouseMode, state.currentDiagramConnection, state.diagramEntities])
+  ] = useSelector((state: Store) => [
+    getScale(state.scaleLevel),
+    state.mouseMode,
+    state.currentDiagramConnection,
+    state.diagramEntities
+  ])
+
   const dispatch = useDispatch()
 
   const interfaceControlElementSize = 10 / scale
   const connectionAreaWidth = interfaceControlElementSize * 2
-  const interfaceColor = props.entity.moved ? 'red' : props.entity.selected ? 'red' : isHovered ? 'red' : 'black'
+  const interfaceColor = props.entity.moved ? 'red' : props.entity.selected ? 'red' : props.entity.isHovered ? 'red' : 'black'
 
   const isResized = props.entity.sizeChangedOnBottom
     || props.entity.sizeChangedOnLeft
@@ -48,19 +57,6 @@ export const EntityContainer = (props: EntityContainerProps) => {
 
   const hoverExtraAreaWidth = Math.max(interfaceControlElementSize, connectionAreaWidth)
 
-  const isConnectable = (() => {
-    const possibleBegins = (() => {
-      if (currentDiagramConnection.begin instanceof ConnectionAreaPoint) {
-        return diagramEntities.get(currentDiagramConnection.begin.entityId).validConnectionToBegin
-      } else {
-        return allConnectionTypes
-      }
-    })()
-    const possibleEnds = props.entity.validConnectionToEnd
-
-    return possibleBegins.filter(type => possibleEnds.indexOf(type) >= 0).length > 0
-  })
-
   const renderHoverableZone = () => (
     <rect
       x={(props.entity.x - hoverExtraAreaWidth) * scale}
@@ -70,46 +66,32 @@ export const EntityContainer = (props: EntityContainerProps) => {
       fill='transparent'
     />)
 
-  const renderConnectionAreas = () => (
-    (props.entity.connectionAreaCreators).map((area, index) => <ConnectionAreaContainer
+  const renderConnectionAreas = () => props.entity.connectionAreaCreators
+    .map((_, index) =>
+      <ConnectionAreaContainer
         key={index}
         width={connectionAreaWidth}
-        entity={props.entity}
         entityId={props.entityId}
-        area={area(props.entity)}
         areaId={index} />)
-  )
 
-  const renderBlocks = () => {
-    return props.entity.parts.map((part, index) => {
-      const block = part.renderer(props.entity)
-
-      return (
-          <DiagramEntityBlock
-            key={index}
-            parentEntity={props.entity}
-            relativeX={block.relativeX}
-            relativeY={block.relativeY}
-            width={block.width}
-            height={block.height}
-            contentEditable={part.contentEditable}
-            svgComponent={block.svgComponent}
-            content={part.content}
-            updateContent={(newContent: string) => {
-              dispatch(updateEntity(props.entityId, {
-                ...props.entity,
-                parts: props.entity.parts.map((p, i) => {
-                  if (index === i) {
-                    return new EntityPart(p.renderer, p.contentEditable, newContent)
-                  } else {
-                    return p
-                  }
-                })
-              }))
-            }}
-          />)
-    })
+  const changeBlockContent = (blockIndex: number, newContent: string) => {
+    dispatch(updateEntity(props.entityId, {
+      ...props.entity,
+      parts: props.entity.parts.map((part, index) =>
+        blockIndex === index ?
+          new EntityPart(part.renderer, part.contentEditable, newContent) :
+          part)
+    }))
   }
+
+  const renderBlocks = () => props.entity.parts.map((part, index) => (
+    <DiagramEntityBlock
+      key={index}
+      parentEntity={props.entity}
+      entityPart={part}
+      updateContent={(newContent: string) => changeBlockContent(index, newContent)}
+    />)
+  )
 
   const renderSelection = () => (
     <rect
@@ -141,10 +123,19 @@ export const EntityContainer = (props: EntityContainerProps) => {
             backgroundImage: getBackgroundSvgImage(getSvgExit(scale, interfaceColor)),
           }}
           onMouseDown={(event) => { event.stopPropagation() }}
-          onClick={(event) => { dispatch(removeEntity(props.entityId)) }}
+          onClick={() => { dispatch(removeEntity(props.entityId)) }}
         /> : ''
       }
     </foreignObject>)
+
+  const shouldRenderConnectionAreas = props.entity.isHovered &&
+    !(mouseMode === MouseMode.dragging)
+    && (mouseMode !== MouseMode.connecting || isConnectable())
+
+  const shouldRenderContainerInterface = (props.entity.selected ||
+    props.entity.isHovered) && mouseMode === MouseMode.default
+
+  const shouldRenderSizeControllers = props.entity.isHovered && mouseMode === MouseMode.default
 
   return (
     <g className='block'
@@ -152,30 +143,25 @@ export const EntityContainer = (props: EntityContainerProps) => {
       onMouseLeave={onMouseLeaveHandler}
       onMouseOver={onMouseEnterHandler}>
       {renderHoverableZone()}
-      {
-        isHovered && !(mouseMode === MouseMode.dragging) && (mouseMode !== MouseMode.connecting || isConnectable()) ?
-          renderConnectionAreas() : ''
-      }
+      {shouldRenderConnectionAreas && renderConnectionAreas()}
       <g
         onMouseDown={onMouseDownHandler}
         onMouseUp={onMouseUpHandler}
         onMouseMove={onMouseMoveHandler}
-      >
-        {renderBlocks()}
-      </g>
+      > {renderBlocks()} </g>
       {
-        props.entity.selected || (isHovered && !(mouseMode === MouseMode.connecting)) ?
-          <>
-            {renderSelection()}
-            {renderDeleteButton()}
-          </> : ''
+        shouldRenderContainerInterface &&
+        <>
+          {renderSelection()}
+          {renderDeleteButton()}
+        </>
       }
       {
-        (isHovered && mouseMode !== MouseMode.connecting) ?
-          <EntitySizeController
-            entity={props.entity}
-            entityId={props.entityId}
-          /> : ''
+        shouldRenderSizeControllers &&
+        <EntitySizeController
+          entity={props.entity}
+          entityId={props.entityId}
+        />
       }
     </g>
   )

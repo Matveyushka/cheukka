@@ -73,6 +73,7 @@
     margin-bottom: 0.5rem;
     width: 2rem;
     height: 2rem;
+    overflow: hidden;
     &:active {
       background-color: $second-color;
     }

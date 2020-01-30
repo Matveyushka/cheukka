@@ -1,20 +1,13 @@
 import * as React from 'react'
-import { Entity } from '../../types'
-import { getScale } from '../../utils'
+import { Entity, EntityPart } from '../types'
+import { getScale } from '../utils'
 import { useSelector } from 'react-redux'
-import { Store } from '../../stores'
-import { EntityBlockSvg } from '../../svg'
-import { EntityContentEditor } from '../EntityContentEditor'
+import { Store } from '../stores'
+import { EntityContentEditor } from './EntityContentEditor'
 
 export interface DiagramEntityBlockProps {
   parentEntity: Entity;
-  relativeX: number;
-  relativeY: number;
-  width: number;
-  height: number;
-  contentEditable: boolean;
-  content?: string;
-  svgComponent: EntityBlockSvg;
+  entityPart: EntityPart
   updateContent: (newContent: string) => void;
 }
 
@@ -23,9 +16,11 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
 
   const scale = useSelector((state: Store) => getScale(state.scaleLevel))
 
+  const block = props.entityPart.renderer(props.parentEntity)
+
   const doubleClickHandler = (event: React.MouseEvent) => {
     event.stopPropagation()
-    if (props.contentEditable) {
+    if (props.entityPart.contentEditable) {
       setIsEditingContent(true)
     }
   }
@@ -35,12 +30,12 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
     props.updateContent(newContent)
   }
 
-  const x = props.parentEntity.x + props.relativeX
-  const y = props.parentEntity.y + props.relativeY
+  const x = props.parentEntity.x + block.relativeX
+  const y = props.parentEntity.y + block.relativeY
 
   return (
     <g onDoubleClick={doubleClickHandler}>
-      {props.svgComponent(x, y, props.width, props.height, scale)}
+      {block.svgComponent(x, y, block.width, block.height, scale)}
       <foreignObject
         x={x * scale}
         y={y * scale}
@@ -51,26 +46,26 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
           onMouseDown={() => { }}
 
           style={{
-            minWidth: props.width * scale + 'px',
-            left: `${(props.width / 2) * scale}px`,
-            top: `${(props.height / 2) * scale}px`,
+            minWidth: block.width * scale + 'px',
+            left: `${(block.width / 2) * scale}px`,
+            top: `${(block.height / 2) * scale}px`,
             fontSize: 0.2 * scale + 'em',
             userSelect: 'none'
           }}
         >
           { 
             !isEditingContent ?
-            props.content : ''
+            props.entityPart.content : ''
           }
         </div>
         {
           isEditingContent ? 
             <EntityContentEditor
-              x={(props.width / 2) * scale}
-              y={(props.height / 2) * scale}
-              width={props.width * scale}
+              x={(block.width / 2) * scale}
+              y={(block.height / 2) * scale}
+              width={block.width * scale}
               height={20}
-              initContent={props.content}
+              initContent={props.entityPart.content}
               finishEdit={finishEditHandler}
             />
           : ''

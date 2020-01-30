@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../stores'
-import { getScale, getCanvasX, getCanvasY, getTheClosestAreaPointPosition } from '../../utils'
+import { getScale, getCanvasX, getCanvasY } from '../../utils'
 import { LEFT_MOUSE_BUTTON } from '../../constants'
-import { MouseMode, nonActiveConnectionTypeChooserState, ConnectionAreaPoint, ConnectionPathPoint, FreeConnectionPoint, Entity, EntityConnectionPoint } from '../../types'
+import { MouseMode, nonActiveConnectionTypeChooserState, Entity, EntityConnectionPoint, ConnectionAreaPoint, allConnectionTypes } from '../../types'
 import { setMouseMode, updateEntity, setConnectionTypeChooserState } from '../../actions'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
+import { validEntityConnectionsEnd, validEntityConnectionsBegin } from '../../constants/dictionaries/validEntityConnections'
 
 export const useEntityContainerHandlers = (entityId: number) => {
 
@@ -21,7 +22,21 @@ export const useEntityContainerHandlers = (entityId: number) => {
 
   const thisEntity: Entity = entities.get(entityId)
 
-  const isHovered = thisEntity.isHovered
+  const isConnectable = (() => {
+    const begin = currentConnectionController.getBegin()
+
+    const possibleBegins = (() => {
+      if (begin instanceof ConnectionAreaPoint ||
+        begin instanceof EntityConnectionPoint) {
+        return validEntityConnectionsBegin.get(entities.get(begin.entityId).type)
+      } else {
+        return allConnectionTypes
+      }
+    })()
+    const possibleEnds = validEntityConnectionsEnd.get(thisEntity.type)
+
+    return possibleBegins.filter(type => possibleEnds.indexOf(type) >= 0).length > 0
+  })
 
   const onMouseUpHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>): void => {
     if (mouseMode === MouseMode.connecting) {
@@ -72,11 +87,11 @@ export const useEntityContainerHandlers = (entityId: number) => {
     }
   }
 
-  const onMouseEnterHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>) => { 
+  const onMouseEnterHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>) => {
     dispatch(updateEntity(entityId, { ...thisEntity, isHovered: true }))
   }
 
-  const onMouseLeaveHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>) => { 
+  const onMouseLeaveHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>) => {
     dispatch(updateEntity(entityId, { ...thisEntity, isHovered: false }))
   }
 
@@ -84,8 +99,10 @@ export const useEntityContainerHandlers = (entityId: number) => {
     if (event.button !== LEFT_MOUSE_BUTTON) {
       dispatch(updateEntity(entityId, { ...thisEntity, isHovered: true }))
       if (mouseMode === MouseMode.connecting) {
-        event.stopPropagation()
-        currentConnectionController.setEndEntityPoint(entityId)
+        if (isConnectable()) {
+          event.stopPropagation()
+          currentConnectionController.setEndEntityPoint(entityId)
+        }
       }
     }
   }
@@ -96,6 +113,6 @@ export const useEntityContainerHandlers = (entityId: number) => {
     onMouseLeaveHandler,
     onMouseMoveHandler,
     onMouseUpHandler,
-    isHovered: thisEntity.isHovered
+    isConnectable,
   }
 }

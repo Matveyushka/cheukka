@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EntityType, EntityConnectionPoint } from '../../types'
+import { EntityType, EntityConnectionPoint, FreeConnectionPoint, ConnectionAreaPoint, allConnectionTypes } from '../../types'
 import { entityCreators } from '../../types/DiagramEntityTypes/EntityType'
 import { useDispatch, useSelector } from 'react-redux'
 import { addEntity, setConnectionTypeChooserState } from '../../actions'
@@ -10,17 +10,16 @@ import { getSegmentAngle, getPointX, getPointY } from '../../utils/geometry'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
 import { useEntityTypeChooserController } from '../../hooks/entityTypeChooserHook'
 
-export interface DiagramEntityTypeChooserProps {
+export interface EntityTypeChooserProps {
   x: number;
   y: number;
-  diagramEntityTypes: Array<EntityType>;
 }
 
-export const DiagramEntityTypeChooser = (props: DiagramEntityTypeChooserProps) => {
-  const [scale, EntityTypeChooserState, entities] = useSelector((state: Store) => [
+export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
+  const [scale, entityTypeChooserState, entities ] = useSelector((state: Store) => [
     getScale(state.scaleLevel),
     state.entityTypeChooserState,
-    state.diagramEntities
+    state.diagramEntities,
   ])
   const dispatch = useDispatch()
 
@@ -33,7 +32,7 @@ export const DiagramEntityTypeChooser = (props: DiagramEntityTypeChooserProps) =
     const x = props.x - width / 2
     const y = props.y - height / 2
 
-    if (EntityTypeChooserState.withConnecting) {
+    if (entityTypeChooserState.withConnecting) {
       const beginPoint = currentConnectionController.getBegin()
       const endPoint = currentConnectionController.getEnd()
 
@@ -59,21 +58,22 @@ export const DiagramEntityTypeChooser = (props: DiagramEntityTypeChooserProps) =
       })()
 
       dispatch(addEntity(entityCreators.get(type).create(
-        roundCoordinateOrSize(x + deltaX), 
-        roundCoordinateOrSize(y + deltaY), 
+        roundCoordinateOrSize(x + deltaX),
+        roundCoordinateOrSize(y + deltaY),
         width, height)))
 
       const newEntityId = Math.max(...entities.keys()) + 1
 
       entityTypeChooserController.deactivate()
-      dispatch(setConnectionTypeChooserState({ x, y, isActive: true, endPoint: 
-        new EntityConnectionPoint(newEntityId)
+      dispatch(setConnectionTypeChooserState({
+        x, y, isActive: true, endPoint:
+          new EntityConnectionPoint(newEntityId)
       }))
     } else {
       dispatch(addEntity(entityCreators.get(type).create(
-        roundCoordinateOrSize(x), 
-        roundCoordinateOrSize(y), 
-        width, 
+        roundCoordinateOrSize(x),
+        roundCoordinateOrSize(y),
+        width,
         height
       )))
       entityTypeChooserController.deactivate()
@@ -85,21 +85,31 @@ export const DiagramEntityTypeChooser = (props: DiagramEntityTypeChooserProps) =
       className='diagram-entity-type-chooser'
       onMouseDown={(event) => event.stopPropagation()}
       onDoubleClick={(event) => event.stopPropagation()}
-      style={{
-        left: props.x * scale,
-        top: props.y * scale,
-      }}>
+      style={{ left: props.x * scale, top: props.y * scale }}>
       {
-        props.diagramEntityTypes.map((type, index) => (
+        entityTypeChooserState.diagramEntityTypes.map((type, index) => (
           <button
             key={index}
             onClick={() => onChoose(type)}
-            style={{
-              overflow: 'hidden'
-            }}
           >
             {entityCreators.get(type).name}
           </button>))
+      }
+      {
+        entityTypeChooserState.withConnecting ?
+          <button
+            onClick={() => {
+              dispatch(setConnectionTypeChooserState({
+                x: roundCoordinateOrSize(props.x),
+                y: roundCoordinateOrSize(props.y),
+                isActive: true,
+                endPoint: new FreeConnectionPoint(
+                  roundCoordinateOrSize(props.x),
+                  roundCoordinateOrSize(props.y))
+              }))
+              entityTypeChooserController.deactivate()
+            }}
+          >X</button> : ''
       }
     </div>
   )

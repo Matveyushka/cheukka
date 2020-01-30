@@ -6,7 +6,7 @@ import { EntityContainer } from '../EntityContainer'
 import { ConnectionContainer } from '../ConnectionContainer'
 import { MouseMode } from '../../types'
 import { useCanvasHandlers } from './handlers'
-import { DiagramEntityTypeChooser } from '../DiagramEntityTypeChooser'
+import { EntityTypeChooser } from '../EntityTypeChooser'
 import { entityGroups } from '../../types/DiagramEntityTypes/EntityType'
 import { getScale } from '../../utils'
 import { ConnectionTypeChooser } from '../ConnectionTypeChooser'
@@ -105,10 +105,9 @@ export const Canvas = (props: CanvasProps) => {
         </svg>
         {
           EntityTypeChooserState.isActive ?
-            <DiagramEntityTypeChooser
+            <EntityTypeChooser
               x={EntityTypeChooserState.x}
               y={EntityTypeChooserState.y}
-              diagramEntityTypes={entityGroups.get(diagramType).types}
             />
             : ''
         }

@@ -8,8 +8,13 @@ import {
   nonActiveConnectionTypeChooserState,
   ConnectionPathPoint,
   ConnectionAreaPoint,
+  EntityConnectionPoint,
  } from '../../types'
 import { addConnection, setConnectionTypeChooserState, setMouseMode } from '../../actions'
+import { 
+  validEntityConnectionsBegin, 
+  validEntityConnectionsEnd 
+} from '../../constants/dictionaries/validEntityConnections'
 
 export interface ConnectionTypeChooserProps {
   x: number
@@ -36,15 +41,17 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
 
   const getPossibleConnectionTypes = () => {
     const possibleBegins = (() => {
-      if (currentDiagramConnection.begin instanceof ConnectionAreaPoint) {
-        return diagramEntities.get(currentDiagramConnection.begin.entityId).validConnectionToBegin
+      if (currentDiagramConnection.begin instanceof ConnectionAreaPoint ||
+          currentDiagramConnection.begin instanceof EntityConnectionPoint) {
+        return validEntityConnectionsBegin.get(diagramEntities.get(currentDiagramConnection.begin.entityId).type)
       } else {
         return allConnectionTypes
       }
     })()
     const possibleEnds = (() => {
-      if (props.endPoint instanceof ConnectionAreaPoint) {
-        return diagramEntities.get(props.endPoint.entityId).validConnectionToEnd
+      if (props.endPoint instanceof ConnectionAreaPoint ||
+        props.endPoint instanceof EntityConnectionPoint) {
+        return validEntityConnectionsEnd.get(diagramEntities.get(props.endPoint.entityId).type)
       } else {
         return allConnectionTypes
       }
@@ -78,6 +85,10 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
       props.endPoint,
       possibleConnectionTypes[0]
     )))
+  }
+
+  if (possibleConnectionTypes.length === 0) {
+    dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
   }
   
   return (
