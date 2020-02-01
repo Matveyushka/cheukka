@@ -7,7 +7,7 @@ import { Store } from '../../stores'
 import { getScale } from '../../utils'
 import { ConnectionPath } from './ConnectionPath'
 import { connectionTypeArrows } from '../../constants/dictionaries/connectionTypeArrows'
-import { getPointX, getPointY, getSegmentAngle } from '../../utils/geometry'
+import { getSegmentAngle } from '../../utils/geometry'
 import { useConnectionHandlers } from './handlers'
 
 export interface ConnectionContainerProps {
@@ -19,10 +19,10 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   const [scale, entities] = useSelector((state: Store) => [getScale(state.scaleLevel), state.diagramEntities])
   const dispatch = useDispatch()
 
-  const beginX = getPointX(props.connection.begin, props.connection.begin, entities)
-  const beginY = getPointY(props.connection.begin, props.connection.begin, entities)
-  const endX = getPointX(props.connection.end, props.connection.begin, entities)
-  const endY = getPointY(props.connection.end, props.connection.begin, entities)
+  const beginX = props.connection.begin.getX(props.connection.begin, entities)
+  const beginY = props.connection.begin.getY(props.connection.begin, entities)
+  const endX = props.connection.end.getX(props.connection.begin, entities)
+  const endY = props.connection.end.getY(props.connection.begin, entities)
 
   const pathPoints = [
     { x: beginX * scale, y: beginY * scale },
@@ -36,12 +36,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
 
   return (
     <>
-      <ConnectionPath
-        points={pathPoints}
-        width={1}
-        color='black'
-        dashed={false}
-      />
+      <ConnectionPath points={pathPoints} width={1} color='black' dashed={false} />
       {
         <g transform={`rotate(${getSegmentAngle(
           beginX,
@@ -52,26 +47,15 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
         </g>
       }
       {
-        props.connection.isHovered ?
-          <ConnectionPath
-            points={pathPoints}
-            width={4}
-            color='red'
-            dashed={true}
-          />
-          : ''
+        props.connection.isHovered &&
+        <ConnectionPath points={pathPoints} width={4} color='red' dashed={true} />
       }
       <g
         onMouseEnter={onMouseEnterHandler}
         onMouseMove={onMouseEnterHandler}
         onMouseLeave={onMouseLeaveHandler}
       >
-        <ConnectionPath
-          points={pathPoints}
-          width={25}
-          color='transparent'
-          dashed={false}
-        />
+        <ConnectionPath points={pathPoints} width={25} color='transparent' dashed={false} />
       </g>
     </>
   )

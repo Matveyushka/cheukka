@@ -1,5 +1,6 @@
-import { ConnectionPathPoint, Entity, ConnectionAreaPoint, FreeConnectionPoint, EntityConnectionPoint, Connection } from "../types"
+import { ConnectionPathPoint, Entity, ConnectionAreaPoint, FreeConnectionPoint, EntityConnectionPoint, Connection, ConnectionPoint } from "../types"
 import { getTheClosestAreaPointPosition } from "."
+import { ConnectionAreaDirection } from "../types/DiagramConnectionTypes/ConnectionArea"
 
 interface Point {
   x: number;
@@ -26,9 +27,9 @@ export const getTheClosestSegmentPointToFreePoint = (freePoint: Point, segmentBe
   const bottomBorder = p1.y > p2.y ? p1.y : p2.y
 
   const desiredX = crossX < leftBorder ? leftBorder : crossX > rightBorder ? rightBorder : crossX
-  const desiredY = (yc1 === 0) ? 
-  (freePoint.y < topBorder ? topBorder : freePoint.y > bottomBorder ? bottomBorder : freePoint.y) 
-  : ((-xc1 * desiredX - fc1) / yc1)
+  const desiredY = (yc1 === 0) ?
+    (freePoint.y < topBorder ? topBorder : freePoint.y > bottomBorder ? bottomBorder : freePoint.y)
+    : ((-xc1 * desiredX - fc1) / yc1)
 
   return { x: desiredX, y: desiredY }
 }
@@ -68,9 +69,9 @@ export const getConnectionPointCoordinates = (point: ConnectionPathPoint, entiti
 }
 
 export const getTheClosestEntityConnectablePointCoordinates = (
-  srcPoint: ConnectionPathPoint, 
-  entity: Entity, 
-  entities: Map<number,Entity>,
+  srcPoint: ConnectionPathPoint,
+  entity: Entity,
+  entities: Map<number, Entity>,
 ) => {
   const [pointX, pointY] = getConnectionPointCoordinates(srcPoint, entities)
   const distances = entity.connectionAreaCreators.map(creator => {
@@ -104,40 +105,76 @@ export const getTheClosestEntityConnectablePointCoordinates = (
   }
 }
 
-export const getPointX = (point: ConnectionPathPoint, srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => {
-  if (point instanceof EntityConnectionPoint) {
-    return getTheClosestEntityConnectablePointCoordinates(srcPoint, entities.get(point.entityId), entities).x
-  } else if (point instanceof ConnectionAreaPoint) {
-    const entity = entities.get(point.entityId)
-    const area = entity.connectionAreaCreators[point.areaId](entity)
-    return entity.x + area.xBegin + (area.xEnd - area.xBegin) * point.positionPercent
-  } else if (point instanceof FreeConnectionPoint) {
-    return point.x
-  }
-}
-
-export const getPointY = (point: ConnectionPathPoint, srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => {
-  if (point instanceof EntityConnectionPoint) {
-    return getTheClosestEntityConnectablePointCoordinates(srcPoint, entities.get(point.entityId), entities).y
-  } else if (point instanceof ConnectionAreaPoint) {
-    const entity = entities.get(point.entityId)
-    const area = entity.connectionAreaCreators[point.areaId](entity)
-    return entity.y + area.yBegin + (area.yEnd - area.yBegin) * point.positionPercent
-  } else if (point instanceof FreeConnectionPoint) {
-    return point.y
-  }
-}
 export const getFreePointToConnectionDistance = (freeX: number, freeY: number, connection: Connection, entities: Map<number, Entity>) => {
-  const beginX = getPointX(connection.begin, connection.begin, entities)
-  const endX = getPointX(connection.end, connection.begin, entities)
-  const beginY = getPointY(connection.begin, connection.begin, entities)
-  const endY = getPointY(connection.end, connection.begin, entities)
+  const beginX = connection.begin.getX(connection.begin, entities)
+  const endX = connection.end.getX(connection.begin, entities)
+  const beginY = connection.begin.getY(connection.begin, entities)
+  const endY = connection.end.getY(connection.begin, entities)
 
   const result = getTheClosestSegmentPointToFreePoint(
-    {x: freeX, y: freeY},
-    {x: beginX, y: beginY},
-    {x: endX, y: endY }
+    { x: freeX, y: freeY },
+    { x: beginX, y: beginY },
+    { x: endX, y: endY }
   )
 
   return Math.sqrt((result.x - freeX) ** 2 + (result.y - freeY) ** 2)
+}
+
+//------------------------------------------
+//------------------------------------------
+//------------------------------------------
+
+export const getIt = (
+  srcPoint: ConnectionPathPoint,
+  targetEntity: Entity,
+  entities: Map<number, Entity>,
+) => {
+  const connectablePoints = targetEntity.connectionAreaCreators
+    .map(creator => creator(targetEntity))
+    .filter(point => point instanceof ConnectionPoint && point.isForEntityConnectionType)
+
+  console.log(connectablePoints)
+
+  const topPoints = connectablePoints.filter(point => {
+    return point.directions.indexOf(ConnectionAreaDirection.Top) >= 0
+  })
+
+  const bottomPoints = connectablePoints.filter(point => {
+    return point.directions.indexOf(ConnectionAreaDirection.Bottom) >= 0
+  })
+
+  const rightPoints = connectablePoints.filter(point => {
+    return point.directions.indexOf(ConnectionAreaDirection.Right) >= 0
+  })
+
+  const leftPoints = connectablePoints.filter(point => {
+    return point.directions.indexOf(ConnectionAreaDirection.Left) >= 0
+  })
+
+  if (targetEntity.y > srcPoint.getY(srcPoint, entities) && topPoints.length > 0) {
+    return {
+      x: targetEntity.x + topPoints[0].xBegin,
+      y: targetEntity.y + topPoints[0].yBegin
+    }
+  } else if (targetEntity.y + targetEntity.height < srcPoint.getY(srcPoint, entities) && bottomPoints.length > 0) {
+    return {
+      x: targetEntity.x + bottomPoints[0].xBegin,
+      y: targetEntity.y + bottomPoints[0].yBegin
+    }
+  } else if (targetEntity.x > srcPoint.getX(srcPoint, entities) && leftPoints.length > 0) {
+    return {
+      x: targetEntity.x + leftPoints[0].xBegin,
+      y: targetEntity.y + leftPoints[0].yBegin
+    }
+  } else if (targetEntity.x + targetEntity.width < srcPoint.getX(srcPoint, entities) && rightPoints.length > 0) {
+    return {
+      x: targetEntity.x + rightPoints[0].xBegin,
+      y: targetEntity.y + rightPoints[0].yBegin
+    }
+  }
+  else {
+    return getTheClosestEntityConnectablePointCoordinates(
+      srcPoint, targetEntity, entities,
+    )
+  }
 }

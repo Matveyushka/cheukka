@@ -6,7 +6,7 @@ import { addEntity, setConnectionTypeChooserState } from '../../actions'
 import { DEFAULT_CANVAS_WIDTH } from '../../constants'
 import { getScale, roundCoordinateOrSize } from '../../utils'
 import { Store } from '../../stores'
-import { getSegmentAngle, getPointX, getPointY } from '../../utils/geometry'
+import { getSegmentAngle } from '../../utils/geometry'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
 import { useEntityTypeChooserController } from '../../hooks/entityTypeChooserHook'
 
@@ -37,10 +37,10 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       const endPoint = currentConnectionController.getEnd()
 
       const inputAngle = getSegmentAngle(
-        getPointX(beginPoint, beginPoint, entities),
-        getPointY(beginPoint, beginPoint, entities),
-        getPointX(endPoint, beginPoint, entities),
-        getPointY(endPoint, beginPoint, entities),
+        beginPoint.getX(beginPoint, entities),
+        beginPoint.getY(beginPoint, entities),
+        endPoint.getX(beginPoint, entities),
+        endPoint.getY(beginPoint, entities),
       )
 
       const offsettedAngle = (inputAngle + 45) % 360

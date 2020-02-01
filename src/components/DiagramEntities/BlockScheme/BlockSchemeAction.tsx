@@ -18,10 +18,10 @@ export class BlockSchemeAction extends Entity {
       (entity: Entity) => new ConnectionArea(entity.width, 0, entity.width, entity.height, [ConnectionAreaDirection.Right]),
       (entity: Entity) => new ConnectionArea(entity.width, entity.height, 0, entity.height, [ConnectionAreaDirection.Bottom]),
       (entity: Entity) => new ConnectionArea(0, 0, 0, entity.height, [ConnectionAreaDirection.Left]),
-      (entity: Entity) => new ConnectionPoint(entity.width / 2, 0, [ConnectionAreaDirection.Top]),
-      (entity: Entity) => new ConnectionPoint(entity.width, entity.height / 2, [ConnectionAreaDirection.Right]),
-      (entity: Entity) => new ConnectionPoint(entity.width / 2, entity.height, [ConnectionAreaDirection.Bottom]),
-      (entity: Entity) => new ConnectionPoint(0, entity.height / 2, [ConnectionAreaDirection.Left]),
+      (entity: Entity) => new ConnectionPoint(entity.width / 2, 0, [ConnectionAreaDirection.Top], true),
+      (entity: Entity) => new ConnectionPoint(entity.width, entity.height / 2, [ConnectionAreaDirection.Right], true),
+      (entity: Entity) => new ConnectionPoint(entity.width / 2, entity.height, [ConnectionAreaDirection.Bottom], true),
+      (entity: Entity) => new ConnectionPoint(0, entity.height / 2, [ConnectionAreaDirection.Left], true),
     ]
   }
 }

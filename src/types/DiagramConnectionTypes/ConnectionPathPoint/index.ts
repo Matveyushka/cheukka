@@ -1,5 +1,6 @@
-import { ConnectionAreaPoint } from './ConnectionAreaPoint'
-import { FreeConnectionPoint } from './FreeConnectionPoint'
-import { EntityConnectionPoint } from './EntityConnectionPoint'
+import { Entity } from '../..'
 
-export type ConnectionPathPoint = ConnectionAreaPoint | FreeConnectionPoint | EntityConnectionPoint
+export abstract class ConnectionPathPoint {
+  abstract getX: (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => number
+  abstract getY: (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => number
+}

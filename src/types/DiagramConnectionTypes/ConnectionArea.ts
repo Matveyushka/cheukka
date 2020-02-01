@@ -37,6 +37,7 @@ export class ConnectionArea {
     this.yBegin = yBegin
     this.xEnd = xEnd
     this.yEnd = yEnd
+    this.directions = directions
   }
 
   entityResizeHandler: (entity: Entity) => ConnectionArea;
