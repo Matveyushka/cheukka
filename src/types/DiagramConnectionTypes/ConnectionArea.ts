@@ -1,25 +1,19 @@
 import { Entity } from '../DiagramEntityTypes/Entity'
+import { ConnectionDirection } from './ConnectionDirection'
 
-export enum ConnectionAreaDirection {
-  Top,
-  Bottom,
-  Right,
-  Left,
-}
-
-export const getOffsetsByConnectionAreaDirections = (directions: Array<ConnectionAreaDirection>) => {
+export const getOffsetsByConnectionAreaDirections = (directions: Array<ConnectionDirection>) => {
   const offsetX = (()=>{
-    if (directions.indexOf(ConnectionAreaDirection.Right) >= 0 &&
-        directions.indexOf(ConnectionAreaDirection.Left) < 0) return 1
-    if (directions.indexOf(ConnectionAreaDirection.Right) < 0 &&
-        directions.indexOf(ConnectionAreaDirection.Left) >= 0) return -1
+    if (directions.indexOf(ConnectionDirection.Right) >= 0 &&
+        directions.indexOf(ConnectionDirection.Left) < 0) return 1
+    if (directions.indexOf(ConnectionDirection.Right) < 0 &&
+        directions.indexOf(ConnectionDirection.Left) >= 0) return -1
     return 0
   })()
   const offsetY = (()=>{
-    if (directions.indexOf(ConnectionAreaDirection.Bottom) >= 0 &&
-        directions.indexOf(ConnectionAreaDirection.Top) < 0) return 1
-    if (directions.indexOf(ConnectionAreaDirection.Bottom) < 0 &&
-        directions.indexOf(ConnectionAreaDirection.Top) >= 0) return -1
+    if (directions.indexOf(ConnectionDirection.Bottom) >= 0 &&
+        directions.indexOf(ConnectionDirection.Top) < 0) return 1
+    if (directions.indexOf(ConnectionDirection.Bottom) < 0 &&
+        directions.indexOf(ConnectionDirection.Top) >= 0) return -1
     return 0
   })()
 
@@ -31,7 +25,7 @@ export const getOffsetsByConnectionAreaDirections = (directions: Array<Connectio
 }
 
 export class ConnectionArea {
-  constructor (xBegin : number, yBegin : number, xEnd : number, yEnd : number, directions: Array<ConnectionAreaDirection>) {
+  constructor (xBegin : number, yBegin : number, xEnd : number, yEnd : number, directions: Array<ConnectionDirection>) {
     [ this.visualOffsetX, this.visualOffseyY ] = getOffsetsByConnectionAreaDirections(directions)
     this.xBegin = xBegin
     this.yBegin = yBegin
@@ -42,7 +36,7 @@ export class ConnectionArea {
 
   entityResizeHandler: (entity: Entity) => ConnectionArea;
 
-  directions: Array<ConnectionAreaDirection>
+  directions: Array<ConnectionDirection>
   visualOffsetX: number
   visualOffseyY: number
   xBegin: number

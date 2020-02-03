@@ -1,5 +1,5 @@
 import { Entity } from '../../../../types/DiagramEntityTypes/Entity'
-import { ConnectionArea, ConnectionAreaDirection } from '../../../../types/DiagramConnectionTypes/ConnectionArea'
+import { ConnectionArea, ConnectionDirection } from '../../../../types/'
 import { EntityBlockRectangle } from '../../../../svg'
 import { EntityPart, EntityType } from '../../../../types'
 import { EntityBlock } from '../../../../types/DiagramEntityTypes/EntityPart'
@@ -21,8 +21,8 @@ export class ComponentDiagramModule extends Entity {
     ]
 
     this.connectionAreaCreators = [
-      (entity: Entity) => new ConnectionArea(entity.width, 0, entity.width, entity.height, [ConnectionAreaDirection.Right]),
-      (entity: Entity) => new ConnectionArea(3, 0, entity.width, 0, [ConnectionAreaDirection.Top]),
+      (entity: Entity) => new ConnectionArea(entity.width, 0, entity.width, entity.height, [ConnectionDirection.Right]),
+      (entity: Entity) => new ConnectionArea(3, 0, entity.width, 0, [ConnectionDirection.Top]),
     ]
   }
 }

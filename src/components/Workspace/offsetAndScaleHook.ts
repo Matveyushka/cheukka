@@ -86,7 +86,7 @@ export const useWorkspaceOffsetAndScale = () => {
   React.useEffect(() => {
     window.addEventListener('keydown', keyPressHandler)
 
-    workspaceRef.current.addEventListener("mousewheel", onWheelHandler, { passive: false })
+    workspaceRef.current.addEventListener('mousewheel', onWheelHandler, { passive: false })
 
     const workspaceHalfWidth = workspaceRef.current.clientWidth / 2
 

@@ -78,26 +78,26 @@ export const Canvas = (props: CanvasProps) => {
   })()
 
   return (
-    <div className="canvas-main">
+    <div className='canvas-main'>
       <div
         onDoubleClick={doubleClickHandler}
         onMouseDown={mouseDownHandler}
         onMouseUp={mouseUpHandler}
         onMouseMove={mouseMoveHandler}
-        className="diagram-canvas"
+        className='diagram-canvas'
         style={{
           backgroundImage: `url('data:image/svg+xml;base64,${getBackgroundSvg(scale, backgroundBlocksAmountInWidth)}')`,
           backgroundSize: `${100 / backgroundBlocksAmountInWidth}%`,
         }}
       >
-        <svg width="100%" height="100%">
+        <svg width='100%' height='100%'>
           {renderConnections()}
           {renderEntities()}
           {(mode === MouseMode.connecting ||
             connectionTypeChooserState.isActive ||
             EntityTypeChooserState.isActive && EntityTypeChooserState.withConnecting) ?
             (
-              <g pointerEvents="none">
+              <g pointerEvents='none'>
                 <ConnectionContainer connectionId={null} connection={currentDiagramConnection}/>
               </g>
             ) : ''}

@@ -10,7 +10,7 @@ export interface MainProps {
 
 export const Main = (props: MainProps) : React.ReactElement => {
   return (
-    <div className="main">
+    <div className='main'>
       <MenuBar />
       <Workspace />
       <StatusBar />

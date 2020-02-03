@@ -36,25 +36,21 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       const beginPoint = currentConnectionController.getBegin()
       const endPoint = currentConnectionController.getEnd()
 
-      const inputAngle = getSegmentAngle(
-        beginPoint.getX(beginPoint, entities),
-        beginPoint.getY(beginPoint, entities),
-        endPoint.getX(beginPoint, entities),
-        endPoint.getY(beginPoint, entities),
-      )
-
-      const offsettedAngle = (inputAngle + 45) % 360
+      const beginX = beginPoint.getX(endPoint, entities)
+      const beginY = beginPoint.getY(endPoint, entities)
+      const endX = endPoint.getX(beginPoint, entities)
+      const endY = endPoint.getY(beginPoint, entities)
 
       const deltaX = (() => {
-        if (offsettedAngle <= 90 || (offsettedAngle > 180 && offsettedAngle <= 270)) return 0
-        if (offsettedAngle > 90 && offsettedAngle <= 180) return width / 2
-        if (offsettedAngle > 270) return - width / 2
+        if (endX > beginX && ((beginY + height / 2 >= endY) && (beginY - height / 2 <= endY))) return width / 2
+        if (endX < beginX && ((beginY + height / 2 >= endY) && (beginY - height / 2 <= endY))) return -(width / 2)
+        return 0
       })()
 
       const deltaY = (() => {
-        if (offsettedAngle > 270 || (offsettedAngle > 90 && offsettedAngle <= 180)) return 0
-        if (offsettedAngle > 180 && offsettedAngle <= 270) return height / 2
-        if (offsettedAngle <= 90) return - height / 2
+        if (beginY + height / 2 < endY) return height / 2
+        if (beginY - height / 2 > endY) return - height / 2
+        return 0
       })()
 
       dispatch(addEntity(entityCreators.get(type).create(

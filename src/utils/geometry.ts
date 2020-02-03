@@ -1,6 +1,6 @@
-import { ConnectionPathPoint, Entity, ConnectionAreaPoint, FreeConnectionPoint, EntityConnectionPoint, Connection, ConnectionPoint } from "../types"
-import { getTheClosestAreaPointPosition } from "."
-import { ConnectionAreaDirection } from "../types/DiagramConnectionTypes/ConnectionArea"
+import { ConnectionPathPoint, Entity, ConnectionAreaPoint, FreeConnectionPoint, EntityConnectionPoint, Connection, ConnectionPoint } from '../types'
+import { getTheClosestAreaPointPosition } from '.'
+import { ConnectionDirection } from '../types'
 
 interface Point {
   x: number;
@@ -133,22 +133,20 @@ export const getIt = (
     .map(creator => creator(targetEntity))
     .filter(point => point instanceof ConnectionPoint && point.isForEntityConnectionType)
 
-  console.log(connectablePoints)
-
   const topPoints = connectablePoints.filter(point => {
-    return point.directions.indexOf(ConnectionAreaDirection.Top) >= 0
+    return point.directions.indexOf(ConnectionDirection.Top) >= 0
   })
 
   const bottomPoints = connectablePoints.filter(point => {
-    return point.directions.indexOf(ConnectionAreaDirection.Bottom) >= 0
+    return point.directions.indexOf(ConnectionDirection.Bottom) >= 0
   })
 
   const rightPoints = connectablePoints.filter(point => {
-    return point.directions.indexOf(ConnectionAreaDirection.Right) >= 0
+    return point.directions.indexOf(ConnectionDirection.Right) >= 0
   })
 
   const leftPoints = connectablePoints.filter(point => {
-    return point.directions.indexOf(ConnectionAreaDirection.Left) >= 0
+    return point.directions.indexOf(ConnectionDirection.Left) >= 0
   })
 
   if (targetEntity.y > srcPoint.getY(srcPoint, entities) && topPoints.length > 0) {

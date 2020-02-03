@@ -23,6 +23,7 @@ export const ConnectionPath = (props: ConnectionPathProps) => {
       stroke={props.color}
       strokeWidth={props.width}
       strokeDasharray={props.dashed ? '4 4' : '1 0'}
+      fill='none'
     />
   )
 }

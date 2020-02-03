@@ -13,5 +13,6 @@ export { ConnectionPathPoint } from './DiagramConnectionTypes/ConnectionPathPoin
 export { ConnectionTypeChooserState, nonActiveConnectionTypeChooserState } from './DiagramConnectionTypes/ConnectionTypeChooserState'
 export { ConnectionType, allConnectionTypes } from './DiagramConnectionTypes/ConnectionType'
 export { ConnectionPoint } from './DiagramConnectionTypes/ConnectionPoint'
+export { ConnectionDirection } from './DiagramConnectionTypes/ConnectionDirection'
 
 export { MouseMode } from './MouseMode'

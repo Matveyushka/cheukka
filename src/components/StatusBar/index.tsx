@@ -35,10 +35,10 @@ export const StatusBar = (props: StatusBarProps) => {
   ))
 
   return (
-    <div className="status-bar">
-      <div className="status-bar-label status-bar-element">Status bar</div>
+    <div className='status-bar'>
+      <div className='status-bar-label status-bar-element'>Status bar</div>
 
-      <div className="status-bar-chooser status-bar-element">
+      <div className='status-bar-chooser status-bar-element'>
         <CustomSelect
           value={{value: diagramType, label: entityGroups.get(diagramType).name}}
           onSelect={onDiagramTypeSelectedHandler}
@@ -46,21 +46,21 @@ export const StatusBar = (props: StatusBarProps) => {
         />
       </div>
 
-      <div className="status-bar-scaler status-bar-element">
-        <div className="status-bar-scaler-label" onClick={onMinusClickHandler}>-</div>
+      <div className='status-bar-scaler status-bar-element'>
+        <div className='status-bar-scaler-label' onClick={onMinusClickHandler}>-</div>
         <input
-          id="typeinp"
-          type="range"
+          id='typeinp'
+          type='range'
           min={MIN_SCALE} max={MAX_SCALE}
           value={scale}
           onChange={onScaleSliderChangedHandler}
           step={SCALE_STEP}
-          className="status-bar-scaler-slider"
+          className='status-bar-scaler-slider'
         />
-        <div className="status-bar-scaler-label" onClick={onPlusClickHandler}>+</div>
+        <div className='status-bar-scaler-label' onClick={onPlusClickHandler}>+</div>
       </div>
 
-      <div className="status-bar-scalechooser status-bar-element">
+      <div className='status-bar-scalechooser status-bar-element'>
         <CustomSelect
             value={{ value: 'currentScale', label: getScalePercent(scale) }}
             onSelect={onScaleSelectedHandler}
@@ -68,12 +68,12 @@ export const StatusBar = (props: StatusBarProps) => {
           />
       </div>
 
-      <button className="status-bar-fit-window status-bar-button status-bar-element" onClick={onFitWindowClickHandler}>
-        <img src="assets/svg/full-size.svg"/>
+      <button className='status-bar-fit-window status-bar-button status-bar-element' onClick={onFitWindowClickHandler}>
+        <img src='assets/svg/full-size.svg'/>
       </button>
 
-      <button className="status-bar-fit-width status-bar-button status-bar-element" onClick={onFitWidthClickHandler}>
-        <img src="assets/svg/full-width.svg"/>
+      <button className='status-bar-fit-width status-bar-button status-bar-element' onClick={onFitWidthClickHandler}>
+        <img src='assets/svg/full-width.svg'/>
       </button>
     </div>
   )

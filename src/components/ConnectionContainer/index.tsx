@@ -24,8 +24,14 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   const endX = props.connection.end.getX(props.connection.begin, entities)
   const endY = props.connection.end.getY(props.connection.begin, entities)
 
+  props.connection.calculateIntermediatePoints(entities, props.connection)
+
   const pathPoints = [
     { x: beginX * scale, y: beginY * scale },
+    ...props.connection.intermediatePoints.map(point => ({
+      x: point.getX(props.connection.begin, entities) * scale,
+      y: point.getY(props.connection.begin, entities) * scale
+    })),
     { x: endX * scale, y: endY * scale }
   ]
 
@@ -34,13 +40,21 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
     onMouseLeaveHandler
   } = useConnectionHandlers(props.connectionId)
 
+  const penultX = props.connection.intermediatePoints.length > 0 ?
+    props.connection.intermediatePoints[props.connection.intermediatePoints.length - 1].getX(props.connection.begin, entities) :
+    beginX
+
+  const penultY = props.connection.intermediatePoints.length > 0 ?
+    props.connection.intermediatePoints[props.connection.intermediatePoints.length - 1].getY(props.connection.begin, entities) :
+    beginY
+
   return (
     <>
       <ConnectionPath points={pathPoints} width={1} color='black' dashed={false} />
       {
         <g transform={`rotate(${getSegmentAngle(
-          beginX,
-          beginY,
+          penultX,
+          penultY,
           endX,
           endY)} ${endX * scale} ${endY * scale})`}>
           {connectionTypeArrows.get(props.connection.type)(endX, endY, scale)}
@@ -49,6 +63,17 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
       {
         props.connection.isHovered &&
         <ConnectionPath points={pathPoints} width={4} color='red' dashed={true} />
+      }
+      {
+        props.connection.intermediatePoints.map((point, index) => (
+          <circle
+            key={index}
+            cx={point.getX(null, entities) * scale}
+            cy={point.getY(null, entities) * scale}
+            r={3}
+            fill='black'
+          />
+        ))
       }
       <g
         onMouseEnter={onMouseEnterHandler}

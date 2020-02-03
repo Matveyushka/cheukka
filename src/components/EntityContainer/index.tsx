@@ -102,7 +102,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
       height={realHeight}
       stroke={interfaceColor}
       strokeWidth={4}
-      strokeDasharray="4,4"
+      strokeDasharray='4,4'
       fill={'transparent'}
       pointerEvents='none'
     />)
