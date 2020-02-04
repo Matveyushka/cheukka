@@ -56,7 +56,6 @@ export const useCurrentDiagramConnectionController = () => {
   }
 
   const setEndFreePoint = (x: number, y: number) => {
-    console.log('gra')
     dispatch(setCurrentDiagramConnection({
       ...currentConnection,
       end: new FreeConnectionPoint(x, y)

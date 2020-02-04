@@ -29,10 +29,10 @@ export const ConnectionAreaContainer = (props: ConnectionAreaContainerProps) => 
   const renderConnectionPoint = () => (
     <circle
       className='connection-area'
-      cx={(entity.x + area.xBegin + area.visualOffsetX * props.width / 2) * scale}
-      cy={(entity.y + area.yBegin + area.visualOffseyY * props.width / 2) * scale}
+      cx={(entity.x + area.xBegin + area.visualOffsetX * props.width / 2 * 1.33) * scale}
+      cy={(entity.y + area.yBegin + area.visualOffseyY * props.width / 2 * 1.33) * scale}
       opacity={0.5}
-      r={props.width * scale / 2}
+      r={props.width * scale / 2 / 1.66}
       onMouseDown={mouseDownHandler}
       onMouseUp={mouseUpHandler}
       onMouseMove={mouseMoveHandler}

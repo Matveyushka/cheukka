@@ -1,6 +1,6 @@
 import { ConnectionPathPoint } from '.'
 import { Entity } from '../..'
-import { getIt } from '../../../utils/geometry'
+import { getEntityConnectionPosition } from '../../../utils/geometry'
 
 
 export class EntityConnectionPoint extends ConnectionPathPoint {
@@ -12,10 +12,10 @@ export class EntityConnectionPoint extends ConnectionPathPoint {
   entityId: number
 
   getX = (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => {
-    return getIt(srcPoint, entities.get(this.entityId), entities).x
+    return getEntityConnectionPosition(srcPoint, entities.get(this.entityId), entities).x
   }
   
   getY = (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => {
-    return getIt(srcPoint, entities.get(this.entityId), entities).y
+    return getEntityConnectionPosition(srcPoint, entities.get(this.entityId), entities).y
   }
 }

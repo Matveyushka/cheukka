@@ -16,7 +16,7 @@ export interface EntityTypeChooserProps {
 }
 
 export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
-  const [scale, entityTypeChooserState, entities ] = useSelector((state: Store) => [
+  const [scale, entityTypeChooserState, entities] = useSelector((state: Store) => [
     getScale(state.scaleLevel),
     state.entityTypeChooserState,
     state.diagramEntities,
@@ -29,8 +29,8 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
   const onChoose = (type: EntityType) => {
     const width = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10)
     const height = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10 * 0.666)
-    const x = props.x - width / 2
-    const y = props.y - height / 2
+    const x = roundCoordinateOrSize(props.x) - width / 2
+    const y = roundCoordinateOrSize(props.y) - height / 2
 
     if (entityTypeChooserState.withConnecting) {
       const beginPoint = currentConnectionController.getBegin()
@@ -41,15 +41,27 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       const endX = endPoint.getX(beginPoint, entities)
       const endY = endPoint.getY(beginPoint, entities)
 
+      const yBottomBound = roundCoordinateOrSize((
+        beginPoint instanceof ConnectionAreaPoint ||
+        beginPoint instanceof EntityConnectionPoint) ?
+        entities.get(beginPoint.entityId).y + entities.get(beginPoint.entityId).height :
+        beginY)
+
+      const yTopBound = roundCoordinateOrSize((
+        beginPoint instanceof ConnectionAreaPoint ||
+        beginPoint instanceof EntityConnectionPoint) ?
+        entities.get(beginPoint.entityId).y :
+        beginY)
+
       const deltaX = (() => {
-        if (endX > beginX && ((beginY + height / 2 >= endY) && (beginY - height / 2 <= endY))) return width / 2
-        if (endX < beginX && ((beginY + height / 2 >= endY) && (beginY - height / 2 <= endY))) return -(width / 2)
+        if (endX > beginX && (endY > yTopBound && endY < yBottomBound)) return width / 2
+        if (endX < beginX && (endY > yTopBound && endY < yBottomBound)) return -(width / 2)
         return 0
       })()
 
       const deltaY = (() => {
-        if (beginY + height / 2 < endY) return height / 2
-        if (beginY - height / 2 > endY) return - height / 2
+        if (endY <= yTopBound) return - height / 2
+        if (endY >= yBottomBound) return height / 2
         return 0
       })()
 
