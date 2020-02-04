@@ -1,6 +1,3 @@
-//THIS MODULE IS AWFUl
-//IT SHOULD BE REWRITTEN (IT WON'T BE)
-
 import { ConnectionPathPoint } from '../ConnectionPathPoint'
 import { FreeConnectionPoint } from '../ConnectionPathPoint/FreeConnectionPoint'
 import { ConnectionDirection } from '../ConnectionDirection'
@@ -10,332 +7,152 @@ import { EntityConnectionPoint } from '../ConnectionPathPoint/EntityConnectionPo
 import { getEntityConnectionClosestPoint, getTheClosestConnectionAreaId } from '../../../utils/geometry'
 import { IntermediateConnectionPoint } from '../ConnectionPathPoint/IntermediateConnectionPoint'
 import { ConnectionArea } from '../ConnectionArea'
+import { ConnectionAreaContainer } from '../../../components/ConnectionAreaContainer'
 
-const getPointDirections = (
+const safeDistantion = 5
+
+interface Area {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface Segment {
+  point1: Point;
+  point2: Point;
+}
+
+const newArea = (x: number, y: number, width: number, height: number): Area => ({
+  left: x,
+  top: y,
+  right: x + width,
+  bottom: y + height
+})
+
+const newSegment = (point1: Point, point2: Point) => ({ point1, point2 })
+
+const newPoint = (x: number, y: number): Point => ({ x, y })
+
+const getRelatedImpassableArea = (
   point: ConnectionPathPoint,
   oppositePoint: ConnectionPathPoint,
   entities: Map<number, Entity>
-) => {
-  if (point instanceof FreeConnectionPoint) {
-    return [
-      ConnectionDirection.Top,
-      ConnectionDirection.Right,
-      ConnectionDirection.Bottom,
-      ConnectionDirection.Left,
-    ]
-  } else if (point instanceof ConnectionAreaPoint) {
+): Area => {
+  if (point instanceof FreeConnectionPoint || point instanceof IntermediateConnectionPoint) {
+    return newArea(point.getX(oppositePoint, entities), point.getY(oppositePoint, entities), 0, 0)
+  } else if (point instanceof ConnectionAreaPoint || point instanceof EntityConnectionPoint) {
     const relatedEntity = entities.get(point.entityId)
-    return relatedEntity.connectionAreaCreators[point.areaId](relatedEntity).directions
-  } else if (point instanceof EntityConnectionPoint) {
-    const relatedEntity = entities.get(point.entityId)
-    const closestPoint = getEntityConnectionClosestPoint(oppositePoint, relatedEntity, entities)
-    const closestAreaId = getTheClosestConnectionAreaId(oppositePoint, relatedEntity, entities)
-
-    if (closestPoint) {
-      return closestPoint.directions
-    } else {
-      return relatedEntity.connectionAreaCreators[closestAreaId](relatedEntity).directions
-    }
-  } else if (point instanceof IntermediateConnectionPoint) {
-    return [point.direction]
+    return newArea(relatedEntity.x, relatedEntity.y, relatedEntity.width, relatedEntity.height)
   }
 }
 
-const areCrossing = (
-  x1: number, y1: number, x2: number, y2: number,
-  x3: number, y3: number, x4: number, y4: number
-) => {
+const getMiddlePointInOneDimension = (begin1: number, end1: number, begin2: number, end2: number) => {
+  if (begin1 > end2) { return end2 + (begin1 - end2) / 2 }
+  if (begin2 > end1) { return end1 + (begin2 - end1) / 2 }
+  if (begin1 <= begin2 && end1 >= begin2 && end2 <= end2) { return begin2 + (end1 - begin2) / 2 }
+  if (begin1 >= begin2 && begin1 <= end2 && end1 >= end2) { return begin1 + (end2 - begin1) / 2 }
+  if (begin1 >= begin2 && end1 <= end2) { return begin1 + (end1 - begin1) / 2 }
+  if (begin1 <= begin2 && end1 >= end2) { return begin2 + (end2 - begin2) / 2 }
+}
+
+const getAreasMiddlePoint = (area1: Area, area2: Area): Point => ({
+  x: getMiddlePointInOneDimension(area1.left, area1.right, area2.left, area2.right),
+  y: getMiddlePointInOneDimension(area1.top, area1.bottom, area2.top, area2.bottom),
+})
+
+const getBorderArea = (area1: Area, area2: Area): Area => ({
+  left: Math.min(area1.left, area2.left) - safeDistantion,
+  top: Math.min(area1.top, area2.top) - safeDistantion,
+  right: Math.max(area1.top, area2.right) + safeDistantion,
+  bottom: Math.max(area1.bottom, area2.bottom) + safeDistantion
+})
+
+const areSegmentsCrossing = (segment1: Segment, segment2: Segment) => {
+  const x1 = segment1.point1.x
+  const y1 = segment1.point1.y
+  const x2 = segment1.point2.x
+  const y2 = segment1.point2.y
+
+  const x3 = segment2.point1.x
+  const y3 = segment2.point1.y
+  const x4 = segment2.point2.x
+  const y4 = segment2.point2.y
+
   const f = (x: number, y: number) => (x - x1) * (y2 - y1) - (y - y1) * (x2 - x1)
+
   const g = (x: number, y: number) => (x - x3) * (y4 - y3) - (y - y3) * (x4 - x3)
 
-  return f(x3, y3) * f(x4, y4) < 0 && g(x1, y1) * g(x2, y2) < 0
+  return (f(x3, y3) * f(x4, y4) < 0) && (g(x1, y1) * g(x2, y2) < 0)
 }
 
+const isSegmentCrossingArea = (segment: Segment, area: Area) => {
+  const topLeft = newPoint(area.left, area.top)
+  const topRight = newPoint(area.right, area.top)
+  const bottomRight = newPoint(area.right, area.bottom)
+  const bottomLeft = newPoint(area.left, area.bottom)
 
-const isWayClear = (
-  firstPoint: ConnectionPathPoint,
-  secondPoint: ConnectionPathPoint,
-  entities: Map<number, Entity>
-) => {
-  const firstX = firstPoint.getX(secondPoint, entities)
-  const firstY = firstPoint.getY(secondPoint, entities)
-  const secondX = secondPoint.getX(firstPoint, entities)
-  const secondY = secondPoint.getY(firstPoint, entities)
-
-  return !Array.from(entities.entries()).map(
-    (entrie) => {
-      const left = entrie[1].x
-      const right = entrie[1].x + entrie[1].width
-      const top = entrie[1].y
-      const bottom = entrie[1].y + entrie[1].height
-
-      return areCrossing(firstX, firstY, secondX, secondY, left, top, right, top) ||
-        areCrossing(firstX, firstY, secondX, secondY, right, top, right, bottom) ||
-        areCrossing(firstX, firstY, secondX, secondY, right, bottom, left, bottom) ||
-        areCrossing(firstX, firstY, secondX, secondY, left, bottom, left, top)
-    }
-  ).reduce((a, v) => a || v)
+  return areSegmentsCrossing(segment, newSegment(topLeft, topRight)) ||
+    areSegmentsCrossing(segment, newSegment(topRight, bottomRight)) ||
+    areSegmentsCrossing(segment, newSegment(bottomRight, bottomLeft)) ||
+    areSegmentsCrossing(segment, newSegment(bottomLeft, topLeft))
 }
 
-const getEntityCornerPoints = (entity: Entity) => [
-  { x: entity.x - 5, y: entity.y - 5 },
-  { x: entity.x + entity.width + 5, y: entity.y - 5 },
-  { x: entity.x + entity.width + 5, y: entity.height + entity.y + 5 },
-  { x: entity.x - 5, y: entity.height + entity.y + 5 },
-]
+const isWayClear = (srcPoint: Point, targetPoint: Point, impassableAreas: Array<Area>) => {
+  return !impassableAreas.map(
+    area => isSegmentCrossingArea(newSegment(srcPoint, targetPoint), area)
+  ).reduce((a, v) => a || v, false)
+}
 
-const getBypassIntermediatePoints = (
-  beginPoint: ConnectionPathPoint,
-  endPoint: ConnectionPathPoint,
-  entities: Map<number, Entity>
-) => {
-  const firstX = beginPoint.getX(endPoint, entities)
-  const firstY = beginPoint.getY(endPoint, entities)
-  const secondX = endPoint.getX(beginPoint, entities)
-  const secondY = endPoint.getY(beginPoint, entities)
+const getMiddleSegments = (middlePoint: Point, borderArea: Area, impassableAreas: Array<Area>) : Array<Segment> => {
+  const topPoint = newPoint(middlePoint.x, borderArea.top)
+  const rightPoint = newPoint(borderArea.right, middlePoint.y)
+  const bottomPoint = newPoint(middlePoint.x, borderArea.bottom)
+  const leftPoint = newPoint(borderArea.left, middlePoint.y)
 
-  const bypassBeginPoints = (() => {
-    if (beginPoint instanceof FreeConnectionPoint || beginPoint instanceof IntermediateConnectionPoint) {
-      return []
-    } else if (beginPoint instanceof ConnectionAreaPoint || beginPoint instanceof EntityConnectionPoint) {
-      return getEntityCornerPoints(entities.get(beginPoint.entityId))
-    }
-  })()
+  const topIsClear = isWayClear(middlePoint, topPoint, impassableAreas)
+  const rightIsClear = isWayClear(middlePoint, rightPoint, impassableAreas)
+  const bottomIsClear = isWayClear(middlePoint, bottomPoint, impassableAreas)
+  const leftIsClear = isWayClear(middlePoint, leftPoint, impassableAreas)
 
- const bypassEndPoints = (() => {
-    if (endPoint instanceof FreeConnectionPoint || endPoint instanceof IntermediateConnectionPoint) {
-      return []
-    } else if (endPoint instanceof ConnectionAreaPoint || endPoint instanceof EntityConnectionPoint) {
-      return getEntityCornerPoints(entities.get(endPoint.entityId))
-    }
-  })()
-
-  const points = [
-    { x: firstX, y: firstY },
-    ...bypassBeginPoints,
-    ...bypassEndPoints,
-    { x: secondX, y: secondY },
+  return [
+    ...(topIsClear ? [newSegment(middlePoint, topPoint)] : []),
+    ...(rightIsClear ? [newSegment(middlePoint, rightPoint)] : []),
+    ...(bottomIsClear ? [newSegment(middlePoint, bottomPoint)] : []),
+    ...(leftIsClear ? [newSegment(middlePoint, leftPoint)] : [])
   ]
+}
 
-  const pointsWithLength = points.map((point, index) => ({
-    length: (index === 0 ? 0 : 99999),
-    x: point.x,
-    y: point.y,
-  }))
+const getPointDirections = (point: ConnectionPathPoint, entities: Map<number, Entity>) => {
+  if (point instanceof FreeConnectionPoint || point instanceof IntermediateConnectionPoint) {
 
-  const getDistance = (p1: FreeConnectionPoint, p2: FreeConnectionPoint) => {
-    return Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)
-  }
-
-  const nextStep = (pwl: Array<{ length: number, x: number, y: number }>, remainSteps: number) : Array<{ length: number, x: number, y: number }> => {
-    if (remainSteps === 0) return pwl
-
-    const DEBUG = (point1: { x: number, y: number, length: number }, index1: number) => {
-      const RESULT = Math.min(...pwl.map((point2, index2) => {
-        if (index1 === index2) return point1.length
-
-        const c1 = new FreeConnectionPoint(point1.x, point1.y)
-        const c2 = new FreeConnectionPoint(point2.x, point2.y)
-
-        if (isWayClear(c1, c2, entities)) {
-          const distance = getDistance(c1, c2)
-
-          if (point2.length + distance < point1.length) {
-            return point2.length + distance
-          } else return point1.length
-        } else return point1.length
-
-      }))
-
-      return RESULT
-    }
-
-    const nextArray = pwl.map((point1, index1) => ({
-      length: DEBUG(point1, index1),
-      x: point1.x,
-      y: point1.y
-    }))
-
-    return nextStep(
-      nextArray,
-      remainSteps - 1,
-    )
-  }
-
-  const lengthedPoints = nextStep(pointsWithLength, 20)
-
-  const whereIsDeWay = (currentPoint: number, deWay: Array<IntermediateConnectionPoint>) : Array<IntermediateConnectionPoint>=> {
-    if (currentPoint === 0) return deWay
+  } else if (point instanceof ConnectionAreaPoint) {
+    const relatedEntity = entities.get(point.entityId)
+    relatedEntity.connectionAreaCreators[point.areaId](relatedEntity).directions
+  } else if (point instanceof EntityConnectionPoint) {
     
-    const mapp = lengthedPoints.map((point: any, index: any) => {
-      if (index === currentPoint) return 99999
-
-      const c1 = new FreeConnectionPoint(lengthedPoints[currentPoint].x, lengthedPoints[currentPoint].y)
-      const c2 = new FreeConnectionPoint(point.x, point.y)
-
-      if (isWayClear(c1, c2, entities)) {
-        return point.length + getDistance(c1, c2)
-      } else return 99999
-    })
-
-    const indexOfmin = mapp.indexOf(Math.min(...mapp))
-
-    return whereIsDeWay(indexOfmin, [...deWay, new IntermediateConnectionPoint(
-      lengthedPoints[indexOfmin].x,
-      lengthedPoints[indexOfmin].y,
-      false,
-      lengthedPoints[indexOfmin].y > lengthedPoints[currentPoint].y ?
-      ConnectionDirection.Bottom :
-      lengthedPoints[indexOfmin].y < lengthedPoints[currentPoint].y ?
-      ConnectionDirection.Top :
-      lengthedPoints[indexOfmin].x > lengthedPoints[currentPoint].x ?
-      ConnectionDirection.Right :
-      ConnectionDirection.Left,
-    )])
   }
-
-  const rrrr = whereIsDeWay(lengthedPoints.length - 1, [])
-
-
-  return rrrr.slice(0, rrrr.length - 1).reverse()
 }
 
 export const getIntermediatePoints = (
-  firstPoint: ConnectionPathPoint,
-  secondPoint: ConnectionPathPoint,
+  beginPoint: ConnectionPathPoint,
+  endPoint: ConnectionPathPoint,
   entities: Map<number, Entity>
-) => {
-  const firstPointDirections = getPointDirections(firstPoint, secondPoint, entities)
-  const secondPointDirections = getPointDirections(secondPoint, firstPoint, entities)
+): Array<IntermediateConnectionPoint> => {
+  const beginImpassableArea = getRelatedImpassableArea(beginPoint, endPoint, entities)
+  const endImpassabelArea = getRelatedImpassableArea(endPoint, beginPoint, entities)
 
-  const firstX = firstPoint.getX(secondPoint, entities)
-  const firstY = firstPoint.getY(secondPoint, entities)
-  const secondX = secondPoint.getX(firstPoint, entities)
-  const secondY = secondPoint.getY(firstPoint, entities)
+  const areasMiddlePoint = getAreasMiddlePoint(beginImpassableArea, endImpassabelArea)
+  const borderArea = getBorderArea(beginImpassableArea, endImpassabelArea)
 
-  const firstIsHorizontal = firstPointDirections.indexOf(ConnectionDirection.Right) >= 0 ||
-    firstPointDirections.indexOf(ConnectionDirection.Left) >= 0
+  const middleSegments = getMiddleSegments(areasMiddlePoint, borderArea, [beginImpassableArea, endImpassabelArea])
 
-  const firstIsVertical = firstPointDirections.indexOf(ConnectionDirection.Top) >= 0 ||
-    firstPointDirections.indexOf(ConnectionDirection.Bottom) >= 0
+  
 
-  const secondIsHorizontal = secondPointDirections.indexOf(ConnectionDirection.Right) >= 0 ||
-    secondPointDirections.indexOf(ConnectionDirection.Left) >= 0
-
-  const secondIsVertical = secondPointDirections.indexOf(ConnectionDirection.Top) >= 0 ||
-    secondPointDirections.indexOf(ConnectionDirection.Bottom) >= 0
-
-  if (!isWayClear(firstPoint, secondPoint, entities)) {
-
-    const bypass = getBypassIntermediatePoints(firstPoint, secondPoint, entities)
-
-    const preBypass = new IntermediateConnectionPoint(
-      firstPointDirections.indexOf(ConnectionDirection.Left) >= 0 ?
-      firstX - 5 : 
-      firstPointDirections.indexOf(ConnectionDirection.Right) >= 0 ?
-      firstX + 5 :
-      firstX,
-      firstPointDirections.indexOf(ConnectionDirection.Top) >= 0 ?
-      firstY - 5 : 
-      firstPointDirections.indexOf(ConnectionDirection.Bottom) >= 0 ?
-      firstY + 5 :
-      firstY,
-      false,
-      firstPointDirections[0]
-    )
-
-    const postBypass = new IntermediateConnectionPoint(
-      secondPointDirections.indexOf(ConnectionDirection.Left) >= 0 ?
-      secondX - 5 : 
-      secondPointDirections.indexOf(ConnectionDirection.Right) >= 0 ?
-      secondX + 5 :
-      secondX,
-      secondPointDirections.indexOf(ConnectionDirection.Top) >= 0 ?
-      secondY - 5 : 
-      secondPointDirections.indexOf(ConnectionDirection.Bottom) >= 0 ?
-      secondY + 5 :
-      secondY,
-      false,
-      secondPointDirections[0]
-    )
-
-    const preFull = [
-      preBypass,
-      ...bypass,
-      postBypass
-    ]
-
-    const turnIndex = (() => {
-      let result = -1
-      preFull.forEach((v, i) => {
-
-        if (i < preFull.length - 1) {
-          if (Math.abs((preFull[i].x - preFull[i + 1].x) * (preFull[i].y - preFull[i + 1].y)) > 0.01) {
-            result = i
-          }
-        }
-      })
-      return result
-    })()
-
-    if (turnIndex < 0 )
-    {
-      return preFull
-    } else {
-      const p1 = preFull.slice(0, turnIndex + 1)
-      const p3 = preFull.slice(turnIndex + 1, preFull.length)
-     const p2 : any = getIntermediatePoints(preFull[turnIndex], preFull[turnIndex + 1], entities)
-      return [
-        preBypass,
-        ...p1, 
-        ...p2, 
-        ...p3,
-        postBypass
-      ]
-    }
-
-  }
-
-  const condition = (
-    (firstPointDirections.indexOf(ConnectionDirection.Right) >= 0 && secondPointDirections.indexOf(ConnectionDirection.Left) >= 0) ||
-    (firstPointDirections.indexOf(ConnectionDirection.Left) >= 0 && secondPointDirections.indexOf(ConnectionDirection.Right) >= 0) ||
-    (firstPointDirections.indexOf(ConnectionDirection.Top) >= 0 && secondPointDirections.indexOf(ConnectionDirection.Bottom) >= 0) ||
-    (firstPointDirections.indexOf(ConnectionDirection.Bottom) >= 0 && secondPointDirections.indexOf(ConnectionDirection.Top) >= 0)
-  )
-
-  if (condition) {
-    if (firstIsHorizontal) {
-      return [
-        new IntermediateConnectionPoint(firstX + (secondX - firstX) / 2, firstY, false,
-          secondX > firstX ? ConnectionDirection.Right : ConnectionDirection.Left
-        ),
-        new IntermediateConnectionPoint(firstX + (secondX - firstX) / 2, secondY, false,
-          secondY > firstY ? ConnectionDirection.Bottom : ConnectionDirection.Top
-        )
-      ]
-    } else {
-      return [
-        new IntermediateConnectionPoint(firstX, firstY + (secondY - firstY) / 2, false,
-          secondY > firstY ? ConnectionDirection.Bottom : ConnectionDirection.Top
-        ),
-        new IntermediateConnectionPoint(secondX, firstY + (secondY - firstY) / 2, false,
-          secondX > firstX ? ConnectionDirection.Right : ConnectionDirection.Left
-        )
-      ]
-    }
-  } else {
-    if (firstIsHorizontal) {
-      return [
-        new IntermediateConnectionPoint(secondX, firstY, false,
-          secondX > firstX ? ConnectionDirection.Right : ConnectionDirection.Left
-        )
-      ]
-    } else {
-      return [
-        new IntermediateConnectionPoint(firstX, secondY, false,
-          secondY > firstY ? ConnectionDirection.Bottom : ConnectionDirection.Top
-        )
-      ]
-    }
-  }
+  return []
 }
