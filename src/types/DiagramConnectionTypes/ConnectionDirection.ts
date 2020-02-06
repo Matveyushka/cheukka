@@ -1,6 +1,6 @@
 export enum ConnectionDirection {
   Top,
-  Bottom,
   Right,
+  Bottom,
   Left,
 }

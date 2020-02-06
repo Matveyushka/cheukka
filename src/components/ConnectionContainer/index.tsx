@@ -50,7 +50,9 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
 
   return (
     <>
-      <ConnectionPath points={pathPoints} width={1} color='black' dashed={false} />
+      {
+        true && <ConnectionPath points={pathPoints} width={1} color='black' dashed={false} />
+      }
       {
         <g transform={`rotate(${getSegmentAngle(
           penultX,
@@ -65,7 +67,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
         <ConnectionPath points={pathPoints} width={4} color='red' dashed={true} />
       }
       {
-        false && props.connection.intermediatePoints.map((point, index) => (
+        true && props.connection.intermediatePoints.map((point, index) => (
           <circle
             key={index}
             cx={point.getX(null, entities) * scale}
