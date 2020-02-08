@@ -1,9 +1,5 @@
 import * as React from 'react'
-
-interface Point {
-  x: number;
-  y: number;
-}
+import { Point } from '../../types/geometry'
 
 export interface ConnectionPathProps {
   points: Array<Point>;

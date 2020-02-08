@@ -37,7 +37,8 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
 
   const {
     onMouseEnterHandler,
-    onMouseLeaveHandler
+    onMouseLeaveHandler,
+    onMouseDown
   } = useConnectionHandlers(props.connectionId)
 
   const penultX = props.connection.intermediatePoints.length > 0 ?
@@ -72,7 +73,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
             key={index}
             cx={point.getX(null, entities) * scale}
             cy={point.getY(null, entities) * scale}
-            r={3}
+            r={2}
             fill='black'
           />
         ))
@@ -81,6 +82,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
         onMouseEnter={onMouseEnterHandler}
         onMouseMove={onMouseEnterHandler}
         onMouseLeave={onMouseLeaveHandler}
+        onMouseDown={onMouseDown}
       >
         <ConnectionPath points={pathPoints} width={25} color='transparent' dashed={false} />
       </g>

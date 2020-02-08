@@ -1,15 +1,17 @@
 import { ConnectionPathPoint, Entity, ConnectionAreaPoint, FreeConnectionPoint, EntityConnectionPoint, Connection, ConnectionPoint } from '../types'
 import { getTheClosestAreaPointPosition } from '.'
 import { ConnectionDirection } from '../types'
-
-interface Point {
-  x: number;
-  y: number;
-}
+import { Point } from '../types/geometry'
+import { IntermediateConnectionPoint } from '../types/DiagramConnectionTypes/ConnectionPathPoint/IntermediateConnectionPoint'
 
 export const getTheClosestSegmentPointToFreePoint = (freePoint: Point, segmentBegin: Point, segmentEnd: Point) => {
   const p1 = segmentBegin
   const p2 = segmentEnd
+
+  if (p1.x === p2.x && p1.y === p2.y) {
+    return { x: p1.x, y: p1.y }
+  }
+
   const xc1 = p1.y - p2.y
   const yc1 = p2.x - p1.x
   const fc1 = p1.x * p2.y - p2.x * p1.y
@@ -55,7 +57,7 @@ export const getSegmentAngle = (beginX: number, beginY: number, endX: number, en
 }
 
 export const getConnectionPointCoordinates = (point: ConnectionPathPoint, entities: Map<number, Entity>) => {
-  if (point instanceof FreeConnectionPoint) {
+  if (point instanceof FreeConnectionPoint || point instanceof IntermediateConnectionPoint) {
     return [point.x, point.y]
   } else if (point instanceof ConnectionAreaPoint) {
     const srcEntity = entities.get(point.entityId)
@@ -187,4 +189,8 @@ export const getEntityConnectionPosition = (
       oppositePoint, targetEntity, entities,
     )
   }
+}
+
+export const getPointsDistance = (point1: Point, point2: Point) => {
+  return Math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2)
 }
