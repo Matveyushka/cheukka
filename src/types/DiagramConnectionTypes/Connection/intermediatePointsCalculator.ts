@@ -32,9 +32,9 @@ const getRelatedImpassableArea = (
   point: ConnectionPathPoint,
   oppositePoint: ConnectionPathPoint,
   entities: Map<number, Entity>
-): Area => {
+): Area | null => {
   if (point instanceof FreeConnectionPoint || point instanceof IntermediateConnectionPoint) {
-    return newArea(point.getX(oppositePoint, entities), point.getY(oppositePoint, entities), 0, 0)
+    return newArea(point.x, point.y, 0, 0)
   } else if (point instanceof ConnectionAreaPoint || point instanceof EntityConnectionPoint) {
     const relatedEntity = entities.get(point.entityId)
     return newArea(
@@ -61,10 +61,10 @@ const getAreasMiddlePoint = (area1: Area, area2: Area): Point => ({
 })
 
 const getBorderArea = (area1: Area, area2: Area): Area => ({
-  left: Math.min(area1.left, area2.left),
-  top: Math.min(area1.top, area2.top),
-  right: Math.max(area1.right, area2.right),
-  bottom: Math.max(area1.bottom, area2.bottom)
+  left: Math.min(area1.left, area2.left) - 0.001,
+  top: Math.min(area1.top, area2.top) - 0.001,
+  right: Math.max(area1.right, area2.right) + 0.001,
+  bottom: Math.max(area1.bottom, area2.bottom) + 0.001
 })
 
 const areSegmentsCrossing = (segment1: Segment, segment2: Segment) => {
@@ -242,15 +242,15 @@ const getTerminalIntermediatePoint = (point: ConnectionPathPoint,
 
   const deltaX = (() => {
     if (possibleDirections.length > 1) return 0
-    if (possibleDirections.indexOf(ConnectionDirection.Right) >= 0) return safeDistantion
-    else if (possibleDirections.indexOf(ConnectionDirection.Left) >= 0) return -safeDistantion
+    if (possibleDirections.indexOf(ConnectionDirection.Right) >= 0) return safeDistantion + 0.001
+    else if (possibleDirections.indexOf(ConnectionDirection.Left) >= 0) return -safeDistantion - 0.001
     else return 0
   })()
 
   const deltaY = (() => {
     if (possibleDirections.length > 1) return 0
-    if (possibleDirections.indexOf(ConnectionDirection.Bottom) >= 0) return safeDistantion
-    else if (possibleDirections.indexOf(ConnectionDirection.Top) >= 0) return -safeDistantion
+    if (possibleDirections.indexOf(ConnectionDirection.Bottom) >= 0) return safeDistantion + 0.001
+    else if (possibleDirections.indexOf(ConnectionDirection.Top) >= 0) return -safeDistantion - 0.001
     else return 0
   })()
 
@@ -328,7 +328,7 @@ const calculateMapPoints = (currentMapPoints: Array<MapPoint>, remainSteps: numb
 
 const isWayValid = (way: Array<Point>) => {
   return !way.map(
-    (point, index) => index !== way.length - 1 ? (Math.abs(point.x - way[index + 1].x) > 0.001 && Math.abs(point.y - way[index + 1].y) > 0.001) : false
+    (point, index) => index !== way.length - 1 ? (Math.abs(point.x - way[index + 1].x) > 0.01 && Math.abs(point.y - way[index + 1].y) > 0.01) : false
   ).reduce(
     (a, v) => a || v
   )
@@ -366,7 +366,7 @@ const arePointsStraight = (point1: Point, point2: Point, point3: Point) => {
 
   const b = (x2 - x3) / (y2 - y3)
 
-  return (a - b < precision) && ( (x1 - x2) * (x2 - x3) >= precision ) && ( (y1 - y2) * (y2 - y3) >= precision ) 
+  return (a - b < precision) && ((x1 - x2) * (x2 - x3) >= precision) && ((y1 - y2) * (y2 - y3) >= precision)
 }
 
 const getWayTurnsAmount = (way: Array<Point>): number => {
@@ -391,29 +391,29 @@ const getAreaBorderLines = (
   borderArea: Area,
   impassableAreas: Array<Area>) => {
 
-  const topLeft = newPoint(area.left, area.top)
-  const topRight = newPoint(area.right, area.top)
-  const bottomRight = newPoint(area.right, area.bottom)
-  const bottomLeft = newPoint(area.left, area.bottom)
+  const topLeft = newPoint(area.left - 0.001, area.top - 0.001)
+  const topRight = newPoint(area.right + 0.001, area.top - 0.001)
+  const bottomRight = newPoint(area.right + 0.001, area.bottom + 0.001)
+  const bottomLeft = newPoint(area.left - 0.001, area.bottom + 0.001)
 
   const topLine = newSegment(
-    getEndWayPoint(topRight, newPoint(borderArea.left, area.top), impassableAreas),
-    getEndWayPoint(topLeft, newPoint(borderArea.right, area.top), impassableAreas)
+    getEndWayPoint(topRight, newPoint(borderArea.left, area.top - 0.001), impassableAreas),
+    getEndWayPoint(topLeft, newPoint(borderArea.right, area.top - 0.001), impassableAreas)
   )
 
   const rightLine = newSegment(
-    getEndWayPoint(bottomRight, newPoint(area.right, borderArea.top), impassableAreas),
-    getEndWayPoint(topRight, newPoint(area.right, borderArea.bottom), impassableAreas)
+    getEndWayPoint(bottomRight, newPoint(area.right + 0.001, borderArea.top), impassableAreas),
+    getEndWayPoint(topRight, newPoint(area.right + 0.001, borderArea.bottom), impassableAreas)
   )
 
   const bottomLine = newSegment(
-    getEndWayPoint(bottomLeft, newPoint(borderArea.right, area.bottom), impassableAreas),
-    getEndWayPoint(bottomRight, newPoint(borderArea.left, area.bottom), impassableAreas)
+    getEndWayPoint(bottomLeft, newPoint(borderArea.right, area.bottom + 0.001), impassableAreas),
+    getEndWayPoint(bottomRight, newPoint(borderArea.left, area.bottom + 0.001), impassableAreas)
   )
 
   const leftLine = newSegment(
-    getEndWayPoint(topLeft, newPoint(area.left, borderArea.bottom), impassableAreas),
-    getEndWayPoint(bottomLeft, newPoint(area.left, borderArea.top), impassableAreas)
+    getEndWayPoint(topLeft, newPoint(area.left - 0.001, borderArea.bottom), impassableAreas),
+    getEndWayPoint(bottomLeft, newPoint(area.left - 0.001, borderArea.top), impassableAreas)
   )
 
   return [
@@ -424,15 +424,24 @@ const getAreaBorderLines = (
   ]
 }
 
-const getFirstBorderLine = (beginLine: Segment, borderLines: Array<Segment>) : Segment => {
+const getFirstBorderLine = (beginLine: Segment, borderLines: Array<Segment>): Segment => {
   return borderLines.reduce((a, v) => {
     if (getVerticcalHorizontalSegmentsIntersection(v, beginLine)) return v
     return a
   })
 }
 
-const getSecondBorderLines = (firstBorderLine: Segment, borderLines: Array<Segment>) : Array<Segment> => {
-  return borderLines.filter(line => getVerticcalHorizontalSegmentsIntersection(line, firstBorderLine) !== null)
+const getSecondBorderLines = (firstBorderLine: Segment, borderLines: Array<Segment>): Array<Segment> => {
+  return borderLines.filter(line =>
+    (getVerticcalHorizontalSegmentsIntersection(line, firstBorderLine) !== null &&
+      (
+        firstBorderLine.point1.x !== line.point1.x ||
+        firstBorderLine.point1.y !== line.point1.y ||
+        firstBorderLine.point2.x !== line.point2.x ||
+        firstBorderLine.point2.y !== line.point2.y
+      )
+    )
+  )
 }
 
 export const getIntermediatePoints = (
@@ -446,137 +455,161 @@ export const getIntermediatePoints = (
   const beginImpassableArea = getRelatedImpassableArea(beginPoint, endPoint, entities)
   const endImpassabelArea = getRelatedImpassableArea(endPoint, beginPoint, entities)
 
+  const impassableAreas = [beginImpassableArea, endImpassabelArea].filter(area => area !== null)
+
   const areasMiddlePoint = getAreasMiddlePoint(beginImpassableArea, endImpassabelArea)
   const borderArea = getBorderArea(beginImpassableArea, endImpassabelArea)
 
   const beginTerminalPoint = getTerminalIntermediatePoint(beginPoint, endPoint, entities)
   const endTerminalPoint = getTerminalIntermediatePoint(endPoint, beginPoint, entities)
 
-  const beginSegment = getDirectionSegment(beginPoint, endPoint, entities, borderArea, [beginImpassableArea, endImpassabelArea])
-  const endSegment = getDirectionSegment(endPoint, beginPoint, entities, borderArea, [beginImpassableArea, endImpassabelArea])
-  const middleSegments = getExitSegments(areasMiddlePoint, borderArea, [beginImpassableArea, endImpassabelArea], true)
-  const beginAreaBorderLines = getAreaBorderLines(beginImpassableArea, borderArea, [beginImpassableArea, endImpassabelArea])
-  const endAreaBorderLines = getAreaBorderLines(endImpassabelArea, borderArea, [beginImpassableArea, endImpassabelArea])
+  const beginSegment = getDirectionSegment(beginPoint, endPoint, entities, borderArea, impassableAreas)
+  const endSegment = getDirectionSegment(endPoint, beginPoint, entities, borderArea, impassableAreas)
+  const middleSegments = getExitSegments(areasMiddlePoint, borderArea, impassableAreas, true)
+  const beginAreaBorderLines = getAreaBorderLines(beginImpassableArea, borderArea, impassableAreas)
+  const endAreaBorderLines = getAreaBorderLines(endImpassabelArea, borderArea, impassableAreas)
+  const beginFirstBorderLine = getFirstBorderLine(beginSegment, beginAreaBorderLines)
+  const beginSecondBorderLines = getSecondBorderLines(beginFirstBorderLine, beginAreaBorderLines)
+  const endFirstBorderLine = getFirstBorderLine(endSegment, endAreaBorderLines)
+  const endSecondBorderLines = getSecondBorderLines(endFirstBorderLine, endAreaBorderLines)
+
+  //return pointsToIntermediatePoints(getSegmentsEndPoints(endAreaBorderLines))
 
   let possibleWays: Array<Array<Point>> = []
 
   const addWay = (way: Array<Point>) => {
-    possibleWays.push([
-      beginTerminalPoint,
-      ...way,
-      endTerminalPoint
-    ])
+    for (const pt of way) {
+      if (pt === null || pt === undefined) return
+    }
+
+    const wayIsClear = (() => {
+      if (way.length === 0) {
+        return isWayClear(beginTerminalPoint, endTerminalPoint, impassableAreas)
+      }
+      const begin = isWayClear(beginTerminalPoint, way[0], impassableAreas)
+
+      const end = isWayClear(endTerminalPoint, way[way.length - 1], impassableAreas)
+
+      const wayClear = way.map((v, i) => i === way.length - 1 ? true : isWayClear(v, way[i + 1], impassableAreas))
+        .reduce((a, v) => a && v)
+
+      return begin && end && wayClear
+    })()
+
+    if (wayIsClear) {
+      possibleWays.push([
+        beginTerminalPoint,
+        ...way,
+        endTerminalPoint
+      ])
+    }
   }
 
-  if (isWayClear(beginXYPoint, endXYPoint, [beginImpassableArea, endImpassabelArea])) {
-    return []
-  }
+  if (isWayClear(beginXYPoint, endXYPoint, impassableAreas)) return []
 
   const beginEndIntersection = getVerticcalHorizontalSegmentsIntersection(beginSegment, endSegment)
 
-  if (beginEndIntersection !== null) {
-    addWay([beginEndIntersection])
-  }
+  addWay([beginEndIntersection])
+
+  endAreaBorderLines.forEach(line => {
+    addWay([getVerticcalHorizontalSegmentsIntersection(line, beginSegment)])
+  })
 
   const beginMiddleIntersections = getIntersections([beginSegment], middleSegments)
   const endMiddleIntersections = getIntersections([endSegment], middleSegments)
 
-  if (beginMiddleIntersections.length > 0 && endMiddleIntersections.length > 0) {
+  addWay([
+    beginMiddleIntersections[0],
+    endMiddleIntersections[0],
+  ])
+
+  const beginFirstMiddleIntersections = getIntersections([beginFirstBorderLine], middleSegments)
+  
+  const endFirstMiddleIntersections = getIntersections([endFirstBorderLine], middleSegments)
+
+  const beginSegmentEndFirstI = getVerticcalHorizontalSegmentsIntersection(beginSegment, endFirstBorderLine)
+
+  const beginFirstEndSegmentI = getVerticcalHorizontalSegmentsIntersection(beginFirstBorderLine, endSegment)
+
+  const beginFirstEndFirstI = getVerticcalHorizontalSegmentsIntersection(beginFirstBorderLine, endFirstBorderLine)
+
+  addWay([
+    beginFirstMiddleIntersections[0],
+    endMiddleIntersections[0]
+  ])
+
+  addWay([
+    beginFirstMiddleIntersections[0],
+    endFirstMiddleIntersections[0]
+  ])
+
+  addWay([
+    beginMiddleIntersections[0],
+    endFirstMiddleIntersections[0]
+  ])
+
+  addWay([
+    beginMiddleIntersections[0],
+    endFirstMiddleIntersections[0]
+  ])
+
+  addWay([
+    beginSegmentEndFirstI
+  ])
+
+  addWay([
+    beginFirstEndSegmentI
+  ])
+
+  addWay([
+    beginFirstEndFirstI
+  ])
+
+  beginSecondBorderLines.forEach(line => {
+    const beginFirstLineI = getVerticcalHorizontalSegmentsIntersection(line, beginFirstBorderLine)
+    const middleLineIs = getIntersections(middleSegments, [line])
+    const endSegmentLineI = getVerticcalHorizontalSegmentsIntersection(endSegment, line)
+    const endFirstLineI = getVerticcalHorizontalSegmentsIntersection(endFirstBorderLine, line)
+
+    addWay([
+      beginFirstLineI,
+      endSegmentLineI
+    ])
+
+    addWay([
+      beginFirstLineI,
+      endSegmentLineI
+    ])
+
+    addWay([
+      beginFirstLineI,
+      middleLineIs[0],
+      endMiddleIntersections[0]
+    ])
+
+    addWay([
+      beginFirstLineI,
+      endFirstLineI
+    ])
+  })
+
+  endSecondBorderLines.forEach(line => {
+    const beginFirstLineI = getVerticcalHorizontalSegmentsIntersection(line, beginFirstBorderLine)
+    const endFirstLineI = getVerticcalHorizontalSegmentsIntersection(line, endFirstBorderLine)
+    const middleLineIs = getIntersections(middleSegments, [line])
+
     addWay([
       beginMiddleIntersections[0],
-      endMiddleIntersections[0],
+      middleLineIs[0],
+      endFirstLineI
     ])
-  }
 
-  const beginLine1 = beginAreaBorderLines.reduce((a,v) => {
-    if (getVerticcalHorizontalSegmentsIntersection(v, beginSegment)) return v
-    return null
+    addWay([
+      beginFirstMiddleIntersections[0],
+      middleLineIs[0],
+      endFirstLineI
+    ])
   })
-
-  /////////
-  //BEGIN//
-  /////////
-
-  beginAreaBorderLines.forEach((line1, index1) => {
-    const beginLineIntersection = getVerticcalHorizontalSegmentsIntersection(beginSegment, line1)
-    const endLineIntersection = getVerticcalHorizontalSegmentsIntersection(endSegment, line1)
-    const lineMiddleIntersections = getIntersections([line1], middleSegments)
-    const endMiddleIntersections = getIntersections(middleSegments, [endSegment])
-
-    if (beginLineIntersection !== null && lineMiddleIntersections.length > 0 && endMiddleIntersections.length > 0) {
-      addWay([
-        beginLineIntersection,
-        lineMiddleIntersections[0],
-        endMiddleIntersections[0]
-      ])
-    }
-
-    if (beginLineIntersection !== null && endLineIntersection !== null) {
-      addWay([
-        beginLineIntersection,
-        endLineIntersection
-      ])
-    }
-    
-    endAreaBorderLines.forEach((line2, index2) => {
-      const endLineIntersection = getVerticcalHorizontalSegmentsIntersection(endSegment, line2)
-      const linesIntersection = getVerticcalHorizontalSegmentsIntersection(line1, line2)
-
-      if (beginLineIntersection !== null && linesIntersection !== null && endLineIntersection !== null) {
-        addWay([
-          linesIntersection
-        ])
-      }
-
-      const endLineMiddleIntersections = getIntersections(middleSegments, [line2])
-
-      if (lineMiddleIntersections.length > 0 && endLineMiddleIntersections.length > 0) {
-        addWay([
-          lineMiddleIntersections[0],
-          endLineMiddleIntersections[0]
-        ])
-      } 
-    })
-  }) 
-
-  ///////
-  //END//
-  ///////
-
-  endAreaBorderLines.forEach((line, index) => {
-    const beginLineIntersection = getVerticcalHorizontalSegmentsIntersection(beginSegment, line)
-
-    const beginMiddleIntersections = getIntersections(middleSegments, [beginSegment])
-
-    const endLineIntersection = getVerticcalHorizontalSegmentsIntersection(endSegment, line)
-    const lineMiddleIntersections = getIntersections([line], middleSegments)
-
-    if (beginMiddleIntersections.length > 0 && lineMiddleIntersections.length > 0 && endLineIntersection !== null) {
-      addWay([
-        beginMiddleIntersections[0],
-        lineMiddleIntersections[0],
-        endLineIntersection
-      ])
-    }
-
-    if (beginLineIntersection !== null && endSegment === null) {
-      addWay([
-        beginLineIntersection
-      ])
-    }
-
-    if (beginLineIntersection !== null && endLineIntersection !== null) {
-      addWay([
-        beginLineIntersection,
-        endLineIntersection
-      ])
-    }
-  })
-
-
-  console.log('----')
-  console.log(endSegment)
-  console.log(possibleWays)
 
   const ppWays = possibleWays.map(way => [
     beginXYPoint,
@@ -584,15 +617,9 @@ export const getIntermediatePoints = (
     endXYPoint,
   ]).filter(way => isWayValid(way))
 
-  console.log(ppWays)
-
   const shortWays = getShortestWays(ppWays)
 
-  console.log(shortWays)
-
   const straightWays = getStraightestWays(shortWays)
-
-  console.log(straightWays)
 
   if (straightWays.length === 0) {
     return []
@@ -613,8 +640,6 @@ export const getIntermediatePoints = (
   ) {
     result.pop()
   }
-
-
 
   return result
 }
