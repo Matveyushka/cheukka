@@ -48,8 +48,8 @@ export const useConnectionHandlers = (connectionId: number) => {
     intermediatePoints[theClosestSegmentPointsId[1]].y
 
     const moved = (() => {
-      if (firstPointX === lastPointX) { return {movedX: true, movedY: false} }
-      if (firstPointY === lastPointY) { return {movedX: false, movedY: true} } 
+      if (Math.abs(firstPointX - lastPointX) < 0.01) { return {movedX: true, movedY: false} }
+      if (Math.abs(firstPointY - lastPointY) < 0.01) { return {movedX: false, movedY: true} } 
       return { movedX: true, movedY: true }
     })()
 

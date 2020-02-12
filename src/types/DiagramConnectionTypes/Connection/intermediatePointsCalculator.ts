@@ -505,7 +505,7 @@ export const getIntermediatePoints = (
     }
   }
 
-  if (isWayClear(beginXYPoint, endXYPoint, impassableAreas)) return []
+  if (isWayClear(beginXYPoint, endXYPoint, impassableAreas) && isWayValid([beginXYPoint, endXYPoint])) return []
 
   const beginEndIntersection = getVerticcalHorizontalSegmentsIntersection(beginSegment, endSegment)
 
@@ -622,7 +622,9 @@ export const getIntermediatePoints = (
   const straightWays = getStraightestWays(shortWays)
 
   if (straightWays.length === 0) {
-    return []
+    return [
+      new IntermediateConnectionPoint(endXYPoint.x, beginXYPoint.y, false)
+    ]
   }
 
   let result = (straightWays[0]).map((point, index, srcArray) => {
