@@ -39,8 +39,12 @@ export const getScalePercent = (scaleStep: number) => {
   return Math.round(getScale(scaleStep) / getScale(START_SCALE) * 100) + '%'
 }
 
-export const roundCoordinateOrSize = (value: number) => {
+export const roundEntityCoordinateOrSize = (value: number) => {
   return Math.round(value / (DEFAULT_CANVAS_WIDTH / 100)) * (DEFAULT_CANVAS_WIDTH / 100)
+}
+
+export const roundConnectionCoordinateOrSize = (value: number) => {
+  return Math.round(value / (DEFAULT_CANVAS_WIDTH / 200)) * (DEFAULT_CANVAS_WIDTH / 200)
 }
 
 export const isPointInRectangle = (

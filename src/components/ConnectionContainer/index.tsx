@@ -4,7 +4,7 @@ import {
 } from '../../types'
 import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../stores'
-import { getScale } from '../../utils'
+import { getScale, roundConnectionCoordinateOrSize } from '../../utils'
 import { ConnectionPath } from './ConnectionPath'
 import { connectionTypeArrows } from '../../constants/dictionaries/connectionTypeArrows'
 import { getSegmentAngle } from '../../utils/geometry'
@@ -27,12 +27,14 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   props.connection.calculateIntermediatePoints(entities, props.connection)
 
   const pathPoints = [
-    { x: beginX * scale, y: beginY * scale },
+    { x: roundConnectionCoordinateOrSize(beginX) * scale, 
+      y: roundConnectionCoordinateOrSize(beginY) * scale },
     ...props.connection.intermediatePoints.map(point => ({
-      x: point.getX(props.connection.begin, entities) * scale,
-      y: point.getY(props.connection.begin, entities) * scale
+      x: roundConnectionCoordinateOrSize(point.getX(props.connection.begin, entities)) * scale,
+      y: roundConnectionCoordinateOrSize(point.getY(props.connection.begin, entities)) * scale
     })),
-    { x: endX * scale, y: endY * scale }
+    { x: roundConnectionCoordinateOrSize(endX) * scale, 
+      y: roundConnectionCoordinateOrSize(endY) * scale }
   ]
 
   const {
@@ -59,8 +61,9 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
           penultX,
           penultY,
           endX,
-          endY)} ${endX * scale} ${endY * scale})`}>
-          {connectionTypeArrows.get(props.connection.type)(endX, endY, scale)}
+          endY)} ${roundConnectionCoordinateOrSize(endX) * scale} ${roundConnectionCoordinateOrSize(endY) * scale})`}>
+          {connectionTypeArrows.get(props.connection.type)(
+            roundConnectionCoordinateOrSize(endX), roundConnectionCoordinateOrSize(endY), scale)}
         </g>
       }
       {
@@ -71,8 +74,8 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
         true && props.connection.intermediatePoints.map((point, index) => (
           <circle
             key={index}
-            cx={point.getX(null, entities) * scale}
-            cy={point.getY(null, entities) * scale}
+            cx={roundConnectionCoordinateOrSize(point.getX(null, entities)) * scale}
+            cy={roundConnectionCoordinateOrSize(point.getY(null, entities)) * scale}
             r={2}
             fill='black'
           />

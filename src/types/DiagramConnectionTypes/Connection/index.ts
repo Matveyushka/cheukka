@@ -22,7 +22,7 @@ export class Connection {
   intermediatePoints: Array<IntermediateConnectionPoint> = []
 
   calculateIntermediatePoints = (entities: Map<number, Entity>, thisConnection: Connection) => {
-    ///thisConnection.intermediatePoints = getIntermediatePoints(thisConnection.begin, thisConnection.end, entities)
+    //thisConnection.intermediatePoints = getIntermediatePoints(thisConnection.begin, thisConnection.end, entities)
     thisConnection.intermediatePoints = getIntermediateWay(thisConnection, [], thisConnection.begin, 0, entities)
   }
 }

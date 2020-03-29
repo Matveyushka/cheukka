@@ -511,10 +511,6 @@ export const getIntermediatePoints = (
 
   addWay([beginEndIntersection])
 
-  endAreaBorderLines.forEach(line => {
-    addWay([getVerticcalHorizontalSegmentsIntersection(line, beginSegment)])
-  })
-
   const beginMiddleIntersections = getIntersections([beginSegment], middleSegments)
   const endMiddleIntersections = getIntersections([endSegment], middleSegments)
 
@@ -532,6 +528,8 @@ export const getIntermediatePoints = (
   const beginFirstEndSegmentI = getVerticcalHorizontalSegmentsIntersection(beginFirstBorderLine, endSegment)
 
   const beginFirstEndFirstI = getVerticcalHorizontalSegmentsIntersection(beginFirstBorderLine, endFirstBorderLine)
+
+
 
   addWay([
     beginFirstMiddleIntersections[0],
@@ -594,7 +592,6 @@ export const getIntermediatePoints = (
   })
 
   endSecondBorderLines.forEach(line => {
-    const beginFirstLineI = getVerticcalHorizontalSegmentsIntersection(line, beginFirstBorderLine)
     const endFirstLineI = getVerticcalHorizontalSegmentsIntersection(line, endFirstBorderLine)
     const middleLineIs = getIntersections(middleSegments, [line])
 
@@ -611,6 +608,10 @@ export const getIntermediatePoints = (
     ])
   })
 
+  endAreaBorderLines.forEach(line => {
+    addWay([getVerticcalHorizontalSegmentsIntersection(line, beginSegment)])
+  })
+
   const ppWays = possibleWays.map(way => [
     beginXYPoint,
     ...way,
@@ -618,7 +619,7 @@ export const getIntermediatePoints = (
   ]).filter(way => isWayValid(way))
 
   const shortWays = getShortestWays(ppWays)
-
+  
   const straightWays = getStraightestWays(shortWays)
 
   if (straightWays.length === 0) {

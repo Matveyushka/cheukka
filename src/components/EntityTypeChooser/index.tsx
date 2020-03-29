@@ -4,7 +4,7 @@ import { entityCreators } from '../../types/DiagramEntityTypes/EntityType'
 import { useDispatch, useSelector } from 'react-redux'
 import { addEntity, setConnectionTypeChooserState } from '../../actions'
 import { DEFAULT_CANVAS_WIDTH } from '../../constants'
-import { getScale, roundCoordinateOrSize } from '../../utils'
+import { getScale, roundEntityCoordinateOrSize } from '../../utils'
 import { Store } from '../../stores'
 import { getSegmentAngle } from '../../utils/geometry'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
@@ -27,10 +27,10 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
   const entityTypeChooserController = useEntityTypeChooserController()
 
   const onChoose = (type: EntityType) => {
-    const width = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10)
-    const height = roundCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10 * 0.666)
-    const x = roundCoordinateOrSize(props.x) - width / 2
-    const y = roundCoordinateOrSize(props.y) - height / 2
+    const width = roundEntityCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10)
+    const height = roundEntityCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10 * 0.666)
+    const x = roundEntityCoordinateOrSize(props.x) - width / 2
+    const y = roundEntityCoordinateOrSize(props.y) - height / 2
 
     if (entityTypeChooserState.withConnecting) {
       const beginPoint = currentConnectionController.getBegin()
@@ -41,13 +41,13 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       const endX = endPoint.getX(beginPoint, entities)
       const endY = endPoint.getY(beginPoint, entities)
 
-      const yBottomBound = roundCoordinateOrSize((
+      const yBottomBound = roundEntityCoordinateOrSize((
         beginPoint instanceof ConnectionAreaPoint ||
         beginPoint instanceof EntityConnectionPoint) ?
         entities.get(beginPoint.entityId).y + entities.get(beginPoint.entityId).height :
         beginY)
 
-      const yTopBound = roundCoordinateOrSize((
+      const yTopBound = roundEntityCoordinateOrSize((
         beginPoint instanceof ConnectionAreaPoint ||
         beginPoint instanceof EntityConnectionPoint) ?
         entities.get(beginPoint.entityId).y :
@@ -66,8 +66,8 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       })()
 
       dispatch(addEntity(entityCreators.get(type).create(
-        roundCoordinateOrSize(x + deltaX),
-        roundCoordinateOrSize(y + deltaY),
+        roundEntityCoordinateOrSize(x + deltaX),
+        roundEntityCoordinateOrSize(y + deltaY),
         width, height)))
 
       const newEntityId = Math.max(...entities.keys()) + 1
@@ -79,8 +79,8 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       }))
     } else {
       dispatch(addEntity(entityCreators.get(type).create(
-        roundCoordinateOrSize(x),
-        roundCoordinateOrSize(y),
+        roundEntityCoordinateOrSize(x),
+        roundEntityCoordinateOrSize(y),
         width,
         height
       )))
@@ -108,12 +108,12 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
           <button
             onClick={() => {
               dispatch(setConnectionTypeChooserState({
-                x: roundCoordinateOrSize(props.x),
-                y: roundCoordinateOrSize(props.y),
+                x: roundEntityCoordinateOrSize(props.x),
+                y: roundEntityCoordinateOrSize(props.y),
                 isActive: true,
                 endPoint: new FreeConnectionPoint(
-                  roundCoordinateOrSize(props.x),
-                  roundCoordinateOrSize(props.y))
+                  roundEntityCoordinateOrSize(props.x),
+                  roundEntityCoordinateOrSize(props.y))
               }))
               entityTypeChooserController.deactivate()
             }}

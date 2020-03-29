@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
-import { roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
+import { roundEntityCoordinateOrSize, getCanvasX, getCanvasY, getScale, roundConnectionCoordinateOrSize } from '../../utils'
 import {
   updateEntity, setMouseMode,
   setConnectionTypeChooserState,
@@ -95,8 +95,8 @@ export const useCanvasHandlers = () => {
       const newShit = entrie[1].intermediatePoints.map(point => {
         if (point.movedX || point.movedY) {
           return new IntermediateConnectionPoint(
-            point.x,
-            point.y,
+            roundConnectionCoordinateOrSize(point.x),
+            roundConnectionCoordinateOrSize(point.y),
             true,
           )
         } else {
@@ -125,8 +125,8 @@ export const useCanvasHandlers = () => {
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.button !== LEFT_MOUSE_BUTTON) {
       if (mode === MouseMode.connecting) {
-        const newX = roundCoordinateOrSize(getCanvasX(event, scale))
-        const newY = roundCoordinateOrSize(getCanvasY(event, scale))
+        const newX = roundEntityCoordinateOrSize(getCanvasX(event, scale))
+        const newY = roundEntityCoordinateOrSize(getCanvasY(event, scale))
 
         currentConnectionController.setEndFreePoint(newX, newY)
       }
@@ -239,10 +239,10 @@ export const useCanvasHandlers = () => {
 
           dispatch(updateEntity(entrie[0], {
             ...entrie[1],
-            x: roundCoordinateOrSize(newX),
-            y: roundCoordinateOrSize(newY),
-            width: roundCoordinateOrSize(newWidth),
-            height: roundCoordinateOrSize(newHeight),
+            x: roundEntityCoordinateOrSize(newX),
+            y: roundEntityCoordinateOrSize(newY),
+            width: roundEntityCoordinateOrSize(newWidth),
+            height: roundEntityCoordinateOrSize(newHeight),
             sizeChangedOnTop: newSizeChangedOnTop,
             sizeChangedOnBottom: newSizeChangedOnBottom,
             sizeChangedOnLeft: newSizeChangedOnLeft,
