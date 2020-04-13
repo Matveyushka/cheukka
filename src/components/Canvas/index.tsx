@@ -10,6 +10,7 @@ import { EntityTypeChooser } from '../EntityTypeChooser'
 import { entityGroups } from '../../types/DiagramEntityTypes/EntityType'
 import { getScale } from '../../utils'
 import { ConnectionTypeChooser } from '../ConnectionTypeChooser'
+import { Saver } from '../Saver'
 
 export interface CanvasProps { }
 
@@ -32,6 +33,8 @@ export const Canvas = (props: CanvasProps) => {
     EntityTypeChooserState,
     diagramType,
     connectionTypeChooserState,
+    saveSettings,
+    isSaving
   ] = useSelector((state: Store) => [
     getScale(state.scaleLevel),
     state.scaleLevel,
@@ -41,15 +44,17 @@ export const Canvas = (props: CanvasProps) => {
     state.currentDiagramConnection,
     state.entityTypeChooserState,
     state.diagramType,
-    state.connectionTypeChooserState
+    state.connectionTypeChooserState,
+    state.lastSaveSettings,
+    state.isSaving
   ])
 
   const renderEntities = () => Array.from(entities.entries()).map((entity, index) => (
-    <EntityContainer key={index} entityId={entity[0]} entity={entity[1]} />
+    <EntityContainer key={index} entityId={entity[0]} entity={entity[1]} scale={scale} />
   ))
 
   const renderConnections = () => Array.from(connections.entries()).map((connection, index) => (
-    <ConnectionContainer key={index} connectionId={connection[0]} connection={connection[1]} />
+    <ConnectionContainer key={index} connectionId={connection[0]} connection={connection[1]} scale={scale}/>
   ))
 
   const renderSelection = () => {
@@ -90,7 +95,10 @@ export const Canvas = (props: CanvasProps) => {
           backgroundSize: `${100 / backgroundBlocksAmountInWidth}%`,
         }}
       >
-        <svg width='100%' height='100%'>
+        {
+          isSaving ? <Saver saveSettings={saveSettings} /> : ""
+        }
+        <svg width='100%' height='100%' id="TEMPO">
           {renderConnections()}
           {renderEntities()}
           {(mode === MouseMode.connecting ||
@@ -98,7 +106,7 @@ export const Canvas = (props: CanvasProps) => {
             EntityTypeChooserState.isActive && EntityTypeChooserState.withConnecting) ?
             (
               <g pointerEvents='none'>
-                <ConnectionContainer connectionId={null} connection={currentDiagramConnection}/>
+                <ConnectionContainer connectionId={null} connection={currentDiagramConnection} scale={scale}/>
               </g>
             ) : ''}
           { mode === MouseMode.selecting ? renderSelection() : '' }

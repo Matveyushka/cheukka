@@ -5,8 +5,11 @@
 @import './Workspace';
 @import './Main';
 @import './Canvas';
+@import './DropdownMenu';
+@import './SavePanel';
 
 body, html, #root {
   height: 100%;
   margin: 0;
+  font-family: $main-font;
 }

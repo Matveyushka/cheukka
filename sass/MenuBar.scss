@@ -2,20 +2,11 @@
   z-index: 1000;
   grid-area: menubar;
   background-color: $main-color;
+  display: flex;
+}
 
-  &-button {
-    font-size: $default-font-size;
-    width: 10%;
-    min-width: 50px;
-    background-color: $main-color;
-    color: $second-color;
-    border: none;
-    border-right: 1px solid $second-color;
-    font-family: $main-font;
-
-    &:hover {
-      background-color: $second-color;
-      color: $main-color;
-    }
-  }
+.menu-item {
+  width: 10%;
+  min-width: 50px;
+  border-right: 1px solid $second-color;
 }

@@ -7,6 +7,7 @@ import {
   ConnectionTypeChooserState,
   DiagramType, 
   nonActiveConnectionTypeChooserState} from '../types'
+import { SaveSettings } from '../types/SaveSettings'
 
 export interface Store {
   scaleLevel: number;
@@ -20,6 +21,9 @@ export interface Store {
   currentDiagramConnection: Connection | null;
   entityTypeChooserState: EntityTypeChooserState;
   connectionTypeChooserState: ConnectionTypeChooserState;
+  savePanelIsOpen: boolean;
+  lastSaveSettings: SaveSettings;
+  isSaving: boolean;
 }
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
@@ -40,5 +44,8 @@ export const store = createStore<Store, any, any, any>(mainReducer,
       withConnecting: false,
       diagramEntityTypes: [],
     },
-    connectionTypeChooserState: nonActiveConnectionTypeChooserState
+    connectionTypeChooserState: nonActiveConnectionTypeChooserState,
+    savePanelIsOpen: false,
+    lastSaveSettings: null,
+    isSaving: false,
   })
