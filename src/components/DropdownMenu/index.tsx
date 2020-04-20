@@ -68,7 +68,12 @@ export const DropdownMenu = (props: DropdownMenuHeader) => {
     }
   }
 
-  window.addEventListener('click', (event: any) => hideMenuBody())
+  window.addEventListener('click', (event: any) => {
+    if (event.target !== headerRef.current &&
+        event.target.parentNode !== bodyRef.current) {
+      hideMenuBody()
+    }
+  })
 
   const bodyStyles = new Map<DropdownMenuDirection, {}>([
     [DropdownMenuDirection.TOP, { bottom: "-0.1rem" }],
@@ -78,7 +83,7 @@ export const DropdownMenu = (props: DropdownMenuHeader) => {
   ])
 
   return (
-    <div className="dropdown-menu" onClick={(event) => event.stopPropagation()}>
+    <div className="dropdown-menu">
       <div className={`dropdown-menu-header 
         ${(props.optional?.isSubmenu ?? false) ? "dropdown-submenu" : ""}`
       } ref={headerRef} onClick={headerClickHandler}>{props.label}</div>

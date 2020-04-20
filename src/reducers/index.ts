@@ -20,6 +20,7 @@ import {
   SET_SAVE_PANEL_IS_OPEN,
   SET_LAST_SAVE_SETTINGS,
   SET_IS_SAVING,
+  SET_TUTORIAL_IS_OPEN,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -131,6 +132,8 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, lastSaveSettings: action.saveSettings }
     case SET_IS_SAVING:
       return { ...state, isSaving: action.isSaving }
+    case SET_TUTORIAL_IS_OPEN: 
+      return { ...state, tutorialIsOpen: action.tutorialIsOpen }
   }
 
   return state

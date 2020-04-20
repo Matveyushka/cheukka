@@ -42,6 +42,8 @@ export interface SetLastSaveSettings { type: Constants.SET_LAST_SAVE_SETTINGS; s
 
 export interface SetIsSaving { type: Constants.SET_IS_SAVING; isSaving: boolean }
 
+export interface SetTutorialIsOpen { type: Constants.SET_TUTORIAL_IS_OPEN; tutorialIsOpen: boolean }
+
 //actions
 
 export const setScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : SetScale => ({
@@ -147,6 +149,11 @@ export const setIsSaving = (isSaving: boolean) : SetIsSaving => ({
   isSaving
 })
 
+export const setTutorialIsOpen = (tutorialIsOpen: boolean) : SetTutorialIsOpen => ({
+  type: Constants.SET_TUTORIAL_IS_OPEN,
+  tutorialIsOpen
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -167,3 +174,4 @@ export type Action =
   | SetSavePanelIsOpen
   | SetLastSaveSettings
   | SetIsSaving
+  | SetTutorialIsOpen

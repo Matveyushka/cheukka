@@ -9,4 +9,24 @@
   width: 10%;
   min-width: 50px;
   border-right: 1px solid $second-color;
+  font-size: $default-font-size;
+  font-family: $main-font;
+  text-align: center;
+  color: $second-color;
+  user-select: none;
+  height: 1.2rem;
+
+  &:hover {
+    color: $main-color;
+    background-color: $second-color;
+  }
+
+  &-right {
+    border-right: none;
+    border-left: 1px solid $second-color;
+  }
+}
+
+.menu-free-space {
+  flex-grow: 1;
 }

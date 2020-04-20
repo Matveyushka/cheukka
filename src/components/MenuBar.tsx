@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { DropdownMenu, DropdownMenuButton, DropdownMenuHeader, DropdownMenuDirection } from './DropdownMenu'
 import { useDispatch, useSelector } from 'react-redux'
-import { setSavePanelIsOpen } from '../actions'
+import { setSavePanelIsOpen, setTutorialIsOpen } from '../actions'
 import { useFileSaveHook } from '../hooks/fileSaverHook'
 import { Store } from '../stores'
 
@@ -32,26 +32,33 @@ export const MenuBar = (props: MenuBarProps) => {
       <div className='menu-item'>
         <DropdownMenu
           label="Edit"
-          elements={[]}
+          elements={[
+            new DropdownMenuButton("Undo", () => { }),
+            new DropdownMenuButton("Redo", () => { }),
+            new DropdownMenuButton("Copy", () => { }),
+            new DropdownMenuButton("Cut", () => { }),
+            new DropdownMenuButton("Paste", () => { }),
+            new DropdownMenuButton("Add block", () => { }),
+          ]}
         />
       </div>
       <div className='menu-item'>
         <DropdownMenu
           label="View"
-          elements={[]}
+          elements={[
+            new DropdownMenuButton("Palette", () => { }),
+            new DropdownMenuButton("Zoom", () => { }),
+          ]}
         />
       </div>
       <div className='menu-item'>
-        <DropdownMenu
-          label="Help"
-          elements={[]}
-        />
+        <div className='dark-button' onClick={() => {}}>About</div>
       </div>
-      <div className='menu-item'>
-        <DropdownMenu
-          label="About"
-          elements={[]}
-        />
+      <div className='menu-free-space'>
+
+      </div>
+      <div className='menu-item menu-item-right' onClick={() => {dispatch(setTutorialIsOpen(true))}}>
+        Help
       </div>
     </div>
 

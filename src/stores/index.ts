@@ -24,6 +24,7 @@ export interface Store {
   savePanelIsOpen: boolean;
   lastSaveSettings: SaveSettings;
   isSaving: boolean;
+  tutorialIsOpen: boolean;
 }
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
@@ -48,4 +49,5 @@ export const store = createStore<Store, any, any, any>(mainReducer,
     savePanelIsOpen: false,
     lastSaveSettings: null,
     isSaving: false,
+    tutorialIsOpen: false,
   })

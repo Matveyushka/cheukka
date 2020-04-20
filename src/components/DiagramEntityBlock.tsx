@@ -13,7 +13,7 @@ export interface DiagramEntityBlockProps {
 }
 
 export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
-  const [ isEditingContent, setIsEditingContent ] = React.useState<boolean>(false)
+  const [isEditingContent, setIsEditingContent] = React.useState<boolean>(false)
 
   const block = props.entityPart.renderer(props.parentEntity)
 
@@ -51,14 +51,15 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
             fontSize: 0.2 * props.scale + 'em',
             userSelect: 'none'
           }}
+
+          dangerouslySetInnerHTML={{
+            __html: (!isEditingContent ?
+              props.entityPart.content : '')
+          }}
         >
-          { 
-            !isEditingContent ?
-            props.entityPart.content : ''
-          }
         </div>
         {
-          isEditingContent ? 
+          isEditingContent ?
             <EntityContentEditor
               x={(block.width / 2) * props.scale}
               y={(block.height / 2) * props.scale}
@@ -67,7 +68,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
               initContent={props.entityPart.content}
               finishEdit={finishEditHandler}
             />
-          : ''
+            : ''
         }
       </foreignObject>
     </g>
