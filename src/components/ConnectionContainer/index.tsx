@@ -11,12 +11,13 @@ import { getSegmentAngle } from '../../utils/geometry'
 import { useConnectionHandlers } from './handlers'
 
 export interface ConnectionContainerProps {
-  connectionId: number | null,
-  connection: Connection,
+  connectionId: number | null;
+  connection: Connection;
+  scale: number;
 }
 
 export const ConnectionContainer = (props: ConnectionContainerProps) => {
-  const [scale, entities] = useSelector((state: Store) => [getScale(state.scaleLevel), state.diagramEntities])
+  const [entities] = useSelector((state: Store) => [state.diagramEntities])
   const dispatch = useDispatch()
 
   const beginX = props.connection.begin.getX(props.connection.begin, entities)
@@ -27,14 +28,14 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   props.connection.calculateIntermediatePoints(entities, props.connection)
 
   const pathPoints = [
-    { x: roundConnectionCoordinateOrSize(beginX) * scale, 
-      y: roundConnectionCoordinateOrSize(beginY) * scale },
+    { x: roundConnectionCoordinateOrSize(beginX) * props.scale, 
+      y: roundConnectionCoordinateOrSize(beginY) * props.scale },
     ...props.connection.intermediatePoints.map(point => ({
-      x: roundConnectionCoordinateOrSize(point.getX(props.connection.begin, entities)) * scale,
-      y: roundConnectionCoordinateOrSize(point.getY(props.connection.begin, entities)) * scale
+      x: roundConnectionCoordinateOrSize(point.getX(props.connection.begin, entities)) * props.scale,
+      y: roundConnectionCoordinateOrSize(point.getY(props.connection.begin, entities)) * props.scale
     })),
-    { x: roundConnectionCoordinateOrSize(endX) * scale, 
-      y: roundConnectionCoordinateOrSize(endY) * scale }
+    { x: roundConnectionCoordinateOrSize(endX) * props.scale, 
+      y: roundConnectionCoordinateOrSize(endY) * props.scale }
   ]
 
   const {
@@ -61,9 +62,9 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
           penultX,
           penultY,
           endX,
-          endY)} ${roundConnectionCoordinateOrSize(endX) * scale} ${roundConnectionCoordinateOrSize(endY) * scale})`}>
+          endY)} ${roundConnectionCoordinateOrSize(endX) * props.scale} ${roundConnectionCoordinateOrSize(endY) * props.scale})`}>
           {connectionTypeArrows.get(props.connection.type)(
-            roundConnectionCoordinateOrSize(endX), roundConnectionCoordinateOrSize(endY), scale)}
+            roundConnectionCoordinateOrSize(endX), roundConnectionCoordinateOrSize(endY), props.scale)}
         </g>
       }
       {
@@ -74,8 +75,8 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
         true && props.connection.intermediatePoints.map((point, index) => (
           <circle
             key={index}
-            cx={roundConnectionCoordinateOrSize(point.getX(null, entities)) * scale}
-            cy={roundConnectionCoordinateOrSize(point.getY(null, entities)) * scale}
+            cx={roundConnectionCoordinateOrSize(point.getX(null, entities)) * props.scale}
+            cy={roundConnectionCoordinateOrSize(point.getY(null, entities)) * props.scale}
             r={2}
             fill='black'
           />

@@ -9,12 +9,11 @@ export interface DiagramEntityBlockProps {
   parentEntity: Entity;
   entityPart: EntityPart
   updateContent: (newContent: string) => void;
+  scale: number;
 }
 
 export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
-  const [ isEditingContent, setIsEditingContent ] = React.useState<boolean>(false)
-
-  const scale = useSelector((state: Store) => getScale(state.scaleLevel))
+  const [isEditingContent, setIsEditingContent] = React.useState<boolean>(false)
 
   const block = props.entityPart.renderer(props.parentEntity)
 
@@ -35,10 +34,10 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
 
   return (
     <g onDoubleClick={doubleClickHandler}>
-      {block.svgComponent(x, y, block.width, block.height, scale)}
+      {block.svgComponent(x, y, block.width, block.height, props.scale)}
       <foreignObject
-        x={x * scale}
-        y={y * scale}
+        x={x * props.scale}
+        y={y * props.scale}
         style={{ overflow: 'visible' }}
       >
         <div
@@ -46,29 +45,30 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
           onMouseDown={() => { }}
 
           style={{
-            minWidth: block.width * scale + 'px',
-            left: `${(block.width / 2) * scale}px`,
-            top: `${(block.height / 2) * scale}px`,
-            fontSize: 0.2 * scale + 'em',
+            minWidth: block.width * props.scale + 'px',
+            left: `${(block.width / 2) * props.scale}px`,
+            top: `${(block.height / 2) * props.scale}px`,
+            fontSize: 0.2 * props.scale + 'em',
             userSelect: 'none'
           }}
+
+          dangerouslySetInnerHTML={{
+            __html: (!isEditingContent ?
+              props.entityPart.content : '')
+          }}
         >
-          { 
-            !isEditingContent ?
-            props.entityPart.content : ''
-          }
         </div>
         {
-          isEditingContent ? 
+          isEditingContent ?
             <EntityContentEditor
-              x={(block.width / 2) * scale}
-              y={(block.height / 2) * scale}
-              width={block.width * scale}
+              x={(block.width / 2) * props.scale}
+              y={(block.height / 2) * props.scale}
+              width={block.width * props.scale}
               height={20}
               initContent={props.entityPart.content}
               finishEdit={finishEditHandler}
             />
-          : ''
+            : ''
         }
       </foreignObject>
     </g>

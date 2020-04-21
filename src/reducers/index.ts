@@ -17,6 +17,10 @@ import {
   SET_CURRENT_DIAGRAM_CONNECTION,
   SET_ENTITY_TYPE_CHOOSER_STATE,
   SET_CONNECTION_TYPE_CHOOSER_STATE,
+  SET_SAVE_PANEL_IS_OPEN,
+  SET_LAST_SAVE_SETTINGS,
+  SET_IS_SAVING,
+  SET_TUTORIAL_IS_OPEN,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -122,6 +126,14 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, entityTypeChooserState: action.state }
     case SET_CONNECTION_TYPE_CHOOSER_STATE:
       return { ...state, connectionTypeChooserState: action.state }
+    case SET_SAVE_PANEL_IS_OPEN:
+      return { ...state, savePanelIsOpen: action.isOpen }
+    case SET_LAST_SAVE_SETTINGS:
+      return { ...state, lastSaveSettings: action.saveSettings }
+    case SET_IS_SAVING:
+      return { ...state, isSaving: action.isSaving }
+    case SET_TUTORIAL_IS_OPEN: 
+      return { ...state, tutorialIsOpen: action.tutorialIsOpen }
   }
 
   return state

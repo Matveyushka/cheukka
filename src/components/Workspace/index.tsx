@@ -9,6 +9,9 @@ import {
 import {
   useWorkspaceOffsetAndScale
 } from './offsetAndScaleHook'
+import { TextCustomizationPanel } from '../CustomizationPanels/TextCustomizationPanel'
+import { RightActionPanel } from '../ActionPanels/RightActionPanel'
+import { LeftActionPanel } from '../ActionPanels/LeftActionPanel'
 
 export interface DiagramCanvasProps { }
 
@@ -39,5 +42,8 @@ export const Workspace = () => {
         <Canvas>
         </Canvas>
       </div>
+
+      <LeftActionPanel/>
+      <RightActionPanel/>
     </div>)
 }

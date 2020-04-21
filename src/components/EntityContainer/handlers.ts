@@ -35,7 +35,7 @@ export const useEntityContainerHandlers = (entityId: number) => {
     })()
     const possibleEnds = validEntityConnectionsEnd.get(thisEntity.type)
 
-    return possibleBegins.filter(type => possibleEnds.indexOf(type) >= 0).length > 0
+    return possibleEnds && possibleBegins.filter(type => possibleEnds.indexOf(type) >= 0).length > 0
   })
 
   const onMouseUpHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>): void => {

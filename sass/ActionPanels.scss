@@ -1,0 +1,70 @@
+.action-panel {
+  position: absolute;
+  background-color: $main-color;
+  width: auto;
+  height: 4vh;
+  top: 1.3rem;
+
+  &-button {
+    padding: 0;
+    border: none;
+    height: 100%;
+
+    &-image {
+      height: 100%;
+      fill: $second-color;
+    }
+
+    &:hover .action-panel-button-image {
+      fill: $main-color;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.action-panel-right {
+  right: 0;
+}
+
+.action-panel-right-controller {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 2vh solid $main-color;
+  border-left: 2vh solid transparent;
+  border-right: 2vh solid $main-color;
+  border-bottom: 2vh solid transparent;
+  right: 100%;
+  top: 0;
+  background-color: transparent;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.action-panel-left {
+  left: 0;
+}
+
+.action-panel-left-controller {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 2vh solid $main-color;
+  border-left: 2vh solid $main-color;
+  border-right: 2vh solid transparent;
+  border-bottom: 2vh solid transparent;
+  left: 100%;
+  top: 0;
+  background-color: transparent;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

@@ -18,7 +18,7 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
   const editorRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
-    editorRef.current.innerText = props.initContent
+    editorRef.current.innerHTML = props.initContent
     editorRef.current.focus()
     document.execCommand('selectall',null);
   }, [])
@@ -36,7 +36,7 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
         fontSize: 0.2 * scale + 'em',
       }}
       onMouseDown={(event) => event.stopPropagation()}
-      onBlur={() => props.finishEdit(editorRef.current.innerText)}
+      onBlur={() => props.finishEdit(editorRef.current.innerHTML)}
     />
   )
 }

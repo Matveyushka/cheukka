@@ -15,8 +15,9 @@ import {
 } from '../../constants/dictionaries/validEntityConnections'
 
 export interface EntityContainerProps {
-  entityId: number,
-  entity: Entity,
+  entityId: number;
+  entity: Entity;
+  scale: number;
 }
 
 export const EntityContainer = (props: EntityContainerProps) => {
@@ -30,12 +31,10 @@ export const EntityContainer = (props: EntityContainerProps) => {
   } = useEntityContainerHandlers(props.entityId)
 
   const [
-    scale,
     mouseMode,
     currentDiagramConnection,
     diagramEntities
   ] = useSelector((state: Store) => [
-    getScale(state.scaleLevel),
     state.mouseMode,
     state.currentDiagramConnection,
     state.diagramEntities
@@ -43,7 +42,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
 
   const dispatch = useDispatch()
 
-  const interfaceControlElementSize = 10 / scale
+  const interfaceControlElementSize = 10 / props.scale
   const connectionAreaWidth = interfaceControlElementSize * 2
   const interfaceColor = props.entity.moved ? 'red' : props.entity.selected ? 'red' : props.entity.isHovered ? 'red' : 'black'
 
@@ -52,17 +51,17 @@ export const EntityContainer = (props: EntityContainerProps) => {
     || props.entity.sizeChangedOnRight
     || props.entity.sizeChangedOnTop
 
-  const realWidth = props.entity.width * scale
-  const realHeight = props.entity.height * scale
+  const realWidth = props.entity.width * props.scale
+  const realHeight = props.entity.height * props.scale
 
   const hoverExtraAreaWidth = Math.max(interfaceControlElementSize, connectionAreaWidth)
 
   const renderHoverableZone = () => (
     <rect
-      x={(props.entity.x - hoverExtraAreaWidth) * scale}
-      y={(props.entity.y - hoverExtraAreaWidth) * scale}
-      width={realWidth + hoverExtraAreaWidth * 2 * scale}
-      height={realHeight + hoverExtraAreaWidth * 2 * scale}
+      x={(props.entity.x - hoverExtraAreaWidth) * props.scale}
+      y={(props.entity.y - hoverExtraAreaWidth) * props.scale}
+      width={realWidth + hoverExtraAreaWidth * 2 * props.scale}
+      height={realHeight + hoverExtraAreaWidth * 2 * props.scale}
       fill='transparent'
     />)
 
@@ -90,14 +89,15 @@ export const EntityContainer = (props: EntityContainerProps) => {
       parentEntity={props.entity}
       entityPart={part}
       updateContent={(newContent: string) => changeBlockContent(index, newContent)}
+      scale={props.scale}
     />)
   )
 
   const renderSelection = () => (
     <rect
       className={`block-decoration`}
-      x={props.entity.x * scale}
-      y={props.entity.y * scale}
+      x={props.entity.x * props.scale}
+      y={props.entity.y * props.scale}
       width={realWidth}
       height={realHeight}
       stroke={interfaceColor}
@@ -109,18 +109,18 @@ export const EntityContainer = (props: EntityContainerProps) => {
 
   const renderDeleteButton = () => (
     <foreignObject
-      x={(props.entity.x + props.entity.width - interfaceControlElementSize * 1.5) * scale}
-      y={(props.entity.y + interfaceControlElementSize * 0.5) * scale}
-      width={interfaceControlElementSize * scale}
-      height={interfaceControlElementSize * scale}
+      x={(props.entity.x + props.entity.width - interfaceControlElementSize * 1.5) * props.scale}
+      y={(props.entity.y + interfaceControlElementSize * 0.5) * props.scale}
+      width={interfaceControlElementSize * props.scale}
+      height={interfaceControlElementSize * props.scale}
     >
-      {(realWidth >= interfaceControlElementSize * 3 * scale && realHeight >= interfaceControlElementSize * 3 * scale) ?
+      {(realWidth >= interfaceControlElementSize * 3 * props.scale && realHeight >= interfaceControlElementSize * 3 * props.scale) ?
         <div
           className={`delete-button ${isResized ? 'invisible' : 'on-hover-visible'}`}
           style={{
-            width: interfaceControlElementSize * scale,
-            height: interfaceControlElementSize * scale,
-            backgroundImage: getBackgroundSvgImage(getSvgExit(scale, interfaceColor)),
+            width: interfaceControlElementSize * props.scale,
+            height: interfaceControlElementSize * props.scale,
+            backgroundImage: getBackgroundSvgImage(getSvgExit(props.scale, interfaceColor)),
           }}
           onMouseDown={(event) => { event.stopPropagation() }}
           onClick={() => { dispatch(removeEntity(props.entityId)) }}

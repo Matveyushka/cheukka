@@ -58,9 +58,9 @@ export const useStatusBarHandlers = () => {
       const workspaceRect = workspace.getBoundingClientRect()
 
       const scaleSteps = [...Array(MAX_SCALE - MIN_SCALE + 1).keys()].map(x => x + MIN_SCALE)
-      const newScale = scaleSteps.filter(s => DEFAULT_CANVAS_WIDTH * getScale(s) <= workspaceRect.width).reverse()[0] || 1
+      const newScale = scaleSteps.filter(s => DEFAULT_CANVAS_WIDTH * getScale(s) <= workspaceRect.width - vhToPx(1.4)).reverse()[0] || 1
       dispatch(setScale(newScale, 0, 0))
-      dispatch(setOffsetX((DEFAULT_CANVAS_WIDTH * getScale(newScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2) / 2 - workspaceRect.width / 2))
+      dispatch(setOffsetX((DEFAULT_CANVAS_WIDTH * getScale(newScale) + DEFAULT_EMPTY_SPACE_WIDTH * 2) / 2 - workspaceRect.width / 2 + vhToPx(1.4)/2))
       dispatch(setOffsetY(DEFAULT_EMPTY_SPACE_HEIGHT * 0.98))
     }
   }

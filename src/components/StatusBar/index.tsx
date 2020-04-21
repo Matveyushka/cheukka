@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { MIN_SCALE, MAX_SCALE, SCALE_STEP } from '../../constants'
 import { getScalePercent } from '../../utils'
-import { CustomSelect } from './CustomSelect'
+import { SelectList } from '../SelectList'
 import { useStatusBarHandlers } from './handlers'
 import { DiagramType } from '../../types'
 import { entityGroups } from '../../types/DiagramEntityTypes/EntityType'
@@ -39,10 +39,11 @@ export const StatusBar = (props: StatusBarProps) => {
       <div className='status-bar-label status-bar-element'>Status bar</div>
 
       <div className='status-bar-chooser status-bar-element'>
-        <CustomSelect
+        <SelectList
           value={{value: diagramType, label: entityGroups.get(diagramType).name}}
           onSelect={onDiagramTypeSelectedHandler}
           options={diagramTypes}
+          placeMenuAtTop={true}
         />
       </div>
 
@@ -61,10 +62,11 @@ export const StatusBar = (props: StatusBarProps) => {
       </div>
 
       <div className='status-bar-scalechooser status-bar-element'>
-        <CustomSelect
+        <SelectList
             value={{ value: 'currentScale', label: getScalePercent(scale) }}
             onSelect={onScaleSelectedHandler}
             options={scaleSelectVariants}
+            placeMenuAtTop={true}
           />
       </div>
 

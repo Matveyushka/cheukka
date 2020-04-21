@@ -1,0 +1,24 @@
+.customization-panel-text {
+  position: fixed;
+  top: 2rem;
+  right: 1.4vh;
+  background-color: $main-color;
+
+  display: flex;
+  flex-direction: column;
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  &-title {
+    padding-left: 0.5rem;
+  }
+
+  &-buttons {
+    justify-content: center;
+    padding: 0.5rem 0;
+  }
+}
+

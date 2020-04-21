@@ -5,8 +5,51 @@
 @import './Workspace';
 @import './Main';
 @import './Canvas';
+@import './DropdownMenu';
+@import './SavePanel';
+@import './Tutorial';
+@import './CustomizationPanels/Text';
+@import './ActionPanels';
 
 body, html, #root {
   height: 100%;
   margin: 0;
+  font-family: $main-font;
+}
+
+.row-flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.column-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.dark-label {
+  background-color: $main-color;
+  color: $second-color
+}
+
+.dark-button {
+  background-color: $main-color;
+  color: $second-color;
+  user-select: none;
+
+  &:hover {
+    background-color: $second-color;
+    color: $main-color;
+  }
+}
+
+.light-button {
+  background-color: $second-color;
+  color: $dark-main-color;
+  user-select: none;
+
+  &:hover {
+    background-color: $main-color;
+    color: $second-color;
+  }
 }

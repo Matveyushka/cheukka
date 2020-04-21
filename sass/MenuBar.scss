@@ -2,20 +2,31 @@
   z-index: 1000;
   grid-area: menubar;
   background-color: $main-color;
+  display: flex;
+}
 
-  &-button {
-    font-size: $default-font-size;
-    width: 10%;
-    min-width: 50px;
-    background-color: $main-color;
-    color: $second-color;
-    border: none;
-    border-right: 1px solid $second-color;
-    font-family: $main-font;
+.menu-item {
+  width: 10%;
+  min-width: 50px;
+  border-right: 1px solid $second-color;
+  font-size: $default-font-size;
+  font-family: $main-font;
+  text-align: center;
+  color: $second-color;
+  user-select: none;
+  height: 1.2rem;
 
-    &:hover {
-      background-color: $second-color;
-      color: $main-color;
-    }
+  &:hover {
+    color: $main-color;
+    background-color: $second-color;
   }
+
+  &-right {
+    border-right: none;
+    border-left: 1px solid $second-color;
+  }
+}
+
+.menu-free-space {
+  flex-grow: 1;
 }

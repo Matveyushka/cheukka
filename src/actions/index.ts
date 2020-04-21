@@ -1,5 +1,6 @@
 import * as Constants from '../constants/actions'
 import { Entity, Connection, MouseMode, EntityTypeChooserState, DiagramType, ConnectionTypeChooserState } from '../types'
+import { SaveSettings } from '../types/SaveSettings';
 
 //interfaces
 
@@ -34,6 +35,14 @@ export interface SetCurrentDiagramConnection { type: Constants.SET_CURRENT_DIAGR
 export interface SetEntityTypeChooserState { type: Constants.SET_ENTITY_TYPE_CHOOSER_STATE; state: EntityTypeChooserState}
 
 export interface SetConnectionTypeChooserState { type: Constants.SET_CONNECTION_TYPE_CHOOSER_STATE; state: ConnectionTypeChooserState}
+
+export interface SetSavePanelIsOpen { type: Constants.SET_SAVE_PANEL_IS_OPEN; isOpen: boolean}
+
+export interface SetLastSaveSettings { type: Constants.SET_LAST_SAVE_SETTINGS; saveSettings: SaveSettings}
+
+export interface SetIsSaving { type: Constants.SET_IS_SAVING; isSaving: boolean }
+
+export interface SetTutorialIsOpen { type: Constants.SET_TUTORIAL_IS_OPEN; tutorialIsOpen: boolean }
 
 //actions
 
@@ -125,6 +134,26 @@ export const setConnectionTypeChooserState = (state: ConnectionTypeChooserState)
   state,
 })
 
+export const setSavePanelIsOpen = (isOpen: boolean) : SetSavePanelIsOpen => ({
+  type: Constants.SET_SAVE_PANEL_IS_OPEN,
+  isOpen,
+})
+
+export const setLastSaveSettings = (saveSettings: SaveSettings) : SetLastSaveSettings => ({
+  type: Constants.SET_LAST_SAVE_SETTINGS,
+  saveSettings
+})
+
+export const setIsSaving = (isSaving: boolean) : SetIsSaving => ({
+  type: Constants.SET_IS_SAVING,
+  isSaving
+})
+
+export const setTutorialIsOpen = (tutorialIsOpen: boolean) : SetTutorialIsOpen => ({
+  type: Constants.SET_TUTORIAL_IS_OPEN,
+  tutorialIsOpen
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -142,3 +171,7 @@ export type Action =
   | SetCurrentDiagramConnection
   | SetEntityTypeChooserState
   | SetConnectionTypeChooserState
+  | SetSavePanelIsOpen
+  | SetLastSaveSettings
+  | SetIsSaving
+  | SetTutorialIsOpen
