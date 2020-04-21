@@ -5,15 +5,16 @@
   color: $second-color;
   font-family: $main-font;
   font-size: $default-font-size;
+  padding: 0.2em 0;
 
   display: grid;
   grid-template: 
-    "statuslabel . diagramtypechooser scaleslider" auto
-    / auto 1fr auto auto;
+    "statuslabel . diagramtypechooser scaleslider scalechooser fitwindow fitwidth" auto
+    / auto 1fr auto auto auto auto;
   align-items: center;
 
   &-element {
-    padding: 0.2em 0.4em;
+    padding: 0 0.4em;
   }
 
   &-label {
@@ -22,12 +23,16 @@
 
   &-chooser {
     grid-area: diagramtypechooser;
+    width: 15em;
+    &:focus {
+      outline: none;
+    }
   }
 
   &-scaler {
     grid-area: scaleslider;
 
-    padding-right: 1em;
+    padding-right: 0.2em;
 
     display: grid;
     grid-template:
@@ -39,13 +44,14 @@
       font-size: 1rem;
       margin-top: -0.2em;
       cursor: pointer;
+      user-select: none;
     }
 
     &-slider {
       margin: 0 0.3em;
       -webkit-appearance: none;
       height: 0.1em;
-      border-radius: 5px;  
+      border-radius: 100%;  
       background: $second-color;
       outline: none;
       opacity: 0.7;
@@ -64,28 +70,35 @@
     }
     
     &-slider::-moz-range-thumb {
-      width: 25px;
-      height: 25px;
+      width: 0.8em;
+      height: 0.8em;
       border-radius: 50%;
       background: $second-color;
       cursor: pointer;
     }
   }
-}
 
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;       /* Remove default arrow */
+  &-scalechooser {
+    grid-area: scalechooser;
+    width: 4em;
+    text-align: right;
+  }
 
-  background-color: $main-color;
-  border: none;
-  font-family: $main-font;
-  color: $second-color;
-  direction: rtl;
-  padding: 0 0.5em;
-}
+  &-button {
+    color: $second-color;
+    background-color: $main-color;
+    padding: 0;
+    width: 1em;
+    height: 1em;
+    border: 0;
+    margin-right: 0.8em;
+  }
 
-option { 
-  direction: rtl; 
+  &-fit-window {
+    grid-area: fitwindow;
+  }
+
+  &-fit-width {
+    grid-area: fitwidth;
+  }
 }
