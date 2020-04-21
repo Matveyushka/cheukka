@@ -1,9 +1,5 @@
 import * as React from 'react'
-
-interface Point {
-  x: number;
-  y: number;
-}
+import { Point } from '../../types/geometry'
 
 export interface ConnectionPathProps {
   points: Array<Point>;
@@ -23,6 +19,7 @@ export const ConnectionPath = (props: ConnectionPathProps) => {
       stroke={props.color}
       strokeWidth={props.width}
       strokeDasharray={props.dashed ? '4 4' : '1 0'}
+      fill='none'
     />
   )
 }

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SizeControlType } from "./SizeController"
+import { SizeControlType } from './SizeController'
 import { SizeController } from './SizeController'
 import { Entity } from '../../types'
 

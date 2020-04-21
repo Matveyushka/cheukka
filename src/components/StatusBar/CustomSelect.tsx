@@ -58,7 +58,7 @@ export interface CustomSelectProps {
 
 export const CustomSelect = (props: CustomSelectProps) => (
   <Select
-    menuPlacement="top"
+    menuPlacement='top'
     styles={customSelectStyles}
     value={props.value}
     onChange={props.onSelect}

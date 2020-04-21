@@ -28,8 +28,6 @@ export const useEntityTypeChooserController = () => {
         return allConnectionTypes
       }
     })()
-
-    console.log(possibleConnections)
     
     return Array.from(Array.from(validEntityConnectionsEnd.entries()).filter(rule =>
       rule[1].filter(type => possibleConnections.indexOf(type) >= 0).length > 0

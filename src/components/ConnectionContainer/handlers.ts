@@ -2,9 +2,10 @@ import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { getCanvasX, getScale, getCanvasY } from '../../utils'
-import { getFreePointToConnectionDistance } from '../../utils/geometry'
-import { updateConnection } from '../../actions'
-import { Connection } from '../../types'
+import { updateConnection, setMouseMode } from '../../actions'
+import { useConnectionDistanceCalculator } from './closestConnectionDetector'
+import { IntermediateConnectionPoint } from '../../types/DiagramConnectionTypes/ConnectionPathPoint/IntermediateConnectionPoint'
+import { MouseMode } from '../../types'
 
 export const useConnectionHandlers = (connectionId: number) => {
   const [scale, connections, entities] = useSelector((state: Store) => [
@@ -12,28 +13,94 @@ export const useConnectionHandlers = (connectionId: number) => {
     state.diagramConnections,
     state.diagramEntities,])
 
+  const connectionDistanceCalculator = useConnectionDistanceCalculator()
+
   const dispatch = useDispatch()
 
-  const thisConnection = connections.get(connectionId)
+  const onMouseDown = (event: React.MouseEvent) => {
+    event.stopPropagation()
+    const x = getCanvasX(event, scale)
+    const y = getCanvasY(event, scale)
+
+    const theClosestConnectionId = connectionDistanceCalculator.getTheClosestConnectionId(x, y)
+
+    const closestConnection = connections.get(theClosestConnectionId)
+
+    const intermediatePoints = closestConnection.intermediatePoints
+    
+    const theClosestSegmentPointsId = connectionDistanceCalculator.
+      getTheClosestConnectionSegmentPointsId(x, y, closestConnection)
+
+    const firstPointX = theClosestSegmentPointsId[0] === -1 ?
+    closestConnection.begin.getX(closestConnection.end, entities) :
+    intermediatePoints[theClosestSegmentPointsId[0]].x
+
+    const firstPointY = theClosestSegmentPointsId[0] === -1 ?
+    closestConnection.begin.getY(closestConnection.end, entities) :
+    intermediatePoints[theClosestSegmentPointsId[0]].y
+
+    const lastPointX = theClosestSegmentPointsId[1] === intermediatePoints.length ?
+    closestConnection.end.getX(closestConnection.begin, entities) :
+    intermediatePoints[theClosestSegmentPointsId[1]].x
+
+    const lastPointY = theClosestSegmentPointsId[1] === intermediatePoints.length ?
+    closestConnection.end.getY(closestConnection.begin, entities) :
+    intermediatePoints[theClosestSegmentPointsId[1]].y
+
+    const moved = (() => {
+      if (Math.abs(firstPointX - lastPointX) < 0.01) { return {movedX: true, movedY: false} }
+      if (Math.abs(firstPointY - lastPointY) < 0.01) { return {movedX: false, movedY: true} } 
+      return { movedX: true, movedY: true }
+    })()
+
+    const newIntermediatePoints = intermediatePoints.map((point, index) => {
+      if (theClosestSegmentPointsId.indexOf(index) >= 0) {
+        return new IntermediateConnectionPoint(
+          point.getX(closestConnection.begin, entities), 
+          point.getY(closestConnection.begin, entities), 
+          true,
+          moved)
+      } else {
+        return point
+      }
+    })
+
+    const pre = theClosestSegmentPointsId[0] === -1 ? [
+      new IntermediateConnectionPoint(
+        closestConnection.begin.getX(closestConnection.end, entities),
+        closestConnection.begin.getY(closestConnection.end, entities),
+        true,
+        moved)
+    ] : []
+
+    const post = theClosestSegmentPointsId[1] === intermediatePoints.length ? [
+      new IntermediateConnectionPoint(
+        closestConnection.end.getX(closestConnection.begin, entities),
+        closestConnection.end.getY(closestConnection.begin, entities),
+        true,
+        moved)
+    ] : []
+
+    const newPoints = [...pre, ...newIntermediatePoints, ...post]
+
+    dispatch(updateConnection(theClosestConnectionId, {
+      ...closestConnection,
+      intermediatePoints: newPoints
+    }))
+    dispatch(setMouseMode(MouseMode.dragging))
+  }
 
   const onMouseEnterHandler = (event: React.MouseEvent) => {
     const x = getCanvasX(event, scale)
     const y = getCanvasY(event, scale)
-    const distances = Array.from(connections.entries()).map(
-      (connection) => {
-        return ({
-          distance: getFreePointToConnectionDistance(x, y, connection[1], entities),
-          id: connection[0]
-        })
-      })
 
-    const theClosest = distances.reduce((acc, value) => (value.distance < acc.distance) ? value : acc)
+    const theClosestConnectionId = connectionDistanceCalculator.getTheClosestConnectionId(x, y)
 
-    distances.forEach(o => {
-      if (o.id === theClosest.id) {
-        dispatch(updateConnection(o.id, { ...connections.get(o.id), isHovered: true }))
+    Array.from(connections.keys()).forEach(id => {
+      if (id === theClosestConnectionId) {
+        dispatch(updateConnection(id, { ...connections.get(id), isHovered: true }))
       } else {
-        dispatch(updateConnection(o.id, { ...connections.get(o.id), isHovered: false }))
+        dispatch(updateConnection(id, { ...connections.get(id), isHovered: false }))
       }
     })
   }
@@ -47,6 +114,7 @@ export const useConnectionHandlers = (connectionId: number) => {
 
   return {
     onMouseEnterHandler,
-    onMouseLeaveHandler
+    onMouseLeaveHandler,
+    onMouseDown
   }
 }

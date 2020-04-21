@@ -1,5 +1,5 @@
 import { Entity, EntityPart, ConnectionType, ConnectionPoint, EntityType } from '../../../types'
-import { ConnectionArea, ConnectionAreaDirection } from '../../../types/DiagramConnectionTypes/ConnectionArea'
+import { ConnectionArea, ConnectionDirection } from '../../../types/'
 import { EntityBlockRombus} from '../../../svg'
 import { EntityBlock } from '../../../types/DiagramEntityTypes/EntityPart'
 
@@ -14,14 +14,14 @@ export class BlockSchemeCondition extends Entity {
     ]
 
     this.connectionAreaCreators = [
-      (entity: Entity) => new ConnectionArea(0, entity.height / 2, entity.width / 2, 0, [ConnectionAreaDirection.Top, ConnectionAreaDirection.Left]),
-      (entity: Entity) => new ConnectionArea(entity.width / 2, 0, entity.width, entity.height / 2, [ConnectionAreaDirection.Top, ConnectionAreaDirection.Right]),
-      (entity: Entity) => new ConnectionArea(entity.width / 2, entity.height, entity.width, entity.height / 2, [ConnectionAreaDirection.Bottom, ConnectionAreaDirection.Right]),
-      (entity: Entity) => new ConnectionArea(0, entity.height / 2, entity.width / 2, entity.height, [ConnectionAreaDirection.Bottom, ConnectionAreaDirection.Left]),
-      (entity: Entity) => new ConnectionPoint(entity.width / 2, 0, [ConnectionAreaDirection.Top]),
-      (entity: Entity) => new ConnectionPoint(entity.width, entity.height / 2, [ConnectionAreaDirection.Right]),
-      (entity: Entity) => new ConnectionPoint(entity.width / 2, entity.height, [ConnectionAreaDirection.Bottom]),
-      (entity: Entity) => new ConnectionPoint(0, entity.height / 2, [ConnectionAreaDirection.Left]),
+      (entity: Entity) => new ConnectionArea(0, entity.height / 2, entity.width / 2, 0, [ConnectionDirection.Top, ConnectionDirection.Left]),
+      (entity: Entity) => new ConnectionArea(entity.width / 2, 0, entity.width, entity.height / 2, [ConnectionDirection.Top, ConnectionDirection.Right]),
+      (entity: Entity) => new ConnectionArea(entity.width / 2, entity.height, entity.width, entity.height / 2, [ConnectionDirection.Bottom, ConnectionDirection.Right]),
+      (entity: Entity) => new ConnectionArea(0, entity.height / 2, entity.width / 2, entity.height, [ConnectionDirection.Bottom, ConnectionDirection.Left]),
+      (entity: Entity) => new ConnectionPoint(entity.width / 2, 0, [ConnectionDirection.Top]),
+      (entity: Entity) => new ConnectionPoint(entity.width, entity.height / 2, [ConnectionDirection.Right]),
+      (entity: Entity) => new ConnectionPoint(entity.width / 2, entity.height, [ConnectionDirection.Bottom]),
+      (entity: Entity) => new ConnectionPoint(0, entity.height / 2, [ConnectionDirection.Left]),
     ]
   }
 }

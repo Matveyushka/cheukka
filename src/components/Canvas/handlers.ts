@@ -1,15 +1,17 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
-import { roundCoordinateOrSize, getCanvasX, getCanvasY, getScale } from '../../utils'
+import { roundEntityCoordinateOrSize, getCanvasX, getCanvasY, getScale, roundConnectionCoordinateOrSize } from '../../utils'
 import {
   updateEntity, setMouseMode,
-  setConnectionTypeChooserState
+  setConnectionTypeChooserState,
+  updateConnection
 } from '../../actions'
 import { MouseMode, Entity, nonActiveConnectionTypeChooserState } from '../../types'
 import { LEFT_MOUSE_BUTTON } from '../../constants'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
 import { useEntityTypeChooserController } from '../../hooks/entityTypeChooserHook'
+import { IntermediateConnectionPoint } from '../../types/DiagramConnectionTypes/ConnectionPathPoint/IntermediateConnectionPoint'
 
 export const useCanvasHandlers = () => {
   const currentConnectionController = useCurrentDiagramConnectionController()
@@ -25,10 +27,12 @@ export const useCanvasHandlers = () => {
   const [
     scale,
     entities,
+    connections,
     mode
   ] = useSelector((state: Store) => [
       getScale(state.scaleLevel),
       state.diagramEntities,
+      state.diagramConnections,
       state.mouseMode,
     ])
   const dispatch = useDispatch()
@@ -87,6 +91,24 @@ export const useCanvasHandlers = () => {
     
     dispatch(setMouseMode(MouseMode.default))
 
+    Array.from(connections.entries()).forEach((entrie, index) => {
+      const newShit = entrie[1].intermediatePoints.map(point => {
+        if (point.movedX || point.movedY) {
+          return new IntermediateConnectionPoint(
+            roundConnectionCoordinateOrSize(point.x),
+            roundConnectionCoordinateOrSize(point.y),
+            true,
+          )
+        } else {
+          return point
+        }
+      })
+
+      dispatch(updateConnection(entrie[0], {
+        ...entrie[1],
+        intermediatePoints: newShit}))
+    })
+
     Array.from(entities.entries()).forEach(entrie => {
       dispatch(updateEntity(entrie[0], {
         ...entrie[1],
@@ -103,8 +125,8 @@ export const useCanvasHandlers = () => {
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.button !== LEFT_MOUSE_BUTTON) {
       if (mode === MouseMode.connecting) {
-        const newX = roundCoordinateOrSize(getCanvasX(event, scale))
-        const newY = roundCoordinateOrSize(getCanvasY(event, scale))
+        const newX = roundEntityCoordinateOrSize(getCanvasX(event, scale))
+        const newY = roundEntityCoordinateOrSize(getCanvasY(event, scale))
 
         currentConnectionController.setEndFreePoint(newX, newY)
       }
@@ -116,6 +138,26 @@ export const useCanvasHandlers = () => {
         })
       }
       if (mode === MouseMode.dragging) {
+        Array.from(connections.entries()).forEach((entrie, index) => {
+          const newShit = entrie[1].intermediatePoints.map(point => {
+            if (point.movedX || point.movedY) {
+              return new IntermediateConnectionPoint(
+                point.movedX ? point.x + event.movementX / scale : point.x,
+                point.movedY ? point.y + event.movementY / scale : point.y,
+                true,
+                { movedX: point.movedX, movedY: point.movedY }
+              )
+            } else {
+              return point
+            }
+          })
+
+          dispatch(updateConnection(entrie[0], {
+            ...entrie[1],
+            intermediatePoints: newShit}))
+        })
+
+
         Array.from(entities.entries()).filter(entrie => (
           entrie[1].sizeChangedOnBottom || entrie[1].sizeChangedOnLeft ||
           entrie[1].sizeChangedOnTop || entrie[1].sizeChangedOnRight || entrie[1].moved
@@ -197,10 +239,10 @@ export const useCanvasHandlers = () => {
 
           dispatch(updateEntity(entrie[0], {
             ...entrie[1],
-            x: roundCoordinateOrSize(newX),
-            y: roundCoordinateOrSize(newY),
-            width: roundCoordinateOrSize(newWidth),
-            height: roundCoordinateOrSize(newHeight),
+            x: roundEntityCoordinateOrSize(newX),
+            y: roundEntityCoordinateOrSize(newY),
+            width: roundEntityCoordinateOrSize(newWidth),
+            height: roundEntityCoordinateOrSize(newHeight),
             sizeChangedOnTop: newSizeChangedOnTop,
             sizeChangedOnBottom: newSizeChangedOnBottom,
             sizeChangedOnLeft: newSizeChangedOnLeft,

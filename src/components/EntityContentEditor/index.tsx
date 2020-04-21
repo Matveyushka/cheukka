@@ -20,7 +20,7 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
   React.useEffect(() => {
     editorRef.current.innerText = props.initContent
     editorRef.current.focus()
-    document.execCommand("selectall",null);
+    document.execCommand('selectall',null);
   }, [])
 
   return (
