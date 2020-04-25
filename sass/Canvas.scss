@@ -22,21 +22,15 @@
 }
 
 .block {
-  
   &-content {
     outline: 0;
     text-align: center;
     position: absolute;      
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     transform: translateX(-50%) translateY(-50%);
     border: 0;
     background: 'none';
     cursor: default;
-    white-space: pre;
-    font-size: 1rem;
+    font-size: 14px;
   }
 
   .on-hover-visible {

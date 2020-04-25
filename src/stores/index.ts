@@ -25,6 +25,9 @@ export interface Store {
   lastSaveSettings: SaveSettings;
   isSaving: boolean;
   tutorialIsOpen: boolean;
+  defaultTextSettings: TextSettings;
+  textSettings: TextSettings;
+  textSettingsAreOpen: boolean;
 }
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
@@ -50,4 +53,21 @@ export const store = createStore<Store, any, any, any>(mainReducer,
     lastSaveSettings: null,
     isSaving: false,
     tutorialIsOpen: false,
+    defaultTextSettings: {
+      fontSize: 14,
+      fontFamily: "Calibri",
+      color: "#000000",
+      bold: false,
+      italic: false,
+      underline: false,
+    },
+    textSettings: {
+      fontSize: 14,
+      fontFamily: "Calibri",
+      color: "#000000",
+      bold: false,
+      italic: false,
+      underline: false,
+    },
+    textSettingsAreOpen: false,
   })

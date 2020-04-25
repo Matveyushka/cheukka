@@ -1,15 +1,46 @@
 .customization-panel-text {
   position: fixed;
-  top: 2rem;
+  top: calc(1.3rem + 5vh);
   right: 1.4vh;
   background-color: $main-color;
+  min-width: 10rem;
+  text-align: center;
 
   display: flex;
   flex-direction: column;
 
+  &-body {
+    padding: 0.5rem;
+  }
+
+  &-font-color {
+    background-color: $main-color;
+    box-sizing: border-box;
+    width: 100%;
+
+    &-chooser {
+      background-color: $second-color;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 0 2px;
+      border: none;
+      height: 1.2rem;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
   &-header {
     display: flex;
     justify-content: space-between;
+  }
+
+  &-exit {
+    width: 1.2rem;
+    height: 1.2rem;
+    text-align: center;
   }
   
   &-title {
@@ -17,8 +48,44 @@
   }
 
   &-buttons {
-    justify-content: center;
+    display: flex;
+    justify-content: space-between;
     padding: 0.5rem 0;
+  }
+
+  &-buttons div {
+    width: 30%;
+    text-align: center;
+    border: 1px solid $second-color;
+  }
+
+  &-font-family {
+    padding: 0;
+  }
+
+  &-font-size {
+    padding: 0.5rem 0;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+
+    &-minus {
+      height: 1.2rem;
+      width: 1.2rem;
+      text-align: center;
+    }
+
+    &-input {
+      flex-grow: 1;
+      height: 1.2rem;
+      background-color: $second-color;
+    }
+    
+    &-plus {
+      height: 1.2rem;
+      width: 1.2rem;
+      text-align: center;
+    }
   }
 }
 

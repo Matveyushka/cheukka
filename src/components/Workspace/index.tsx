@@ -12,6 +12,8 @@ import {
 import { TextCustomizationPanel } from '../CustomizationPanels/TextCustomizationPanel'
 import { RightActionPanel } from '../ActionPanels/RightActionPanel'
 import { LeftActionPanel } from '../ActionPanels/LeftActionPanel'
+import { useSelector } from 'react-redux'
+import { Store } from '../../stores'
 
 export interface DiagramCanvasProps { }
 
@@ -23,6 +25,12 @@ export const Workspace = () => {
     scrollHandler,
     preventContextMenu,
   } = useWorkspaceOffsetAndScale()
+
+  const [
+    textSettingsAreOpen
+  ] = useSelector((state: Store) => [
+    state.textSettingsAreOpen
+  ])
 
   return (
     <div className='workspace'
@@ -45,5 +53,8 @@ export const Workspace = () => {
 
       <LeftActionPanel/>
       <RightActionPanel/>
+      {
+        textSettingsAreOpen && <TextCustomizationPanel/>
+      }
     </div>)
 }

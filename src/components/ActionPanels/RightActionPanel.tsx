@@ -1,13 +1,25 @@
 import * as React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setTextSettingsAreOpen } from '../../actions'
+import { Store } from '../../stores'
 
 export const RightActionPanel = () => {
+  const dispatch = useDispatch()
   const [isOpen, setIsOpen] = React.useState(true)
+
+  const [
+    textSettingsAreOpen
+  ] = useSelector((state: Store) => [
+    state.textSettingsAreOpen
+  ])
 
   return (
     <div className="action-panel action-panel-right">
       {
         isOpen ? (<>
-          <button className="dark-button action-panel-button">
+          <button className="dark-button action-panel-button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => dispatch(setTextSettingsAreOpen(!textSettingsAreOpen))}>
             <svg
               className="action-panel-button-image"
               viewBox="-80 -80 500 500">

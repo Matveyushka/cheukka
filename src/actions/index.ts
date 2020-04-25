@@ -44,6 +44,12 @@ export interface SetIsSaving { type: Constants.SET_IS_SAVING; isSaving: boolean 
 
 export interface SetTutorialIsOpen { type: Constants.SET_TUTORIAL_IS_OPEN; tutorialIsOpen: boolean }
 
+export interface SetTextSettings { type: Constants.SET_TEXT_SETTINGS; textSettings: TextSettings }
+
+export interface SetDefaultTextSettings { type: Constants.SET_DEFAULT_TEXT_SETTINGS; textSettings: TextSettings }
+
+export interface SetTextSettingsAreOpen { type: Constants.SET_TEXT_SETTINGS_ARE_OPEN; areOpen: boolean }
+
 //actions
 
 export const setScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : SetScale => ({
@@ -154,6 +160,21 @@ export const setTutorialIsOpen = (tutorialIsOpen: boolean) : SetTutorialIsOpen =
   tutorialIsOpen
 })
 
+export const setTextSettings = (textSettings: TextSettings) : SetTextSettings => ({
+  type: Constants.SET_TEXT_SETTINGS,
+  textSettings
+})
+
+export const setDefaultTextSettings = (textSettings: TextSettings) : SetDefaultTextSettings => ({
+  type: Constants.SET_DEFAULT_TEXT_SETTINGS,
+  textSettings
+})
+
+export const setTextSettingsAreOpen = (areOpen: boolean) : SetTextSettingsAreOpen => ({
+  type: Constants.SET_TEXT_SETTINGS_ARE_OPEN,
+  areOpen,
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -175,3 +196,6 @@ export type Action =
   | SetLastSaveSettings
   | SetIsSaving
   | SetTutorialIsOpen
+  | SetTextSettings
+  | SetDefaultTextSettings
+  | SetTextSettingsAreOpen

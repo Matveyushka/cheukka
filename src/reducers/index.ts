@@ -21,6 +21,9 @@ import {
   SET_LAST_SAVE_SETTINGS,
   SET_IS_SAVING,
   SET_TUTORIAL_IS_OPEN,
+  SET_TEXT_SETTINGS,
+  SET_TEXT_SETTINGS_ARE_OPEN,
+  SET_DEFAULT_TEXT_SETTINGS,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -132,8 +135,14 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, lastSaveSettings: action.saveSettings }
     case SET_IS_SAVING:
       return { ...state, isSaving: action.isSaving }
-    case SET_TUTORIAL_IS_OPEN: 
+    case SET_TUTORIAL_IS_OPEN:
       return { ...state, tutorialIsOpen: action.tutorialIsOpen }
+    case SET_TEXT_SETTINGS:
+      return { ...state, textSettings: action.textSettings }
+    case SET_DEFAULT_TEXT_SETTINGS:
+      return { ...state, defaultTextSettings: action.textSettings }
+    case SET_TEXT_SETTINGS_ARE_OPEN:
+      return { ...state, textSettingsAreOpen: action.areOpen }
   }
 
   return state

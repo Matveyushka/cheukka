@@ -1,9 +1,11 @@
 import * as React from 'react'
 import { Entity, EntityPart } from '../types'
 import { getScale } from '../utils'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../stores'
 import { EntityContentEditor } from './EntityContentEditor'
+import { START_SCALE } from '../constants'
+import { setTextSettingsAreOpen } from '../actions'
 
 export interface DiagramEntityBlockProps {
   parentEntity: Entity;
@@ -13,6 +15,8 @@ export interface DiagramEntityBlockProps {
 }
 
 export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
+  const dispatch = useDispatch()
+
   const [isEditingContent, setIsEditingContent] = React.useState<boolean>(false)
 
   const block = props.entityPart.renderer(props.parentEntity)
@@ -21,16 +25,25 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
     event.stopPropagation()
     if (props.entityPart.contentEditable) {
       setIsEditingContent(true)
+      dispatch(setTextSettingsAreOpen(true))
     }
   }
 
   const finishEditHandler = (newContent: string) => {
     setIsEditingContent(false)
     props.updateContent(newContent)
+    dispatch(setTextSettingsAreOpen(false))
   }
+
+  React.useEffect(() => {
+    setIsEditingContent(true)
+    dispatch(setTextSettingsAreOpen(true))
+  },[])
 
   const x = props.parentEntity.x + block.relativeX
   const y = props.parentEntity.y + block.relativeY
+
+  const relativeScale = props.scale / getScale(START_SCALE)
 
   return (
     <g onDoubleClick={doubleClickHandler}>
@@ -48,8 +61,8 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
             minWidth: block.width * props.scale + 'px',
             left: `${(block.width / 2) * props.scale}px`,
             top: `${(block.height / 2) * props.scale}px`,
-            fontSize: 0.2 * props.scale + 'em',
-            userSelect: 'none'
+            userSelect: 'none',
+            transform: `scale(${relativeScale}) translate(-${50 / relativeScale}%, -${50 / relativeScale}%)`
           }}
 
           dangerouslySetInnerHTML={{

@@ -520,7 +520,7 @@ export const getIntermediatePoints = (
   ])
 
   const beginFirstMiddleIntersections = getIntersections([beginFirstBorderLine], middleSegments)
-  
+
   const endFirstMiddleIntersections = getIntersections([endFirstBorderLine], middleSegments)
 
   const beginSegmentEndFirstI = getVerticcalHorizontalSegmentsIntersection(beginSegment, endFirstBorderLine)
@@ -619,7 +619,7 @@ export const getIntermediatePoints = (
   ]).filter(way => isWayValid(way))
 
   const shortWays = getShortestWays(ppWays)
-  
+
   const straightWays = getStraightestWays(shortWays)
 
   if (straightWays.length === 0) {
@@ -628,7 +628,7 @@ export const getIntermediatePoints = (
     ]
   }
 
-  let result = (straightWays[0]).map((point, index, srcArray) => {
+  const result = (straightWays[0]).map((point, index, srcArray) => {
     if (index !== 0) {
       return new IntermediateConnectionPoint(
         point.x, point.y, false
@@ -644,5 +644,25 @@ export const getIntermediatePoints = (
     result.pop()
   }
 
-  return result
+  const result2 = result.filter((point, index) => {
+    if (index !== 0) {
+      if (Math.abs(point.x - result[index - 1].x) < 0.001 &&
+      Math.abs(point.y - result[index - 1].y) < 0.001) {
+        return false
+      }
+      return true
+    }
+    return true
+  })
+
+
+  const result3 = result2.filter((point, index) => {
+    if (index !== 0 && index !== result2.length - 1) {
+      return !(
+        Math.abs(result2[index - 1].x - result2[index + 1].x) < 0.001 || 
+        Math.abs(result2[index - 1].y - result2[index + 1].y) < 0.001)
+    }
+    return true
+  })
+  return result3
 }

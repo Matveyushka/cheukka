@@ -82,8 +82,6 @@ export const useConnectionDistanceCalculator = () => {
     const freePoint = newPoint(x, y)
     const segments = getConnectionSegments(connection)
 
-    console.log(segments)
-
     const distances = segments.map((segment, index) => ({
       index,
       distance: getPointsDistance(
@@ -91,8 +89,6 @@ export const useConnectionDistanceCalculator = () => {
         getTheClosestSegmentPointToFreePoint(freePoint, segment.point1, segment.point2)
       )
     }))
-
-    console.log(distances)
 
     const firstIndex = distances.reduce((a, v) => v.distance < a.distance ? v : a).index - 1
 
