@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { SimpleSelect } from '../SImpleSelect'
 import { Store } from '../../../stores'
 import { setTextSettings, setTextSettingsAreOpen, setDefaultTextSettings } from '../../../actions'
+import { ColorPicker } from '../ColorPicker'
 
 export const TextCustomizationPanel = () => {
   const dispatch = useDispatch()
@@ -61,14 +62,11 @@ export const TextCustomizationPanel = () => {
           />
         </div>
         <div className='customization-panel-text-font-color'>
-          <input type="color"
-            ref={colorRef}
-            className='customization-panel-text-font-color-chooser'
-            onMouseDown={(e) => e.preventDefault()}
-            onChange={() => {
-              const value = colorRef.current.value
-              dispatch(setTextSettings({ ...textSettings, fontSize: value }))
-              document.execCommand('foreColor', false, value);
+          <ColorPicker
+            currentColor={textSettings.color}
+            onChange={(color: string) => {
+              dispatch(setTextSettings({ ...textSettings, color }))
+              document.execCommand('foreColor', false, color)
             }}
           />
         </div>

@@ -17,19 +17,7 @@
     background-color: $main-color;
     box-sizing: border-box;
     width: 100%;
-
-    &-chooser {
-      background-color: $second-color;
-      box-sizing: border-box;
-      width: 100%;
-      padding: 0 2px;
-      border: none;
-      height: 1.2rem;
-
-      &:focus {
-        outline: none;
-      }
-    }
+    height: 1.2rem;
   }
 
   &-header {

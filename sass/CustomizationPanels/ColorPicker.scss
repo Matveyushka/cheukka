@@ -1,0 +1,30 @@
+.color-picker-header {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid $second-color;
+}
+
+.color-picker-body {
+  box-sizing: border-box;
+  position: relative;
+  background-color: $main-color;
+  width: 100%;
+  left: 0;
+  top: 0;
+  padding: 0.5rem;
+  border: 1px solid $second-color;
+}
+
+.color-picker-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.color-picker-cancel {
+  width: 100%;
+  bottom: 0.5rem;
+}

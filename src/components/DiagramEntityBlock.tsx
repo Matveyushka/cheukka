@@ -36,9 +36,11 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
   }
 
   React.useEffect(() => {
-    setIsEditingContent(true)
-    dispatch(setTextSettingsAreOpen(true))
-  },[])
+    if (props.entityPart.contentEditable) {
+      setIsEditingContent(true)
+      dispatch(setTextSettingsAreOpen(true))
+    }
+  }, [])
 
   const x = props.parentEntity.x + block.relativeX
   const y = props.parentEntity.y + block.relativeY
@@ -58,7 +60,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
           onMouseDown={() => { }}
 
           style={{
-            minWidth: block.width * props.scale + 'px',
+            minWidth: block.width * getScale(START_SCALE) + 'px',
             left: `${(block.width / 2) * props.scale}px`,
             top: `${(block.height / 2) * props.scale}px`,
             userSelect: 'none',
@@ -76,7 +78,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
             <EntityContentEditor
               x={(block.width / 2) * props.scale}
               y={(block.height / 2) * props.scale}
-              width={block.width * props.scale}
+              width={block.width * getScale(START_SCALE)}
               height={20}
               initContent={props.entityPart.content}
               finishEdit={finishEditHandler}
