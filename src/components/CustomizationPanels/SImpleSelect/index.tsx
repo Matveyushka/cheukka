@@ -8,14 +8,14 @@ interface SimpleSelectOption {
 interface SimpleSelectProps {
   options: Array<SimpleSelectOption>;
   onChange: (value: any) => void;
-  defaultOptionIndex?: number;
+  currentOptionIndex: number;
   withButtons?: boolean;
 }
 
 export const SimpleSelect = (props: SimpleSelectProps) => {
   const [isOpened, setIsOpened] = React.useState<boolean>(false)
 
-  const [optionIndex, setOptionIndex] = React.useState<number>(props.defaultOptionIndex ?? 0)
+  const [optionIndex, setOptionIndex] = React.useState<number>(props.currentOptionIndex ?? 0)
 
   const selectRef = React.useRef(null)
 
@@ -36,8 +36,8 @@ export const SimpleSelect = (props: SimpleSelectProps) => {
   }, [isOpened])
 
   React.useEffect(() => {
-    setOptionIndex(props.defaultOptionIndex)
-  }, [props.defaultOptionIndex])
+    setOptionIndex(props.currentOptionIndex)
+  }, [props.currentOptionIndex])
 
   return (
     <div className='simple-select' ref={selectRef}>

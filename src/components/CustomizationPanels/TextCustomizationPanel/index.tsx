@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { SelectList } from '../../SelectList'
 import { useSelector, useDispatch } from 'react-redux'
 import { SimpleSelect } from '../SImpleSelect'
 import { Store } from '../../../stores'
 import { setTextSettings, setTextSettingsAreOpen, setDefaultTextSettings } from '../../../actions'
 import { ColorPicker } from '../ColorPicker'
+import { applyFontSize } from '../../../utils'
 
 export const TextCustomizationPanel = () => {
   const dispatch = useDispatch()
@@ -15,15 +15,15 @@ export const TextCustomizationPanel = () => {
     state.textSettings
   ])
 
-  const fontSizeOptions = [
-    9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72, 96
-  ]
+  const fontSizes = [ 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72, 96 ]
+
+  const fontSizeOptions = fontSizes.map(option => ({ value: option }))
 
   const fontFamilies = [
     'Arial', 'Times New Roman', 'Courier New', 'Calibri'
   ]
 
-  const colorRef = React.useRef(null)
+  const fontFamilyOptions = fontFamilies.map(option => ({ value: option }))
 
   return (
     <div className='customization-panel-text' onMouseDown={(event) => event.preventDefault()}>
@@ -36,35 +36,29 @@ export const TextCustomizationPanel = () => {
       <div className='customization-panel-text-body'>
         <div className='customization-panel-text-font-family'>
           {<SimpleSelect
-            options={fontFamilies.map(option => ({ value: option }))}
-            onChange={(value) => {
-              dispatch(setTextSettings({ ...textSettings, fontFamily: value }))
-              document.execCommand("fontName", false, value)
+            options={fontFamilyOptions}
+            onChange={(fontFamily) => {
+              dispatch(setTextSettings({ ...textSettings, fontFamily }))
+              document.execCommand("fontName", false, fontFamily)
             }}
-            defaultOptionIndex={fontFamilies.indexOf(textSettings.fontFamily)}
+            currentOptionIndex={fontFamilies.indexOf(textSettings.fontFamily)}
           />}
         </div>
         <div className='customization-panel-text-font-size'>
           <SimpleSelect
-            options={fontSizeOptions.map(option => ({ value: option }))}
-            onChange={(value) => {
-              dispatch(setTextSettings({ ...textSettings, fontSize: value }))
-              document.execCommand("fontSize", false, "7")
-              Array.from(document.getElementsByTagName("font")).forEach((element) => {
-                if (element.size == "7") {
-                  element.removeAttribute("size")
-                  element.style.fontSize = "" + value + "px"
-                }
-              })
+            options={fontSizeOptions}
+            onChange={(fontSize) => {
+              dispatch(setTextSettings({ ...textSettings, fontSize }))
+              applyFontSize(fontSize)
             }}
-            defaultOptionIndex={fontSizeOptions.indexOf(textSettings.fontSize)}
+            currentOptionIndex={fontSizes.indexOf(textSettings.fontSize)}
             withButtons={true}
           />
         </div>
         <div className='customization-panel-text-font-color'>
           <ColorPicker
             currentColor={textSettings.color}
-            onChange={(color: string) => {
+            onChange={(color) => {
               dispatch(setTextSettings({ ...textSettings, color }))
               document.execCommand('foreColor', false, color)
             }}
@@ -94,9 +88,7 @@ export const TextCustomizationPanel = () => {
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => { dispatch(setDefaultTextSettings(textSettings)) }}
           className='light-button '
-        >
-          Save as default
-        </div>
+        >Save as default</div>
       </div>
     </div>
   )

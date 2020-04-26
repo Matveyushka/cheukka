@@ -115,3 +115,13 @@ export const getTheClosestAreaPointPosition = (
 
   return segmentLength === 0 ? 0.5 : Math.abs(pointDistantionFromBegin / segmentLength)
 }
+
+export const applyFontSize = (fontSize: number) => {
+  document.execCommand("fontSize", false, "7")
+  Array.from(document.getElementsByTagName("font")).forEach((element) => {
+    if (element.size == "7") {
+      element.removeAttribute("size")
+      element.style.fontSize = "" + fontSize + "px"
+    }
+  })
+}
