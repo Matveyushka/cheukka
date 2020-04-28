@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getScale } from '../../utils'
 import { Store } from '../../stores'
 import { Entity, ConnectionAreaPoint, MouseMode, allConnectionTypes, EntityPart, EntityConnectionPoint } from '../../types'
-import { removeEntity, updateEntity } from '../../actions'
+import { removeEntity, updateEntity, setEntitySettings, setEntitySettingsAreOpen } from '../../actions'
 import { getBackgroundSvgImage, getSvgExit } from '../../svg'
 import { ConnectionAreaContainer } from '../ConnectionAreaContainer'
 import { DiagramEntityBlock } from '../DiagramEntityBlock'
@@ -39,6 +39,17 @@ export const EntityContainer = (props: EntityContainerProps) => {
     state.currentDiagramConnection,
     state.diagramEntities
   ])
+
+  React.useEffect(() => {
+    if (props.entity.selected) {
+      dispatch(setEntitySettings(props.entity.settings))
+      dispatch(setEntitySettingsAreOpen(true))
+    } else {
+      if (Array.from(diagramEntities.values()).filter(entity => entity.selected).length === 0) {
+        dispatch(setEntitySettingsAreOpen(false))
+      }
+    }
+  }, [props.entity.selected])
 
   const dispatch = useDispatch()
 

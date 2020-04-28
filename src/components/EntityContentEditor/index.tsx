@@ -4,6 +4,7 @@ import { Store } from '../../stores'
 import { getScale } from '../../utils'
 import { setTextSettings } from '../../actions'
 import { START_SCALE } from '../../constants'
+import { TextSettings } from '../../types/Settings/TextSettings'
 
 export interface EntityContentEditorProps {
   x: number;

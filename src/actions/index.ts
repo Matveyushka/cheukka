@@ -1,6 +1,9 @@
 import * as Constants from '../constants/actions'
 import { Entity, Connection, MouseMode, EntityTypeChooserState, DiagramType, ConnectionTypeChooserState } from '../types'
 import { SaveSettings } from '../types/SaveSettings';
+import { EntitySettings } from '../types/Settings/EntitySettings';
+import { TextSettings } from '../types/Settings/TextSettings';
+import { ConnectionSettings } from '../types/Settings/ConnectionSettings';
 
 //interfaces
 
@@ -49,6 +52,18 @@ export interface SetTextSettings { type: Constants.SET_TEXT_SETTINGS; textSettin
 export interface SetDefaultTextSettings { type: Constants.SET_DEFAULT_TEXT_SETTINGS; textSettings: TextSettings }
 
 export interface SetTextSettingsAreOpen { type: Constants.SET_TEXT_SETTINGS_ARE_OPEN; areOpen: boolean }
+
+export interface SetEntitySettingsAreOpen { type: Constants.SET_ENTITY_SETTINGS_ARE_OPEN; areOpen: boolean }
+
+export interface SetEntitySettings { type: Constants.SET_ENTITY_SETTINGS; entitySettings: EntitySettings }
+
+export interface SetDefaultEntitySettings { type: Constants.SET_DEFAULT_ENTITY_SETTINGS; entitySettings: EntitySettings }
+
+export interface SetConnectionSettingsAreOpen { type: Constants.SET_CONNECTION_SETTINGS_ARE_OPEN; areOpen: boolean }
+
+export interface SetConnectionSettings { type: Constants.SET_CONNECTION_SETTINGS; connectionSettings: ConnectionSettings }
+
+export interface SetDefaultConnectionSettings { type: Constants.SET_DEFAULT_CONNECTION_SETTINGS; connectionSettings: ConnectionSettings }
 
 //actions
 
@@ -175,6 +190,37 @@ export const setTextSettingsAreOpen = (areOpen: boolean) : SetTextSettingsAreOpe
   areOpen,
 })
 
+export const setEntitySettingsAreOpen = (areOpen: boolean) : SetEntitySettingsAreOpen => ({
+  type: Constants.SET_ENTITY_SETTINGS_ARE_OPEN,
+  areOpen,
+})
+
+export const setEntitySettings = (entitySettings: EntitySettings) : SetEntitySettings => ({
+  type: Constants.SET_ENTITY_SETTINGS,
+  entitySettings
+})
+
+export const setDefaultEntitySettings = (entitySettings: EntitySettings) : SetDefaultEntitySettings => ({
+  type: Constants.SET_DEFAULT_ENTITY_SETTINGS,
+  entitySettings
+})
+
+export const setConnectionSettingsAreOpen = (areOpen: boolean) : SetConnectionSettingsAreOpen => ({
+  type: Constants.SET_CONNECTION_SETTINGS_ARE_OPEN,
+  areOpen,
+})
+
+export const setConnectionSettings = (connectionSettings: ConnectionSettings) : SetConnectionSettings => ({
+  type: Constants.SET_CONNECTION_SETTINGS,
+  connectionSettings
+})
+
+export const setDefaultConnectionSettings = (connectionSettings: ConnectionSettings) : SetDefaultConnectionSettings => ({
+  type: Constants.SET_DEFAULT_CONNECTION_SETTINGS,
+  connectionSettings
+})
+
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -199,3 +245,9 @@ export type Action =
   | SetTextSettings
   | SetDefaultTextSettings
   | SetTextSettingsAreOpen
+  | SetEntitySettingsAreOpen
+  | SetEntitySettings
+  | SetDefaultEntitySettings
+  | SetConnectionSettingsAreOpen
+  | SetConnectionSettings
+  | SetDefaultConnectionSettings

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../stores'
 import { EntityContentEditor } from './EntityContentEditor'
 import { START_SCALE } from '../constants'
-import { setTextSettingsAreOpen } from '../actions'
+import { setTextSettingsAreOpen, setTextSettings } from '../actions'
 
 export interface DiagramEntityBlockProps {
   parentEntity: Entity;
@@ -16,6 +16,12 @@ export interface DiagramEntityBlockProps {
 
 export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
   const dispatch = useDispatch()
+
+  const [
+    defaultTextSettings
+  ] = useSelector((state: Store) => [
+    state.defaultTextSettings
+  ])
 
   const [isEditingContent, setIsEditingContent] = React.useState<boolean>(false)
 
@@ -32,6 +38,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
   const finishEditHandler = (newContent: string) => {
     setIsEditingContent(false)
     props.updateContent(newContent)
+    dispatch(setTextSettings(defaultTextSettings))
     dispatch(setTextSettingsAreOpen(false))
   }
 
@@ -49,7 +56,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
 
   return (
     <g onDoubleClick={doubleClickHandler}>
-      {block.svgComponent(x, y, block.width, block.height, props.scale)}
+      {block.svgComponent(x, y, block.width, block.height, props.scale, props.parentEntity.settings)}
       <foreignObject
         x={x * props.scale}
         y={y * props.scale}

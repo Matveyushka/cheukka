@@ -55,7 +55,11 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
   return (
     <>
       {
-        true && <ConnectionPath points={pathPoints} width={1} color='black' dashed={false} />
+        <ConnectionPath 
+        points={pathPoints} 
+        width={props.connection.settings.thickness} 
+        color={props.connection.settings.color} 
+        dashed={false} />
       }
       {
         <g transform={`rotate(${getSegmentAngle(
@@ -64,15 +68,19 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
           endX,
           endY)} ${roundConnectionCoordinateOrSize(endX) * props.scale} ${roundConnectionCoordinateOrSize(endY) * props.scale})`}>
           {connectionTypeArrows.get(props.connection.type)(
-            roundConnectionCoordinateOrSize(endX), roundConnectionCoordinateOrSize(endY), props.scale)}
+            roundConnectionCoordinateOrSize(endX), 
+            roundConnectionCoordinateOrSize(endY), 
+            props.scale, 
+            props.connection.settings.color,
+            props.connection.settings.arrowSize)}
         </g>
       }
       {
-        props.connection.isHovered &&
+        (props.connection.isHovered || props.connection.selected) &&
         <ConnectionPath points={pathPoints} width={4} color='red' dashed={true} />
       }
       {
-        true && props.connection.intermediatePoints.map((point, index) => (
+        props.connection.intermediatePoints.map((point, index) => (
           <circle
             key={index}
             cx={roundConnectionCoordinateOrSize(point.getX(null, entities)) * props.scale}

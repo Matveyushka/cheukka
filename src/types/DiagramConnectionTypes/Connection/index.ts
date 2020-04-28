@@ -3,6 +3,8 @@ import { ConnectionType } from '../ConnectionType'
 import { IntermediateConnectionPoint } from '../ConnectionPathPoint/IntermediateConnectionPoint'
 import { Entity } from '../..'
 import { getIntermediatePoints } from './intermediatePointsCalculator'
+import { ConnectionSettings } from '../../Settings/ConnectionSettings'
+import { store } from '../../../stores/index'
 
 export class Connection {
   constructor(
@@ -13,13 +15,16 @@ export class Connection {
     this.begin = beginPoint
     this.end = endPoint
     this.type = type
+    console.log(store.getState().defaultConnectionSettings)
   }
 
   begin: ConnectionPathPoint
   end: ConnectionPathPoint
   type: ConnectionType
-  isHovered: boolean
+  isHovered: boolean = false
   intermediatePoints: Array<IntermediateConnectionPoint> = []
+  selected: boolean = false
+  settings: ConnectionSettings = store.getState().defaultConnectionSettings
 
   calculateIntermediatePoints = (entities: Map<number, Entity>, thisConnection: Connection) => {
     //thisConnection.intermediatePoints = getIntermediatePoints(thisConnection.begin, thisConnection.end, entities)

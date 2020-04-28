@@ -24,6 +24,12 @@ import {
   SET_TEXT_SETTINGS,
   SET_TEXT_SETTINGS_ARE_OPEN,
   SET_DEFAULT_TEXT_SETTINGS,
+  SET_ENTITY_SETTINGS_ARE_OPEN,
+  SET_ENTITY_SETTINGS,
+  SET_DEFAULT_ENTITY_SETTINGS,
+  SET_CONNECTION_SETTINGS_ARE_OPEN,
+  SET_CONNECTION_SETTINGS,
+  SET_DEFAULT_CONNECTION_SETTINGS,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -143,6 +149,18 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, defaultTextSettings: action.textSettings }
     case SET_TEXT_SETTINGS_ARE_OPEN:
       return { ...state, textSettingsAreOpen: action.areOpen }
+    case SET_ENTITY_SETTINGS_ARE_OPEN:
+      return { ...state, entitySettingsAreOpen: action.areOpen }
+    case SET_ENTITY_SETTINGS:
+      return { ...state, entitySettings: action.entitySettings }
+    case SET_DEFAULT_ENTITY_SETTINGS:
+      return { ...state, defaultEntitySettings: action.entitySettings }
+    case SET_CONNECTION_SETTINGS_ARE_OPEN:
+      return { ...state, connectionSettingsAreOpen: action.areOpen }
+    case SET_CONNECTION_SETTINGS:
+      return { ...state, connectionSettings: action.connectionSettings }
+    case SET_DEFAULT_CONNECTION_SETTINGS:
+      return { ...state, defaultConnectionSettings: action.connectionSettings }
   }
 
   return state

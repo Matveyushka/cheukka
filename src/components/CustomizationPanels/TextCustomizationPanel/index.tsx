@@ -26,14 +26,14 @@ export const TextCustomizationPanel = () => {
   const fontFamilyOptions = fontFamilies.map(option => ({ value: option }))
 
   return (
-    <div className='customization-panel-text' onMouseDown={(event) => event.preventDefault()}>
-      <div className='customization-panel-text-header'>
-        <div className='customization-panel-text-title dark-label'>Text settings</div>
-        <div className='customization-panel-text-exit dark-button'
+    <div className='customization-panel customization-panel-text' onMouseDown={(event) => event.preventDefault()}>
+      <div className='customization-panel-header'>
+        <div className='customization-panel-title dark-label'>Text settings</div>
+        <div className='customization-panel-exit dark-button'
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => dispatch(setTextSettingsAreOpen(false))}>X</div>
       </div>
-      <div className='customization-panel-text-body'>
+      <div className='customization-panel-body'>
         <div className='customization-panel-text-font-family'>
           {<SimpleSelect
             options={fontFamilyOptions}
@@ -45,6 +45,7 @@ export const TextCustomizationPanel = () => {
           />}
         </div>
         <div className='customization-panel-text-font-size'>
+          font size
           <SimpleSelect
             options={fontSizeOptions}
             onChange={(fontSize) => {

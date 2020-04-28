@@ -31,3 +31,15 @@
 .canvas-wrapper {
   position: relative;
 }
+
+.customization-panels {
+  position: fixed;
+  top: calc(1.3rem + 5vh);
+  right: 1.4vh;
+
+  &-spacing {
+    height: 0.5rem;
+    width: 100%;
+    pointer-events: none;
+  }
+}

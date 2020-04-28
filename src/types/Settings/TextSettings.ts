@@ -1,4 +1,4 @@
-interface TextSettings {
+export interface TextSettings {
   fontSize: number;
   fontFamily: string;
   color: string;

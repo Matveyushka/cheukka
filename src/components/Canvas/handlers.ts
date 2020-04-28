@@ -30,11 +30,11 @@ export const useCanvasHandlers = () => {
     connections,
     mode
   ] = useSelector((state: Store) => [
-      getScale(state.scaleLevel),
-      state.diagramEntities,
-      state.diagramConnections,
-      state.mouseMode,
-    ])
+    getScale(state.scaleLevel),
+    state.diagramEntities,
+    state.diagramConnections,
+    state.mouseMode,
+  ])
   const dispatch = useDispatch()
 
   const doubleClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -54,11 +54,15 @@ export const useCanvasHandlers = () => {
         endY: getCanvasY(event, scale),
       })
       dispatch(setMouseMode(MouseMode.selecting))
-      Array.from(entities.entries()).forEach(entrie => {
-        if (!event.ctrlKey) {
+
+      if (!event.ctrlKey) {
+        Array.from(entities.entries()).forEach(entrie => {
           dispatch(updateEntity(entrie[0], { ...entrie[1], selected: false }))
-        }
-      })
+        })
+        Array.from(connections.entries()).forEach(entrie => {
+          dispatch(updateConnection(entrie[0], { ...entrie[1], selected: false }))
+        })
+      }
     }
   }
 
@@ -88,7 +92,7 @@ export const useCanvasHandlers = () => {
         dispatch(setMouseMode(MouseMode.default))
       }
     }
-    
+
     dispatch(setMouseMode(MouseMode.default))
 
     Array.from(connections.entries()).forEach((entrie, index) => {
@@ -106,7 +110,8 @@ export const useCanvasHandlers = () => {
 
       dispatch(updateConnection(entrie[0], {
         ...entrie[1],
-        intermediatePoints: newShit}))
+        intermediatePoints: newShit
+      }))
     })
 
     Array.from(entities.entries()).forEach(entrie => {
@@ -154,7 +159,8 @@ export const useCanvasHandlers = () => {
 
           dispatch(updateConnection(entrie[0], {
             ...entrie[1],
-            intermediatePoints: newShit}))
+            intermediatePoints: newShit
+          }))
         })
 
 

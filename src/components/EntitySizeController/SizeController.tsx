@@ -73,7 +73,6 @@ export const SizeController = (props: SizeControllerProps) => {
           dispatch(setMouseMode(MouseMode.dragging))
           dispatch(updateEntity(props.entityId, {
             ...props.entity, 
-            selected: true,
             sizeChangedOnTop: 
               props.sizeControlType === SizeControlType.top ||
               props.sizeControlType === SizeControlType.topRight ||

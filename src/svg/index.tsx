@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { getScale } from '../utils'
+import { EntitySettings } from '../types/Settings/EntitySettings'
 
 export const getBackgroundSvgImage = (svg: string) => `url('data:image/svg+xml;base64,${svg}')`
 
@@ -29,23 +30,23 @@ export const getBackgroundSvg = (scale: number, backgroundBlocksAmountInWidth: n
   </svg>`)
 }
 
-export type EntityBlockSvg = (x: number, y: number, width: number, height: number, scale: number) => React.ReactElement
+export type EntityBlockSvg = (x: number, y: number, width: number, height: number, scale: number, settings: EntitySettings) => React.ReactElement
 
-export const EntityBlockRectangle: EntityBlockSvg = (x: number, y: number, width: number, height: number, scale: number) => {
+export const EntityBlockRectangle: EntityBlockSvg = (x: number, y: number, width: number, height: number, scale: number, settings: EntitySettings) => {
   return (
   <rect
     x={x * scale}
     y={y * scale}
     width={width * scale}
     height={height * scale}
-    stroke='black'
-    strokeWidth={1}
-    fill='white'
+    stroke={settings.borderColor}
+    strokeWidth={settings.thickness}
+    fill={settings.backgroundColor}
     onClick={() => { }}
   />)
 }
 
-export const EntityBlockRombus: EntityBlockSvg = (x: number, y: number, width: number, height: number, scale: number) => {
+export const EntityBlockRombus: EntityBlockSvg = (x: number, y: number, width: number, height: number, scale: number, settings: EntitySettings) => {
   return (
   <path
     d={`
@@ -55,9 +56,9 @@ export const EntityBlockRombus: EntityBlockSvg = (x: number, y: number, width: n
     L ${x * scale} ${(y + height / 2) * scale}
     L ${(x + width / 2) * scale} ${y * scale}
     `}
-    stroke='black'
-    strokeWidth={1}
-    fill='white'
+    stroke={settings.borderColor}
+    strokeWidth={settings.thickness}
+    fill={settings.backgroundColor}
     onClick={() => { }}
   />)
 }

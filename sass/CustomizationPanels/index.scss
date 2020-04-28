@@ -1,0 +1,33 @@
+@import './Text';
+@import './Entity';
+@import './ColorPicker';
+@import './Connection';
+
+.customization-panel {
+  position: relative;
+  background-color: $main-color;
+  min-width: 10rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  &-body {
+    padding: 0.5rem;
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-exit {
+    width: 1.2rem;
+    height: 1.2rem;
+    text-align: center;
+  }
+  
+  &-title {
+    padding-left: 0.5rem;
+  }
+
+}

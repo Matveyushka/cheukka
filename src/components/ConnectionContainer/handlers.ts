@@ -85,6 +85,7 @@ export const useConnectionHandlers = (connectionId: number) => {
 
     dispatch(updateConnection(theClosestConnectionId, {
       ...closestConnection,
+      selected: true,
       intermediatePoints: newPoints
     }))
     dispatch(setMouseMode(MouseMode.dragging))
