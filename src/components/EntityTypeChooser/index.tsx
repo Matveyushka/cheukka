@@ -36,10 +36,10 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       const beginPoint = currentConnectionController.getBegin()
       const endPoint = currentConnectionController.getEnd()
 
-      const beginX = beginPoint.getX(endPoint, entities)
-      const beginY = beginPoint.getY(endPoint, entities)
-      const endX = endPoint.getX(beginPoint, entities)
-      const endY = endPoint.getY(beginPoint, entities)
+      const beginX = beginPoint.getX(endPoint)
+      const beginY = beginPoint.getY(endPoint)
+      const endX = endPoint.getX(beginPoint)
+      const endY = endPoint.getY(beginPoint)
 
       const yBottomBound = roundEntityCoordinateOrSize((
         beginPoint instanceof ConnectionAreaPoint ||

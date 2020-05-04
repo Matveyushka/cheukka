@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../stores'
 import { SavePanel } from './SavePanel'
 import { Tutorial } from './Tutorial'
+import { About } from './About'
 
 export interface MainProps {
 
@@ -16,10 +17,12 @@ export interface MainProps {
 export const Main = (props: MainProps) : React.ReactElement => {
   const [
     savePanelIsOpen,
-    tutorialIsOpen
+    tutorialIsOpen,
+    aboutIsOpen
   ] = useSelector((state: Store) => [
     state.savePanelIsOpen,
-    state.tutorialIsOpen
+    state.tutorialIsOpen,
+    state.aboutIsOpen
   ])
 
   return (
@@ -29,6 +32,7 @@ export const Main = (props: MainProps) : React.ReactElement => {
       <StatusBar />
       {savePanelIsOpen ? <SavePanel/> : ""}
       {tutorialIsOpen ? <Tutorial/> : ""}
+      {aboutIsOpen ? <About/> : ""}
     </div>
   )
 }

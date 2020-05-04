@@ -27,8 +27,28 @@ export class Connection {
   settings: ConnectionSettings = store.getState().defaultConnectionSettings
 
   calculateIntermediatePoints = (entities: Map<number, Entity>, thisConnection: Connection) => {
-    //thisConnection.intermediatePoints = getIntermediatePoints(thisConnection.begin, thisConnection.end, entities)
     thisConnection.intermediatePoints = getIntermediateWay(thisConnection, [], thisConnection.begin, 0, entities)
+  }
+
+  getConnectionBounds = () => {
+    const xs = [
+      this.begin.getX(this.end),
+      this.end.getX(this.begin),
+      ...this.intermediatePoints.map(point => point.getX()) 
+    ]
+
+    const ys = [
+      this.begin.getY(this.end),
+      this.end.getY(this.begin),
+      ...this.intermediatePoints.map(point => point.getY()) 
+    ]
+
+    return {
+      top: ys.reduce((a: number, v: number) => Math.min(a, v)),
+      right: xs.reduce((a: number, v: number) => Math.max(a, v)),
+      bottom: ys.reduce((a: number, v: number) => Math.max(a, v)),
+      left: xs.reduce((a: number, v: number) => Math.min(a, v))
+    }
   }
 }
 

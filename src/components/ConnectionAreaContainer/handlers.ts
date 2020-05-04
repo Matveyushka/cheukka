@@ -1,6 +1,6 @@
 import { setMouseMode, setConnectionTypeChooserState, updateEntity } from '../../actions'
 import { MouseMode } from '../../types'
-import { LEFT_MOUSE_BUTTON } from '../../constants'
+import { RIGHT_MOUSE_BUTTON } from '../../constants'
 import { Entity, ConnectionArea, Connection, ConnectionAreaPoint, ConnectionType, nonActiveConnectionTypeChooserState, ConnectionPoint } from '../../types'
 import { getScale, getCanvasX, getCanvasY, getTheClosestAreaPointPosition } from '../../utils'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
@@ -22,7 +22,7 @@ export const useConnectionAreaHandlers = (
 
   const mouseDownHandler = (event: React.MouseEvent) => {
     event.stopPropagation()
-    if (event.button !== LEFT_MOUSE_BUTTON) {
+    if (event.button !== RIGHT_MOUSE_BUTTON) {
       const position = getTheClosestAreaPointPosition(
         getCanvasX(event, scale),
         getCanvasY(event, scale),
@@ -44,7 +44,7 @@ export const useConnectionAreaHandlers = (
   const mouseUpHandler = (event: React.MouseEvent) => {
     event.stopPropagation()
     if (mouseMode === MouseMode.connecting) {
-      if (event.button !== LEFT_MOUSE_BUTTON) {
+      if (event.button !== RIGHT_MOUSE_BUTTON) {
         const position = getTheClosestAreaPointPosition(
           getCanvasX(event, scale),
           getCanvasY(event, scale),

@@ -204,8 +204,8 @@ const getPointDirections = (point: ConnectionPathPoint,
     relatedEntity.connectionAreaCreators.forEach(creator => {
       const connectionArea = creator(relatedEntity)
       if (connectionArea instanceof ConnectionPoint &&
-        relatedEntity.x + connectionArea.xBegin === point.getX(oppositePoint, entities) &&
-        relatedEntity.y + connectionArea.yBegin === point.getY(oppositePoint, entities)) {
+        relatedEntity.x + connectionArea.xBegin === point.getX(oppositePoint) &&
+        relatedEntity.y + connectionArea.yBegin === point.getY(oppositePoint)) {
         COSTYL = connectionArea.directions
       }
     })
@@ -222,7 +222,7 @@ const getDirectionSegment = (point: ConnectionPathPoint,
 
   if (directions.length !== 1) return null
 
-  const srcPoint = newPoint(point.getX(oppositePoint, entities), point.getY(oppositePoint, entities))
+  const srcPoint = newPoint(point.getX(oppositePoint), point.getY(oppositePoint))
 
   const topPoint = newPoint(srcPoint.x, borderArea.top)
   const rightPoint = newPoint(borderArea.right, srcPoint.y)
@@ -255,8 +255,8 @@ const getTerminalIntermediatePoint = (point: ConnectionPathPoint,
   })()
 
   return newPoint(
-    point.getX(oppositePoint, entities) + deltaX,
-    point.getY(oppositePoint, entities) + deltaY
+    point.getX(oppositePoint) + deltaX,
+    point.getY(oppositePoint) + deltaY
   )
 }
 
@@ -449,8 +449,8 @@ export const getIntermediatePoints = (
   endPoint: ConnectionPathPoint,
   entities: Map<number, Entity>
 ): Array<IntermediateConnectionPoint> => {
-  const beginXYPoint = newPoint(beginPoint.getX(endPoint, entities), beginPoint.getY(endPoint, entities))
-  const endXYPoint = newPoint(endPoint.getX(beginPoint, entities), endPoint.getY(beginPoint, entities))
+  const beginXYPoint = newPoint(beginPoint.getX(endPoint), beginPoint.getY(endPoint))
+  const endXYPoint = newPoint(endPoint.getX(beginPoint), endPoint.getY(beginPoint))
 
   const beginImpassableArea = getRelatedImpassableArea(beginPoint, endPoint, entities)
   const endImpassabelArea = getRelatedImpassableArea(endPoint, beginPoint, entities)
@@ -638,8 +638,8 @@ export const getIntermediatePoints = (
     }
   }).filter(p => p !== null)
 
-  while (result[result.length - 1].getX(beginPoint, entities) === endPoint.getX(beginPoint, entities) &&
-    result[result.length - 1].getY(beginPoint, entities) === endPoint.getY(beginPoint, entities)
+  while (result[result.length - 1].getX() === endPoint.getX(beginPoint) &&
+    result[result.length - 1].getY() === endPoint.getY(beginPoint)
   ) {
     result.pop()
   }

@@ -11,17 +11,17 @@ export const useConnectionDistanceCalculator = () => {
 
 
   const getPointFromPathPoint = (srcPoint: ConnectionPathPoint, oppositePoint: ConnectionPathPoint) => newPoint(
-    srcPoint.getX(oppositePoint, entities), srcPoint.getY(oppositePoint, entities)
+    srcPoint.getX(oppositePoint), srcPoint.getY(oppositePoint)
   )
 
   const getConnectionSegments = (connection: Connection): Array<Segment> => {
     const beginPoint = newPoint(
-      connection.begin.getX(connection.end, entities),
-      connection.begin.getY(connection.end, entities)
+      connection.begin.getX(connection.end),
+      connection.begin.getY(connection.end)
     )
     const endPoint = newPoint(
-      connection.end.getX(connection.begin, entities),
-      connection.end.getY(connection.begin, entities)
+      connection.end.getX(connection.begin),
+      connection.end.getY(connection.begin)
     )
 
     if (connection.intermediatePoints.length === 0) {

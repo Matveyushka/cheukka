@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { DropdownMenu, DropdownMenuButton, DropdownMenuHeader, DropdownMenuDirection } from './DropdownMenu'
 import { useDispatch, useSelector } from 'react-redux'
-import { setSavePanelIsOpen, setTutorialIsOpen } from '../actions'
+import { setSavePanelIsOpen, setTutorialIsOpen, setAboutIsOpen } from '../actions'
 import { useFileSaveHook } from '../hooks/fileSaverHook'
 import { Store } from '../stores'
 
@@ -51,8 +51,8 @@ export const MenuBar = (props: MenuBarProps) => {
           ]}
         />
       </div>
-      <div className='menu-item'>
-        <div className='dark-button' onClick={() => {}}>About</div>
+      <div className='menu-item dark-button' onClick={() => dispatch(setAboutIsOpen(true))}>
+        About
       </div>
       <div className='menu-free-space'>
 

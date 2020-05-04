@@ -1,6 +1,6 @@
 import { ConnectionPathPoint } from '.'
-import { Entity } from '../..'
 import { getEntityConnectionPosition } from '../../../utils/geometry'
+import { store } from '../../../stores'
 
 
 export class EntityConnectionPoint extends ConnectionPathPoint {
@@ -11,11 +11,13 @@ export class EntityConnectionPoint extends ConnectionPathPoint {
 
   entityId: number
 
-  getX = (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => {
+  getX = (srcPoint: ConnectionPathPoint) => {
+    const entities = store.getState().diagramEntities
     return getEntityConnectionPosition(srcPoint, entities.get(this.entityId), entities).x
   }
   
-  getY = (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => {
+  getY = (srcPoint: ConnectionPathPoint) => {
+    const entities = store.getState().diagramEntities
     return getEntityConnectionPosition(srcPoint, entities.get(this.entityId), entities).y
   }
 }

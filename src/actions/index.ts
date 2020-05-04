@@ -65,6 +65,8 @@ export interface SetConnectionSettings { type: Constants.SET_CONNECTION_SETTINGS
 
 export interface SetDefaultConnectionSettings { type: Constants.SET_DEFAULT_CONNECTION_SETTINGS; connectionSettings: ConnectionSettings }
 
+export interface SetAboutIsOpen { type: Constants.SET_ABOUT_IS_OPEN; isOpen: boolean }
+
 //actions
 
 export const setScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : SetScale => ({
@@ -220,6 +222,10 @@ export const setDefaultConnectionSettings = (connectionSettings: ConnectionSetti
   connectionSettings
 })
 
+export const setAboutIsOpen = (isOpen: boolean) : SetAboutIsOpen => ({
+  type: Constants.SET_ABOUT_IS_OPEN,
+  isOpen
+})
 
 export type Action = 
     SetScale 
@@ -251,3 +257,4 @@ export type Action =
   | SetConnectionSettingsAreOpen
   | SetConnectionSettings
   | SetDefaultConnectionSettings
+  | SetAboutIsOpen

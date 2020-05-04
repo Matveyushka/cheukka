@@ -30,6 +30,7 @@ import {
   SET_CONNECTION_SETTINGS_ARE_OPEN,
   SET_CONNECTION_SETTINGS,
   SET_DEFAULT_CONNECTION_SETTINGS,
+  SET_ABOUT_IS_OPEN,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -161,6 +162,8 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, connectionSettings: action.connectionSettings }
     case SET_DEFAULT_CONNECTION_SETTINGS:
       return { ...state, defaultConnectionSettings: action.connectionSettings }
+    case SET_ABOUT_IS_OPEN:
+      return { ...state, aboutIsOpen: action.isOpen }
   }
 
   return state

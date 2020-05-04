@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Store } from '../../stores'
 import { getScale, getCanvasX, getCanvasY } from '../../utils'
-import { LEFT_MOUSE_BUTTON } from '../../constants'
+import { RIGHT_MOUSE_BUTTON } from '../../constants'
 import { MouseMode, nonActiveConnectionTypeChooserState, Entity, EntityConnectionPoint, ConnectionAreaPoint, allConnectionTypes } from '../../types'
 import { setMouseMode, updateEntity, setConnectionTypeChooserState } from '../../actions'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
@@ -41,7 +41,7 @@ export const useEntityContainerHandlers = (entityId: number) => {
   const onMouseUpHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>): void => {
     if (mouseMode === MouseMode.connecting) {
       event.stopPropagation()
-      if (event.button !== LEFT_MOUSE_BUTTON) {
+      if (event.button !== RIGHT_MOUSE_BUTTON) {
         dispatch(setConnectionTypeChooserState({
           isActive: true,
           x: getCanvasX(event, scale),
@@ -51,7 +51,7 @@ export const useEntityContainerHandlers = (entityId: number) => {
         dispatch(setMouseMode(MouseMode.default))
       }
     }
-    if (event.button === LEFT_MOUSE_BUTTON) {
+    if (event.button === RIGHT_MOUSE_BUTTON) {
       event.stopPropagation()
       dispatch(updateEntity(entityId, {
         ...thisEntity,
@@ -62,7 +62,7 @@ export const useEntityContainerHandlers = (entityId: number) => {
 
   const onMouseDownHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>): void => {
     event.stopPropagation()
-    if (event.button !== LEFT_MOUSE_BUTTON) {
+    if (event.button !== RIGHT_MOUSE_BUTTON) {
       dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
       dispatch(setMouseMode(MouseMode.dragging))
       Array.from(entities.entries()).forEach(entrie => {
@@ -96,7 +96,7 @@ export const useEntityContainerHandlers = (entityId: number) => {
   }
 
   const onMouseMoveHandler = (event: React.MouseEvent<SVGGElement, MouseEvent>) => {
-    if (event.button !== LEFT_MOUSE_BUTTON) {
+    if (event.button !== RIGHT_MOUSE_BUTTON) {
       dispatch(updateEntity(entityId, { ...thisEntity, isHovered: true }))
       if (mouseMode === MouseMode.connecting) {
         if (isConnectable()) {

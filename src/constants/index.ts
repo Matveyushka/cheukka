@@ -16,4 +16,4 @@ export const DEFAULT_EMPTY_SPACE_WIDTH = vwToPx(60)
 
 export const DEFAULT_EMPTY_SPACE_HEIGHT = vhToPx(60)
 
-export const LEFT_MOUSE_BUTTON = 2
+export const RIGHT_MOUSE_BUTTON = 2

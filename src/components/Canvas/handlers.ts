@@ -7,15 +7,36 @@ import {
   setConnectionTypeChooserState,
   updateConnection
 } from '../../actions'
-import { MouseMode, Entity, nonActiveConnectionTypeChooserState } from '../../types'
-import { LEFT_MOUSE_BUTTON } from '../../constants'
+import { MouseMode, Entity, nonActiveConnectionTypeChooserState, Connection } from '../../types'
+import { RIGHT_MOUSE_BUTTON } from '../../constants'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
 import { useEntityTypeChooserController } from '../../hooks/entityTypeChooserHook'
 import { IntermediateConnectionPoint } from '../../types/DiagramConnectionTypes/ConnectionPathPoint/IntermediateConnectionPoint'
+import { isEntityInArea, isAreaInsideAnotherArea } from '../../utils/geometry'
 
 export const useCanvasHandlers = () => {
   const currentConnectionController = useCurrentDiagramConnectionController()
   const entityTypeChooserController = useEntityTypeChooserController()
+
+  const updateEntities = (
+    fieldsToUpdate: (id: number, entity: Entity) => Partial<Entity>,
+    condition?: (id: number, entity: Entity) => boolean) => {
+    Array.from(entities.entries()).forEach(entrie => {
+      if (!condition || condition(entrie[0], entrie[1])) {
+        dispatch(updateEntity(entrie[0], { ...entrie[1], ...fieldsToUpdate(entrie[0], entrie[1]) }))
+      }
+    })
+  }
+
+  const updateConnections = (
+    fieldsToUpdate: (id: number, connection: Connection) => Partial<Connection>,
+    condition?: (id: number, connection: Connection) => boolean) => {
+    Array.from(connections.entries()).forEach(entrie => {
+      if (!condition || condition(entrie[0], entrie[1])) {
+        dispatch(updateConnection(entrie[0], { ...entrie[1], ...fieldsToUpdate(entrie[0], entrie[1]) }))
+      }
+    })
+  }
 
   const [selectingState, setSelectingState] = React.useState({
     beginX: 0,
@@ -38,15 +59,15 @@ export const useCanvasHandlers = () => {
   const dispatch = useDispatch()
 
   const doubleClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mode !== MouseMode.default) return;
-
-    entityTypeChooserController.activate(getCanvasX(event, scale), getCanvasY(event, scale), false)
+    if (mode === MouseMode.default) {
+      entityTypeChooserController.activate(getCanvasX(event, scale), getCanvasY(event, scale), false)
+    }
   }
 
   const mouseDownHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     entityTypeChooserController.deactivate()
     dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
-    if (event.button !== LEFT_MOUSE_BUTTON) {
+    if (event.button !== RIGHT_MOUSE_BUTTON) {
       setSelectingState({
         beginX: getCanvasX(event, scale),
         beginY: getCanvasY(event, scale),
@@ -56,84 +77,73 @@ export const useCanvasHandlers = () => {
       dispatch(setMouseMode(MouseMode.selecting))
 
       if (!event.ctrlKey) {
-        Array.from(entities.entries()).forEach(entrie => {
-          dispatch(updateEntity(entrie[0], { ...entrie[1], selected: false }))
-        })
-        Array.from(connections.entries()).forEach(entrie => {
-          dispatch(updateConnection(entrie[0], { ...entrie[1], selected: false }))
-        })
+        updateEntities(() => ({ selected: false }))
+        updateConnections(() => ({ selected: false }))
       }
     }
   }
 
-  const isEntityInArea = (entity: Entity, area: {
-    beginX: number,
-    beginY: number,
-    endX: number,
-    endY: number,
-  }) => {
-    const x = Math.min(area.beginX, area.endX)
-    const y = Math.min(area.beginY, area.endY)
-    const width = Math.max(area.beginX - x, area.endX - x)
-    const height = Math.max(area.beginY - y, area.endY - y)
-
-    if ((entity.x >= x) &&
-      ((entity.x + entity.width) < (x + width)) &&
-      (entity.y >= y) &&
-      ((entity.y + entity.height) < (y + height))) return true
-    return false
-  }
-
   const mouseUpHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (mode === MouseMode.connecting) {
-      if (event.button !== LEFT_MOUSE_BUTTON) {
-        entityTypeChooserController.activate(getCanvasX(event, scale), getCanvasY(event, scale), true)
-      } else {
-        dispatch(setMouseMode(MouseMode.default))
-      }
+    if (mode === MouseMode.connecting && event.button !== RIGHT_MOUSE_BUTTON) {
+      entityTypeChooserController.activate(getCanvasX(event, scale), getCanvasY(event, scale), true)
     }
 
     dispatch(setMouseMode(MouseMode.default))
 
-    Array.from(connections.entries()).forEach((entrie, index) => {
-      const newShit = entrie[1].intermediatePoints.map(point => {
-        if (point.movedX || point.movedY) {
-          return new IntermediateConnectionPoint(
-            roundConnectionCoordinateOrSize(point.x),
-            roundConnectionCoordinateOrSize(point.y),
-            true,
+    if (mode === MouseMode.dragging) {
+      updateConnections((id, connection) => ({
+        intermediatePoints: connection.intermediatePoints.map(point => {
+          const pointWasMoved = roundConnectionCoordinateOrSize(point.x) !== roundConnectionCoordinateOrSize(point.prevX) ||
+          roundConnectionCoordinateOrSize(point.y) !== roundConnectionCoordinateOrSize(point.prevY)
+  
+          if (point.movedX || point.movedY) {
+            return new IntermediateConnectionPoint(
+              roundConnectionCoordinateOrSize(point.x),
+              roundConnectionCoordinateOrSize(point.y),
+              pointWasMoved,
+            )
+          } else {
+            return point
+          }
+        })
+      }))
+    }
+
+    if (mode === MouseMode.selecting) {
+      updateConnections((id, connection) => {
+        const connectionArea = connection.getConnectionBounds()
+        return {
+          selected: isAreaInsideAnotherArea(
+            {
+              beginX: connectionArea.left,
+              beginY: connectionArea.top,
+              endX: connectionArea.right,
+              endY: connectionArea.bottom
+            },
+            selectingState
           )
-        } else {
-          return point
         }
       })
+    }
 
-      dispatch(updateConnection(entrie[0], {
-        ...entrie[1],
-        intermediatePoints: newShit
-      }))
-    })
 
-    Array.from(entities.entries()).forEach(entrie => {
-      dispatch(updateEntity(entrie[0], {
-        ...entrie[1],
-        selected: (mode === MouseMode.selecting && isEntityInArea(entrie[1], selectingState)) ? true : entrie[1].selected,
-        moved: false,
-        sizeChangedOnBottom: false,
-        sizeChangedOnLeft: false,
-        sizeChangedOnRight: false,
-        sizeChangedOnTop: false,
-      }))
-    })
+    updateEntities((_, entity) => ({
+      selected: (mode === MouseMode.selecting && isEntityInArea(entity, selectingState)) ? true : entity.selected,
+      moved: false,
+      sizeChangedOnBottom: false,
+      sizeChangedOnLeft: false,
+      sizeChangedOnRight: false,
+      sizeChangedOnTop: false,
+    }))
+
   }
 
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (event.button !== LEFT_MOUSE_BUTTON) {
+    if (event.button !== RIGHT_MOUSE_BUTTON) {
       if (mode === MouseMode.connecting) {
-        const newX = roundEntityCoordinateOrSize(getCanvasX(event, scale))
-        const newY = roundEntityCoordinateOrSize(getCanvasY(event, scale))
-
-        currentConnectionController.setEndFreePoint(newX, newY)
+        currentConnectionController.setEndFreePoint(
+          roundConnectionCoordinateOrSize(getCanvasX(event, scale)),
+          roundConnectionCoordinateOrSize(getCanvasY(event, scale)))
       }
       if (mode === MouseMode.selecting) {
         setSelectingState({
@@ -143,108 +153,101 @@ export const useCanvasHandlers = () => {
         })
       }
       if (mode === MouseMode.dragging) {
-        Array.from(connections.entries()).forEach((entrie, index) => {
-          const newShit = entrie[1].intermediatePoints.map(point => {
+        console.log("DRAGGING")
+        updateConnections((id, connection) => ({
+          intermediatePoints: connection.intermediatePoints.map(point => {
+            console.log(point)
             if (point.movedX || point.movedY) {
               return new IntermediateConnectionPoint(
                 point.movedX ? point.x + event.movementX / scale : point.x,
                 point.movedY ? point.y + event.movementY / scale : point.y,
                 true,
-                { movedX: point.movedX, movedY: point.movedY }
+                point.movedX,
+                point.movedY,
               )
             } else {
               return point
             }
           })
+        }))
 
-          dispatch(updateConnection(entrie[0], {
-            ...entrie[1],
-            intermediatePoints: newShit
-          }))
-        })
-
-
-        Array.from(entities.entries()).filter(entrie => (
-          entrie[1].sizeChangedOnBottom || entrie[1].sizeChangedOnLeft ||
-          entrie[1].sizeChangedOnTop || entrie[1].sizeChangedOnRight || entrie[1].moved
-        )).forEach(entrie => {
+        updateEntities((id, entity) => {
           const possibleNewX = getCanvasX(event, scale)
-          const rightX = entrie[1].x + entrie[1].width
+          const rightX = entity.x + entity.width
           const possibleNewY = getCanvasY(event, scale)
-          const bottomY = entrie[1].y + entrie[1].height
+          const bottomY = entity.y + entity.height
 
           const newX = (() => {
-            if (entrie[1].moved) return getCanvasX(event, scale) - entrie[1].movementOriginX
-            if (entrie[1].sizeChangedOnLeft) {
+            if (entity.moved) return getCanvasX(event, scale) - entity.movementOriginX
+            if (entity.sizeChangedOnLeft) {
               return possibleNewX > rightX ? rightX : possibleNewX
             }
-            if (entrie[1].sizeChangedOnRight) {
-              return getCanvasX(event, scale) < entrie[1].x ? getCanvasX(event, scale) : entrie[1].x
+            if (entity.sizeChangedOnRight) {
+              return getCanvasX(event, scale) < entity.x ? getCanvasX(event, scale) : entity.x
             }
-            return entrie[1].x
+            return entity.x
           })()
 
           const newY = (() => {
-            if (entrie[1].moved) return getCanvasY(event, scale) - entrie[1].movementOriginY
-            if (entrie[1].sizeChangedOnTop) {
+            if (entity.moved) return getCanvasY(event, scale) - entity.movementOriginY
+            if (entity.sizeChangedOnTop) {
               return possibleNewY > bottomY ? bottomY : possibleNewY
             }
-            if (entrie[1].sizeChangedOnBottom) {
-              return getCanvasY(event, scale) < entrie[1].y ? getCanvasY(event, scale) : entrie[1].y
+            if (entity.sizeChangedOnBottom) {
+              return getCanvasY(event, scale) < entity.y ? getCanvasY(event, scale) : entity.y
             }
-            return entrie[1].y
+            return entity.y
           })()
 
           const newWidth = (() => {
-            if (entrie[1].sizeChangedOnLeft) {
+            if (entity.sizeChangedOnLeft) {
               const possibleNewWidth = rightX - getCanvasX(event, scale)
               return possibleNewWidth > 0 ? possibleNewWidth : -possibleNewWidth
             }
-            if (entrie[1].sizeChangedOnRight) {
-              const possibleNewWidth = getCanvasX(event, scale) - entrie[1].x
+            if (entity.sizeChangedOnRight) {
+              const possibleNewWidth = getCanvasX(event, scale) - entity.x
               return possibleNewWidth > 0 ? possibleNewWidth : -possibleNewWidth
             }
-            return entrie[1].width
+            return entity.width
           })()
 
           const newHeight = (() => {
-            if (entrie[1].sizeChangedOnTop) {
+            if (entity.sizeChangedOnTop) {
               const possibleNewHeight = bottomY - getCanvasY(event, scale)
               return possibleNewHeight > 0 ? possibleNewHeight : -possibleNewHeight
             }
-            if (entrie[1].sizeChangedOnBottom) {
-              const possibleNewHeight = getCanvasY(event, scale) - entrie[1].y
+            if (entity.sizeChangedOnBottom) {
+              const possibleNewHeight = getCanvasY(event, scale) - entity.y
               return possibleNewHeight > 0 ? possibleNewHeight : -possibleNewHeight
             }
-            return entrie[1].height
+            return entity.height
           })()
 
           const newSizeChangedOnTop = (() => {
-            if (entrie[1].sizeChangedOnTop && possibleNewY > bottomY) return false
-            if (entrie[1].sizeChangedOnBottom && entrie[1].y !== newY) return true
-            return entrie[1].sizeChangedOnTop
+            if (entity.sizeChangedOnTop && possibleNewY > bottomY) return false
+            if (entity.sizeChangedOnBottom && entity.y !== newY) return true
+            return entity.sizeChangedOnTop
           })()
 
           const newSizeChangedOnLeft = (() => {
-            if (entrie[1].sizeChangedOnLeft && possibleNewX > rightX) return false
-            if (entrie[1].sizeChangedOnRight && entrie[1].x !== newX) return true
-            return entrie[1].sizeChangedOnLeft
+            if (entity.sizeChangedOnLeft && possibleNewX > rightX) return false
+            if (entity.sizeChangedOnRight && entity.x !== newX) return true
+            return entity.sizeChangedOnLeft
           })()
 
           const newSizeChangedOnBottom = (() => {
-            if (entrie[1].sizeChangedOnTop && possibleNewY > bottomY) return true
-            if (entrie[1].sizeChangedOnBottom && entrie[1].y !== newY) return false
-            return entrie[1].sizeChangedOnBottom
+            if (entity.sizeChangedOnTop && possibleNewY > bottomY) return true
+            if (entity.sizeChangedOnBottom && entity.y !== newY) return false
+            return entity.sizeChangedOnBottom
           })()
 
           const newSizeChangedOnRight = (() => {
-            if (entrie[1].sizeChangedOnLeft && possibleNewX > rightX) return true
-            if (entrie[1].sizeChangedOnRight && entrie[1].x !== newX) return false
-            return entrie[1].sizeChangedOnRight
+            if (entity.sizeChangedOnLeft && possibleNewX > rightX) return true
+            if (entity.sizeChangedOnRight && entity.x !== newX) return false
+            return entity.sizeChangedOnRight
           })()
 
-          dispatch(updateEntity(entrie[0], {
-            ...entrie[1],
+          return {
             x: roundEntityCoordinateOrSize(newX),
             y: roundEntityCoordinateOrSize(newY),
             width: roundEntityCoordinateOrSize(newWidth),
@@ -253,8 +256,9 @@ export const useCanvasHandlers = () => {
             sizeChangedOnBottom: newSizeChangedOnBottom,
             sizeChangedOnLeft: newSizeChangedOnLeft,
             sizeChangedOnRight: newSizeChangedOnRight,
-          }))
-        })
+          }
+        }, (id, entity) => (entity.sizeChangedOnBottom || entity.sizeChangedOnLeft ||
+          entity.sizeChangedOnTop || entity.sizeChangedOnRight || entity.moved))
       }
     }
   }
