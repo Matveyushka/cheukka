@@ -6,11 +6,12 @@ import { Store } from '../stores'
 import { EntityContentEditor } from './EntityContentEditor'
 import { START_SCALE } from '../constants'
 import { setTextSettingsAreOpen, setTextSettings } from '../actions'
+import { TextSettings } from '../types/Settings/TextSettings'
 
 export interface DiagramEntityBlockProps {
-  parentEntity: Entity;
+  parentEntityId: number;
   entityPart: EntityPart
-  updateContent: (newContent: string) => void;
+  updateContent: (newContent: string, textSettings: TextSettings) => void;
   scale: number;
 }
 
@@ -18,14 +19,22 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
   const dispatch = useDispatch()
 
   const [
-    defaultTextSettings
+    textSettings,
+    defaultTextSettings,
+    parentEntity,
+    scale
   ] = useSelector((state: Store) => [
-    state.defaultTextSettings
+    state.textSettings,
+    state.defaultTextSettings,
+    state.diagramEntities.get(props.parentEntityId),
+    getScale(state.scaleLevel)
   ])
 
   const [isEditingContent, setIsEditingContent] = React.useState<boolean>(false)
 
-  const block = props.entityPart.renderer(props.parentEntity)
+  const block = props.entityPart.renderer(parentEntity, props.parentEntityId, scale)
+
+  const contentBlockRef = React.useRef(null);
 
   const doubleClickHandler = (event: React.MouseEvent) => {
     event.stopPropagation()
@@ -37,26 +46,28 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
 
   const finishEditHandler = (newContent: string) => {
     setIsEditingContent(false)
-    props.updateContent(newContent)
+    props.updateContent(newContent, textSettings)
     dispatch(setTextSettings(defaultTextSettings))
     dispatch(setTextSettingsAreOpen(false))
   }
 
   React.useEffect(() => {
     if (props.entityPart.contentEditable) {
+      console.log(props.entityPart.content)     
+
       setIsEditingContent(true)
       dispatch(setTextSettingsAreOpen(true))
     }
   }, [])
 
-  const x = props.parentEntity.x + block.relativeX
-  const y = props.parentEntity.y + block.relativeY
+  const x = parentEntity.x + block.relativeX
+  const y = parentEntity.y + block.relativeY
 
   const relativeScale = props.scale / getScale(START_SCALE)
 
   return (
     <g onDoubleClick={doubleClickHandler}>
-      {block.svgComponent(x, y, block.width, block.height, props.scale, props.parentEntity.settings)}
+      {block.svgComponent(x, y, block.width, block.height, props.scale, parentEntity.settings)}
       <foreignObject
         x={x * props.scale}
         y={y * props.scale}
@@ -65,6 +76,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
         <div
           className='block-content'
           onMouseDown={() => { }}
+          ref={contentBlockRef}
 
           style={{
             minWidth: block.width * getScale(START_SCALE) + 'px',

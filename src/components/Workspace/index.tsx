@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { EntityCustomizationPanel } from '../CustomizationPanels/EntityCustomizationPanel'
 import { ConnectionCustomizationPanel } from '../CustomizationPanels/ConnectionCustomizationPanel'
+import { useHotKeys } from './hotKeysHook'
 
 export interface DiagramCanvasProps { }
 
@@ -27,6 +28,8 @@ export const Workspace = () => {
     scrollHandler,
     preventContextMenu,
   } = useWorkspaceOffsetAndScale()
+
+  useHotKeys()
 
   const [
     textSettingsAreOpen,

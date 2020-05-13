@@ -33,4 +33,5 @@ export abstract class Entity {
   connectionPointCreators: Array<(entity: Entity) => ConnectionPoint> = []
   areaConnectionMode: boolean = true
   isHovered: boolean = false
+  heightToContentAdapter?: (entityId: number, scale: number) => number
 }

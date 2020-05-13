@@ -39,7 +39,7 @@ export const SavePanel = (props: SavePanelProps) => {
     <div className="save-panel">
       <button className="save-panel-close" onClick={() => dispatch(setSavePanelIsOpen(false))}>X</button>
       <div className="save-panel-header">
-        <div>Saving ass {SaveTypeNames[saveType]}</div>
+        <div>Saving as {SaveTypeNames[saveType]}</div>
       </div>
       <div className="save-panel-body">
         <input ref={nameRef} type="text" placeholder="Write the new file name" className="save-panel-input-name" />

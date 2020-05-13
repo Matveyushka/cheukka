@@ -127,8 +127,9 @@ export const useCanvasHandlers = () => {
     }
 
 
-    updateEntities((_, entity) => ({
+    updateEntities((entityId, entity) => ({
       selected: (mode === MouseMode.selecting && isEntityInArea(entity, selectingState)) ? true : entity.selected,
+      height: entity.heightToContentAdapter ? entity.heightToContentAdapter(entityId, scale) : entity.height,
       moved: false,
       sizeChangedOnBottom: false,
       sizeChangedOnLeft: false,
@@ -156,7 +157,6 @@ export const useCanvasHandlers = () => {
         console.log("DRAGGING")
         updateConnections((id, connection) => ({
           intermediatePoints: connection.intermediatePoints.map(point => {
-            console.log(point)
             if (point.movedX || point.movedY) {
               return new IntermediateConnectionPoint(
                 point.movedX ? point.x + event.movementX / scale : point.x,

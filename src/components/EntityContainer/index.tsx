@@ -13,6 +13,7 @@ import {
   validEntityConnectionsBegin, 
   validEntityConnectionsEnd 
 } from '../../constants/dictionaries/validEntityConnections'
+import { TextSettings } from '../../types/Settings/TextSettings'
 
 export interface EntityContainerProps {
   entityId: number;
@@ -33,11 +34,15 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const [
     mouseMode,
     currentDiagramConnection,
-    diagramEntities
+    diagramEntities,
+    scale,
+    textIsEdited
   ] = useSelector((state: Store) => [
     state.mouseMode,
     state.currentDiagramConnection,
-    state.diagramEntities
+    state.diagramEntities,
+    getScale(state.scaleLevel),
+    state.textSettingsAreOpen
   ])
 
   React.useEffect(() => {
@@ -50,6 +55,9 @@ export const EntityContainer = (props: EntityContainerProps) => {
       }
     }
   }, [props.entity.selected])
+
+  React.useEffect(() => {
+  }, [])
 
   const dispatch = useDispatch()
 
@@ -87,6 +95,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const changeBlockContent = (blockIndex: number, newContent: string) => {
     dispatch(updateEntity(props.entityId, {
       ...props.entity,
+      height: props.entity.heightToContentAdapter ? props.entity.heightToContentAdapter(props.entityId, scale) : props.entity.height,
       parts: props.entity.parts.map((part, index) =>
         blockIndex === index ?
           new EntityPart(part.renderer, part.contentEditable, newContent) :
@@ -97,7 +106,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const renderBlocks = () => props.entity.parts.map((part, index) => (
     <DiagramEntityBlock
       key={index}
-      parentEntity={props.entity}
+      parentEntityId={props.entityId}
       entityPart={part}
       updateContent={(newContent: string) => changeBlockContent(index, newContent)}
       scale={props.scale}
@@ -142,11 +151,12 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const shouldRenderConnectionAreas = props.entity.isHovered &&
     !(mouseMode === MouseMode.dragging)
     && (mouseMode !== MouseMode.connecting || isConnectable())
+    && !textIsEdited
 
   const shouldRenderContainerInterface = (props.entity.selected ||
-    props.entity.isHovered) && mouseMode === MouseMode.default
+    props.entity.isHovered) && mouseMode === MouseMode.default && !textIsEdited
 
-  const shouldRenderSizeControllers = props.entity.isHovered && mouseMode === MouseMode.default
+  const shouldRenderSizeControllers = props.entity.isHovered && mouseMode === MouseMode.default && !textIsEdited
 
   return (
     <g className='block'
@@ -155,7 +165,8 @@ export const EntityContainer = (props: EntityContainerProps) => {
       onMouseOver={onMouseEnterHandler}>
       {renderHoverableZone()}
       {shouldRenderConnectionAreas && renderConnectionAreas()}
-      <g
+      <g 
+        id={`entity ${props.entityId}`}
         onMouseDown={onMouseDownHandler}
         onMouseUp={onMouseUpHandler}
         onMouseMove={onMouseMoveHandler}

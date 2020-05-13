@@ -58,7 +58,13 @@ const removeEntity = (state: Store, entityId: number) => {
       newDiagramConnections.delete(entrie[0])
     }
   })
-  return { ...state, diagramEntities: newDiagramEntities, diagramConnections: newDiagramConnections }
+  return { 
+    ...state, 
+    diagramEntities: newDiagramEntities, 
+    diagramConnections: newDiagramConnections,  
+    entitySettingsAreOpen: false,
+    connectionSettingsAreOpen: false
+  }
 }
 
 export const mainReducer = (state: Store, action: Action): Store => {
@@ -123,7 +129,7 @@ export const mainReducer = (state: Store, action: Action): Store => {
     case REMOVE_CONNECTION:
       const newRemoveDiagramConnections = new Map(state.diagramConnections)
       newRemoveDiagramConnections.delete(action.id)
-      return { ...state, diagramConnections: newRemoveDiagramConnections }
+      return { ...state, diagramConnections: newRemoveDiagramConnections, connectionSettingsAreOpen: false }
     case UPDATE_CONNECTION:
       const updatedDiagramConnetions = new Map(state.diagramConnections)
       updatedDiagramConnetions.set(action.id, action.connection)

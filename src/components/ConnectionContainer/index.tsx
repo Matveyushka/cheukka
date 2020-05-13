@@ -10,6 +10,7 @@ import { connectionTypeArrows } from '../../constants/dictionaries/connectionTyp
 import { getSegmentAngle } from '../../utils/geometry'
 import { useConnectionHandlers } from './handlers'
 import { setConnectionSettingsAreOpen, setConnectionSettings } from '../../actions'
+import { connectionTypeDashedPaths } from '../../constants/arrays/connectionTypePaths'
 
 export interface ConnectionContainerProps {
   connectionId: number | null;
@@ -75,7 +76,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
           points={pathPoints}
           width={props.connection.settings.thickness}
           color={props.connection.settings.color}
-          dashed={false} />
+          dashed={connectionTypeDashedPaths.indexOf(props.connection.type) !== -1 ? true : false} />
       }
       {
         <g transform={`rotate(${getSegmentAngle(

@@ -4,7 +4,7 @@ import { Store } from '../../stores'
 import { getScale } from '../../utils'
 import { setTextSettings } from '../../actions'
 import { START_SCALE } from '../../constants'
-import { TextSettings } from '../../types/Settings/TextSettings'
+import { TextSettings, TextJustifySettings, TextJustify } from '../../types/Settings/TextSettings'
 
 export interface EntityContentEditorProps {
   x: number;
@@ -12,7 +12,7 @@ export interface EntityContentEditorProps {
   width: number;
   height: number;
   initContent: string;
-  finishEdit: (newContent: string) => void
+  finishEdit: (newContent: string) => void;
 }
 
 export const EntityContentEditor = (props: EntityContentEditorProps) => {
@@ -62,25 +62,30 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
     if (settings.italic) document.execCommand("italic", false, '')
     if (settings.underline) document.execCommand("underline", false, '')
     document.execCommand('foreColor', false, textSettings.color);
+    document.execCommand(TextJustifySettings[settings.justify], false, '')
   }
 
-  // document.onselectstart = () => updateSettings
   document.onselectionchange = () => updateSettings()
 
   const updateSettings = () => {
     const selectedElement = document.getSelection().anchorNode.parentElement
     if (selectedElement.tagName === 'DIV' || selectedElement.tagName === 'foreignObject') {
       dispatch(setTextSettings(defaultSettings))
-      applyTextSettings(defaultSettings)
     } else {
       const fontSize = window.getComputedStyle(selectedElement, null).getPropertyValue('font-size')
       const fontFamily = getFontFace(selectedElement)
-      console.log(fontFamily)
       const color = window.getComputedStyle(selectedElement, null).getPropertyValue('color')
       const bold = isInTag(selectedElement, 'B')
       const italic = isInTag(selectedElement, 'I')
       const underline = isInTag(selectedElement, 'U')
-      dispatch(setTextSettings({ fontSize: parseInt(fontSize), fontFamily, color,bold, italic, underline }))
+      const justify = window.getComputedStyle(selectedElement, null).getPropertyValue('text-align')
+      dispatch(setTextSettings({ fontSize: parseInt(fontSize), fontFamily, color,bold, italic, underline, 
+        justify: (
+          justify === 'right' ? TextJustify.Right :
+          justify === 'center' ? TextJustify.Center :
+          justify === 'justify' ? TextJustify.Full : TextJustify.Left
+        )
+      }))
     }
   }
 

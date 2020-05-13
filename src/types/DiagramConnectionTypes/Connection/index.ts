@@ -8,19 +8,11 @@ import { store } from '../../../stores/index'
 
 export class Connection {
   constructor(
-    beginPoint: ConnectionPathPoint,
-    endPoint: ConnectionPathPoint,
-    type: ConnectionType
-  ) {
-    this.begin = beginPoint
-    this.end = endPoint
-    this.type = type
-    console.log(store.getState().defaultConnectionSettings)
-  }
+    public begin: ConnectionPathPoint,
+    public end: ConnectionPathPoint,
+    public type: ConnectionType
+  ) { }
 
-  begin: ConnectionPathPoint
-  end: ConnectionPathPoint
-  type: ConnectionType
   isHovered: boolean = false
   intermediatePoints: Array<IntermediateConnectionPoint> = []
   selected: boolean = false

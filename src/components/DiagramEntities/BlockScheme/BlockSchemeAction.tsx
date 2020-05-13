@@ -1,6 +1,6 @@
 import { Entity, EntityPart, ConnectionType, ConnectionPoint, EntityType } from '../../../types'
 import { ConnectionArea, ConnectionDirection } from '../../../types'
-import { EntityBlockRectangle } from '../../../svg'
+import { EntityBlockRectangle } from '../../../svg/blocks'
 import { EntityBlock } from '../../../types/DiagramEntityTypes/EntityPart'
 
 export class BlockSchemeAction extends Entity {

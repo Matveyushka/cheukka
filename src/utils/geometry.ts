@@ -206,10 +206,6 @@ export const isAreaInsideAnotherArea = (innerArea: {
   endX: number,
   endY: number,
 }) => {
-  console.log('---')
-  console.log(innerArea)
-  console.log(outerArea)
-
   const innerX = Math.min(innerArea.beginX, innerArea.endX)
   const innerY = Math.min(innerArea.beginY, innerArea.endY)
   const innerWidth = Math.max(innerArea.beginX - innerX, innerArea.endX - innerX)

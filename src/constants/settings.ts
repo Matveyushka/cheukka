@@ -1,5 +1,5 @@
 import { EntitySettings } from '../types/Settings/EntitySettings'
-import { TextSettings } from '../types/Settings/TextSettings'
+import { TextSettings, TextJustifySettings, TextJustify } from '../types/Settings/TextSettings'
 import { ConnectionSettings } from '../types/Settings/ConnectionSettings'
 
 export const DEFAULT_TEXT_SETTINGS: TextSettings = {
@@ -9,6 +9,7 @@ export const DEFAULT_TEXT_SETTINGS: TextSettings = {
   bold: false,
   italic: false,
   underline: false,
+  justify: TextJustify.Center
 }
 
 export const DEFAULT_ENTITY_SETTINGS: EntitySettings = {
