@@ -53,8 +53,6 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
 
   React.useEffect(() => {
     if (props.entityPart.contentEditable) {
-      console.log(props.entityPart.content)     
-
       setIsEditingContent(true)
       dispatch(setTextSettingsAreOpen(true))
     }

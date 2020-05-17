@@ -65,8 +65,6 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
     document.execCommand(TextJustifySettings[settings.justify], false, '')
   }
 
-  document.onselectionchange = () => updateSettings()
-
   const updateSettings = () => {
     const selectedElement = document.getSelection().anchorNode.parentElement
     if (selectedElement.tagName === 'DIV' || selectedElement.tagName === 'foreignObject') {
@@ -90,6 +88,14 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
   }
 
   React.useEffect(() => {
+
+    document.onselectionchange = (event) => {
+      console.log('selection')
+      updateSettings()
+    }
+
+    
+
     editorRef.current.innerHTML = props.initContent
     editorRef.current.focus()
     document.execCommand('selectall', null);
@@ -108,6 +114,7 @@ export const EntityContentEditor = (props: EntityContentEditorProps) => {
         transform: `scale(${relativeScale}) translate(-${50 / relativeScale}%, -${50 / relativeScale}%)`
       }}
       onInput={(e: any) => {
+        console.log('input')
         if (prevInnerText.length !== editorRef.current.innerText.length) {
           Array.from(document.getElementsByTagName("font")).forEach((element) => {
             if (element.size == "7") {

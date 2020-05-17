@@ -35,14 +35,12 @@ export const EntityContainer = (props: EntityContainerProps) => {
     mouseMode,
     currentDiagramConnection,
     diagramEntities,
-    scale,
-    textIsEdited
+    scale
   ] = useSelector((state: Store) => [
     state.mouseMode,
     state.currentDiagramConnection,
     state.diagramEntities,
-    getScale(state.scaleLevel),
-    state.textSettingsAreOpen
+    getScale(state.scaleLevel)
   ])
 
   React.useEffect(() => {
@@ -151,12 +149,11 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const shouldRenderConnectionAreas = props.entity.isHovered &&
     !(mouseMode === MouseMode.dragging)
     && (mouseMode !== MouseMode.connecting || isConnectable())
-    && !textIsEdited
 
   const shouldRenderContainerInterface = (props.entity.selected ||
-    props.entity.isHovered) && mouseMode === MouseMode.default && !textIsEdited
+    props.entity.isHovered) && mouseMode === MouseMode.default
 
-  const shouldRenderSizeControllers = props.entity.isHovered && mouseMode === MouseMode.default && !textIsEdited
+  const shouldRenderSizeControllers = props.entity.isHovered && mouseMode === MouseMode.default
 
   return (
     <g className='block'

@@ -39,6 +39,7 @@ export interface Store {
   entitySettingsAreOpen: boolean;
   connectionSettingsAreOpen: boolean;
   aboutIsOpen: boolean;
+  actualVersionSaved: boolean;
 }
 
 export const store = createStore<Store, any, any, any>(mainReducer, 
@@ -74,4 +75,5 @@ export const store = createStore<Store, any, any, any>(mainReducer,
     entitySettingsAreOpen: false,
     connectionSettingsAreOpen: false,
     aboutIsOpen: false,
+    actualVersionSaved: true,
   })

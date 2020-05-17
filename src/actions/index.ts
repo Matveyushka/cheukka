@@ -67,6 +67,8 @@ export interface SetDefaultConnectionSettings { type: Constants.SET_DEFAULT_CONN
 
 export interface SetAboutIsOpen { type: Constants.SET_ABOUT_IS_OPEN; isOpen: boolean }
 
+export interface SetActualVersionIsSaved { type: Constants.SET_ACTUAL_VERSION_IS_SAVED; isSaved: boolean }
+
 //actions
 
 export const setScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : SetScale => ({
@@ -227,6 +229,11 @@ export const setAboutIsOpen = (isOpen: boolean) : SetAboutIsOpen => ({
   isOpen
 })
 
+export const setActualVersionIsSaved = (isSaved: boolean) : SetActualVersionIsSaved => ({
+  type: Constants.SET_ACTUAL_VERSION_IS_SAVED,
+  isSaved
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -258,3 +265,4 @@ export type Action =
   | SetConnectionSettings
   | SetDefaultConnectionSettings
   | SetAboutIsOpen
+  | SetActualVersionIsSaved

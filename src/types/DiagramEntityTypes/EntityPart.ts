@@ -21,9 +21,6 @@ export class EntityPart {
     defaultTextSettings?: Partial<TextSettings>
   ) { 
     const settings = { ...store.getState().defaultTextSettings, ...defaultTextSettings }
-
-    console.log(settings)
-
     let thisContent = content
     if (settings.underline) {
       thisContent = `<u>${thisContent}</u>`

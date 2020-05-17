@@ -9,6 +9,7 @@ import { Store } from '../stores'
 import { SavePanel } from './SavePanel'
 import { Tutorial } from './Tutorial'
 import { About } from './About'
+import { useRecoveryDispather } from '../hooks/recoveryDispatherHook'
 
 export interface MainProps {
 
@@ -24,6 +25,8 @@ export const Main = (props: MainProps) : React.ReactElement => {
     state.tutorialIsOpen,
     state.aboutIsOpen
   ])
+
+  useRecoveryDispather()
 
   return (
     <div className='main'>

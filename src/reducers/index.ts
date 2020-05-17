@@ -31,6 +31,7 @@ import {
   SET_CONNECTION_SETTINGS,
   SET_DEFAULT_CONNECTION_SETTINGS,
   SET_ABOUT_IS_OPEN,
+  SET_ACTUAL_VERSION_IS_SAVED,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -63,7 +64,8 @@ const removeEntity = (state: Store, entityId: number) => {
     diagramEntities: newDiagramEntities, 
     diagramConnections: newDiagramConnections,  
     entitySettingsAreOpen: false,
-    connectionSettingsAreOpen: false
+    connectionSettingsAreOpen: false,
+    actualVersionSaved: false
   }
 }
 
@@ -115,25 +117,25 @@ export const mainReducer = (state: Store, action: Action): Store => {
     case ADD_ENTITY:
       const newAddDiagramEntities = new Map(state.diagramEntities)
       newAddDiagramEntities.set(getNextMapId(state.diagramEntities), action.entity)
-      return { ...state, diagramEntities: newAddDiagramEntities }
+      return { ...state, diagramEntities: newAddDiagramEntities, actualVersionSaved: false }
     case REMOVE_ENTITY:
       return removeEntity(state, action.id)
     case UPDATE_ENTITY:
       const updatedDiagramEntities = new Map(state.diagramEntities)
       updatedDiagramEntities.set(action.id, action.entity)
-      return { ...state, diagramEntities: updatedDiagramEntities }
+      return { ...state, diagramEntities: updatedDiagramEntities, actualVersionSaved: false }
     case ADD_CONNECTION:
       const newAddDiagramConnections = new Map(state.diagramConnections)
       newAddDiagramConnections.set(getNextMapId(state.diagramConnections), action.connection)
-      return { ...state, diagramConnections: newAddDiagramConnections }
+      return { ...state, diagramConnections: newAddDiagramConnections, actualVersionSaved: false }
     case REMOVE_CONNECTION:
       const newRemoveDiagramConnections = new Map(state.diagramConnections)
       newRemoveDiagramConnections.delete(action.id)
-      return { ...state, diagramConnections: newRemoveDiagramConnections, connectionSettingsAreOpen: false }
+      return { ...state, diagramConnections: newRemoveDiagramConnections, connectionSettingsAreOpen: false, actualVersionSaved: false }
     case UPDATE_CONNECTION:
       const updatedDiagramConnetions = new Map(state.diagramConnections)
       updatedDiagramConnetions.set(action.id, action.connection)
-      return { ...state, diagramConnections: updatedDiagramConnetions }
+      return { ...state, diagramConnections: updatedDiagramConnetions, actualVersionSaved: false }
     case SET_MOUSE_MODE:
       return { ...state, mouseMode: action.mouseMode }
     case SET_CURRENT_DIAGRAM_CONNECTION:
@@ -170,6 +172,8 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, defaultConnectionSettings: action.connectionSettings }
     case SET_ABOUT_IS_OPEN:
       return { ...state, aboutIsOpen: action.isOpen }
+    case SET_ACTUAL_VERSION_IS_SAVED:
+      return { ...state, actualVersionSaved: action.isSaved }
   }
 
   return state

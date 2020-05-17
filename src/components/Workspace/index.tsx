@@ -34,11 +34,13 @@ export const Workspace = () => {
   const [
     textSettingsAreOpen,
     entitySettingsAreOpen,
-    connectionSettingsAreOpen
+    connectionSettingsAreOpen,
+    saved
   ] = useSelector((state: Store) => [
     state.textSettingsAreOpen,
     state.entitySettingsAreOpen,
-    state.connectionSettingsAreOpen
+    state.connectionSettingsAreOpen,
+    state.actualVersionSaved
   ])
 
   return (
@@ -48,6 +50,7 @@ export const Workspace = () => {
       onScroll={scrollHandler}
       ref={workspaceRef}
     >
+      <div style={{position: "fixed", left: "20px", top: "20px"}}>{saved ? "saved" : "no"}</div>
       <div className='canvas-wrapper' style={{
         height: DEFAULT_CANVAS_HEIGHT * scale + 'px',
         width: DEFAULT_CANVAS_WIDTH * scale + 'px',

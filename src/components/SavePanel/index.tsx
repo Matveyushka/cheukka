@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setSavePanelIsOpen, setLastSaveSettings } from '../../actions'
+import { setSavePanelIsOpen, setLastSaveSettings, setActualVersionIsSaved } from '../../actions'
 import { saveAsPng } from './Savers/PngSaver'
 import { saveAsSvg } from './Savers/SvgSaver'
 import { PngSaveSettings, SvgSaveSettings } from '../../types/SaveSettings'
@@ -90,6 +90,8 @@ export const SavePanel = (props: SavePanelProps) => {
             } else if (saveType === SaveType.SVG) {
               saveLocally(new SvgSaveSettings(name))
             }
+
+            dispatch(setActualVersionIsSaved(true))
           }}>Save</button>
         </div>
       </div>
