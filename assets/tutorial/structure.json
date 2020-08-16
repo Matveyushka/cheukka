@@ -11,9 +11,29 @@
         "content": "get_started"
       },
       {
-        "name": "to be continued",
+        "name": "workspace settings",
+        "content": "to_be_continued"
+      },
+      {
+        "name": "choose a diagram type",
+        "content": "to_be_continued"
+      },
+      {
+        "name": "create a block",
+        "content": "to_be_continued"
+      },
+      {
+        "name": "connect blocks",
         "content": "to_be_continued"
       }
     ]
+  },
+  {
+    "name": "save files",
+    "subfragments": []
+  },
+  {
+    "name": "advanced",
+    "subfragments": []
   }
 ]

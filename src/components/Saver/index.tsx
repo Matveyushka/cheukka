@@ -18,11 +18,9 @@ export const Saver = (props: SaverProps) => {
   const dispatch = useDispatch()
 
   const [
-    scale,
     entities,
     connections,
   ] = useSelector((state: Store) => [
-    getScale(state.scaleLevel),
     state.diagramEntities,
     state.diagramConnections,
   ])
@@ -41,7 +39,7 @@ export const Saver = (props: SaverProps) => {
     if (props.saveSettings instanceof PngSaveSettings) {
       saveAsPng(props.saveSettings.name, props.saveSettings.scale, props.saveSettings.background)
     } else if (props.saveSettings instanceof SvgSaveSettings) {
-      saveAsSvg(name)
+      saveAsSvg(props.saveSettings.name)
     }
     dispatch(setLastSaveSettings(props.saveSettings))
     dispatch(setIsSaving(false))

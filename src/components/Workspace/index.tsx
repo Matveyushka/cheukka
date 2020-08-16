@@ -6,9 +6,7 @@ import {
   DEFAULT_EMPTY_SPACE_WIDTH,
   DEFAULT_EMPTY_SPACE_HEIGHT,
 } from '../../constants'
-import {
-  useWorkspaceOffsetAndScale
-} from './offsetAndScaleHook'
+import { useWorkspaceOffsetAndScale } from './offsetAndScaleHook'
 import { TextCustomizationPanel } from '../CustomizationPanels/TextCustomizationPanel'
 import { RightActionPanel } from '../ActionPanels/RightActionPanel'
 import { LeftActionPanel } from '../ActionPanels/LeftActionPanel'

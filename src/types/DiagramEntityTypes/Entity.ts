@@ -35,3 +35,13 @@ export abstract class Entity {
   isHovered: boolean = false
   heightToContentAdapter?: (entityId: number, scale: number) => number
 }
+
+export const areEntitiesEqual = (entity1: Entity, entity2: Entity) => {
+  return (
+    entity1.type === entity2.type &&
+    entity1.x === entity2.x &&
+    entity1.y === entity2.y &&
+    entity1.width === entity2.width &&
+    entity1.height === entity2.height
+  )
+}

@@ -20,7 +20,9 @@ export interface Store {
   offsetX: number;
   offsetY: number;
   diagramEntities: Map<number, Entity>;
+  diagramEntitiesHistory: Map<number, Entity>[];
   diagramConnections: Map<number, Connection>;
+  diagramConnectionsHistory: Map<number, Connection>[];
   mouseMode: MouseMode;
   currentDiagramConnection: Connection | null;
   entityTypeChooserState: EntityTypeChooserState;
@@ -50,7 +52,9 @@ export const store = createStore<Store, any, any, any>(mainReducer,
     offsetX: 0,
     offsetY: 0,
     diagramEntities: new Map([]),
+    diagramEntitiesHistory: [new Map([])],
     diagramConnections: new Map([]),
+    diagramConnectionsHistory: [new Map([])],
     mouseMode: MouseMode.default,
     currentDiagramConnection: null,
     entityTypeChooserState: {

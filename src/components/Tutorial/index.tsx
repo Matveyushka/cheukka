@@ -34,7 +34,7 @@ export const Tutorial = (props: TutorialProps) => {
   return (
     <div className='tutorial'>
       <div className='tutorial-header'>
-        <div className='tutorial-header-label'>Cheukka tutorial - Intro</div>
+        <div className='tutorial-header-label'>tutorial</div>
         <div className='tutorial-header-button' onClick={() => dispatch(setTutorialIsOpen(false))}>X</div>
       </div>
       <div className='tutorial-navigation'>

@@ -97,7 +97,7 @@ export const ConnectionContainer = (props: ConnectionContainerProps) => {
         <ConnectionPath points={pathPoints} width={4} color='red' dashed={true} />
       }
       {
-        props.connection.intermediatePoints.map((point, index) => (
+        false && props.connection.intermediatePoints.map((point, index) => (
           <circle
             key={index}
             cx={roundConnectionCoordinateOrSize(point.getX()) * props.scale}

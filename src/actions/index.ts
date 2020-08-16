@@ -69,6 +69,10 @@ export interface SetAboutIsOpen { type: Constants.SET_ABOUT_IS_OPEN; isOpen: boo
 
 export interface SetActualVersionIsSaved { type: Constants.SET_ACTUAL_VERSION_IS_SAVED; isSaved: boolean }
 
+export interface AddDiagramEntitiesStamp { type: Constants.ADD_DIAGRAM_ENTITIES_STAMP }
+
+export interface RecoveryLastDiagramEntitiesStamp { type: Constants.RECOVERY_LAST_DIAGRAM_ENTITIES_STAMP }
+
 //actions
 
 export const setScale = (scale: number, scaleFocusX: number, scaleFocusY: number) : SetScale => ({
@@ -234,6 +238,14 @@ export const setActualVersionIsSaved = (isSaved: boolean) : SetActualVersionIsSa
   isSaved
 })
 
+export const addDiagramEntitiesStamp = () : AddDiagramEntitiesStamp => ({
+  type: Constants.ADD_DIAGRAM_ENTITIES_STAMP
+})
+
+export const recoveryLastDiagramEntitiesStamp = () : RecoveryLastDiagramEntitiesStamp => ({
+  type: Constants.RECOVERY_LAST_DIAGRAM_ENTITIES_STAMP
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -266,3 +278,5 @@ export type Action =
   | SetDefaultConnectionSettings
   | SetAboutIsOpen
   | SetActualVersionIsSaved
+  | AddDiagramEntitiesStamp
+  | RecoveryLastDiagramEntitiesStamp

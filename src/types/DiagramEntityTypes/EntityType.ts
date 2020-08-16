@@ -27,7 +27,13 @@ export const entityGroups = new Map<DiagramType, { name: string, types: Array<En
     EntityType.BlockSchemeProcess,
   ]}],
   [DiagramType.UMLComponent, {name: 'Component diagram', types: [EntityType.ComponentModule]}],
-  [DiagramType.UMLClass, { name: 'Class diagram', types: [EntityType.UMLClass]}]
+  [DiagramType.UMLClass, { name: 'Class diagram', types: [EntityType.UMLClass]}],
+  [DiagramType.UMLActivity, { name: 'Activity diagram', types: []}],
+  [DiagramType.UMLState, { name: 'State diagram', types: []}],
+  [DiagramType.UMLSequence, { name: 'Sequence diagram', types: []}],
+  [DiagramType.DFD, { name: 'Data flow diagram', types: []}],
+  [DiagramType.IDEF0, { name: 'IDEF0', types: []}],
+  [DiagramType.IDEF3, { name: 'IDEF3', types: []}]
 ])
 
 export const entityCreators = new Map<

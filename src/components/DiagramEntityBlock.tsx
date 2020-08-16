@@ -86,7 +86,7 @@ export const DiagramEntityBlock = (props: DiagramEntityBlockProps) => {
 
           dangerouslySetInnerHTML={{
             __html: (!isEditingContent ?
-              props.entityPart.content : '')
+              (props.entityPart.content || '') : '')
           }}
         >
         </div>

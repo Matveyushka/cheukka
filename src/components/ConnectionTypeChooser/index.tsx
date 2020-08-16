@@ -38,7 +38,7 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
 
   const getStyle = () => ({
     left: props.x * scale,
-    top: props.y * scale,
+    top: props.y * scale, 
   })
 
   const getPossibleConnectionTypes = () => {

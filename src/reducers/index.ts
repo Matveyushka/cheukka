@@ -32,6 +32,8 @@ import {
   SET_DEFAULT_CONNECTION_SETTINGS,
   SET_ABOUT_IS_OPEN,
   SET_ACTUAL_VERSION_IS_SAVED,
+  ADD_DIAGRAM_ENTITIES_STAMP,
+  RECOVERY_LAST_DIAGRAM_ENTITIES_STAMP,
 } from '../constants/actions'
 import {
   MAX_SCALE,
@@ -174,6 +176,18 @@ export const mainReducer = (state: Store, action: Action): Store => {
       return { ...state, aboutIsOpen: action.isOpen }
     case SET_ACTUAL_VERSION_IS_SAVED:
       return { ...state, actualVersionSaved: action.isSaved }
+    case ADD_DIAGRAM_ENTITIES_STAMP:
+      return { ...state, diagramEntitiesHistory: [...state.diagramEntitiesHistory, state.diagramEntities] }
+    case RECOVERY_LAST_DIAGRAM_ENTITIES_STAMP:
+      if (state.diagramEntitiesHistory.length < 2) {
+        return state
+      } else {
+        return {
+          ...state,
+          diagramEntities: state.diagramEntitiesHistory[state.diagramEntitiesHistory.length - 2],
+          diagramEntitiesHistory: state.diagramEntitiesHistory.slice(0, state.diagramEntitiesHistory.length - 1)
+        }
+      }
   }
 
   return state
