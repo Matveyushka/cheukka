@@ -1,6 +1,9 @@
 import * as Constants from '../constants/actions'
 import { Entity, Connection, MouseMode, EntityTypeChooserState, DiagramType, ConnectionTypeChooserState } from '../types'
 import { SaveSettings } from '../types/SaveSettings';
+import { EntitySettings } from '../types/Settings/EntitySettings';
+import { TextSettings } from '../types/Settings/TextSettings';
+import { ConnectionSettings } from '../types/Settings/ConnectionSettings';
 
 //interfaces
 
@@ -43,6 +46,32 @@ export interface SetLastSaveSettings { type: Constants.SET_LAST_SAVE_SETTINGS; s
 export interface SetIsSaving { type: Constants.SET_IS_SAVING; isSaving: boolean }
 
 export interface SetTutorialIsOpen { type: Constants.SET_TUTORIAL_IS_OPEN; tutorialIsOpen: boolean }
+
+export interface SetTextSettings { type: Constants.SET_TEXT_SETTINGS; textSettings: TextSettings }
+
+export interface SetDefaultTextSettings { type: Constants.SET_DEFAULT_TEXT_SETTINGS; textSettings: TextSettings }
+
+export interface SetTextSettingsAreOpen { type: Constants.SET_TEXT_SETTINGS_ARE_OPEN; areOpen: boolean }
+
+export interface SetEntitySettingsAreOpen { type: Constants.SET_ENTITY_SETTINGS_ARE_OPEN; areOpen: boolean }
+
+export interface SetEntitySettings { type: Constants.SET_ENTITY_SETTINGS; entitySettings: EntitySettings }
+
+export interface SetDefaultEntitySettings { type: Constants.SET_DEFAULT_ENTITY_SETTINGS; entitySettings: EntitySettings }
+
+export interface SetConnectionSettingsAreOpen { type: Constants.SET_CONNECTION_SETTINGS_ARE_OPEN; areOpen: boolean }
+
+export interface SetConnectionSettings { type: Constants.SET_CONNECTION_SETTINGS; connectionSettings: ConnectionSettings }
+
+export interface SetDefaultConnectionSettings { type: Constants.SET_DEFAULT_CONNECTION_SETTINGS; connectionSettings: ConnectionSettings }
+
+export interface SetAboutIsOpen { type: Constants.SET_ABOUT_IS_OPEN; isOpen: boolean }
+
+export interface SetActualVersionIsSaved { type: Constants.SET_ACTUAL_VERSION_IS_SAVED; isSaved: boolean }
+
+export interface AddDiagramEntitiesStamp { type: Constants.ADD_DIAGRAM_ENTITIES_STAMP }
+
+export interface RecoveryLastDiagramEntitiesStamp { type: Constants.RECOVERY_LAST_DIAGRAM_ENTITIES_STAMP }
 
 //actions
 
@@ -154,6 +183,69 @@ export const setTutorialIsOpen = (tutorialIsOpen: boolean) : SetTutorialIsOpen =
   tutorialIsOpen
 })
 
+export const setTextSettings = (textSettings: TextSettings) : SetTextSettings => ({
+  type: Constants.SET_TEXT_SETTINGS,
+  textSettings
+})
+
+export const setDefaultTextSettings = (textSettings: TextSettings) : SetDefaultTextSettings => ({
+  type: Constants.SET_DEFAULT_TEXT_SETTINGS,
+  textSettings
+})
+
+export const setTextSettingsAreOpen = (areOpen: boolean) : SetTextSettingsAreOpen => ({
+  type: Constants.SET_TEXT_SETTINGS_ARE_OPEN,
+  areOpen,
+})
+
+export const setEntitySettingsAreOpen = (areOpen: boolean) : SetEntitySettingsAreOpen => ({
+  type: Constants.SET_ENTITY_SETTINGS_ARE_OPEN,
+  areOpen,
+})
+
+export const setEntitySettings = (entitySettings: EntitySettings) : SetEntitySettings => ({
+  type: Constants.SET_ENTITY_SETTINGS,
+  entitySettings
+})
+
+export const setDefaultEntitySettings = (entitySettings: EntitySettings) : SetDefaultEntitySettings => ({
+  type: Constants.SET_DEFAULT_ENTITY_SETTINGS,
+  entitySettings
+})
+
+export const setConnectionSettingsAreOpen = (areOpen: boolean) : SetConnectionSettingsAreOpen => ({
+  type: Constants.SET_CONNECTION_SETTINGS_ARE_OPEN,
+  areOpen,
+})
+
+export const setConnectionSettings = (connectionSettings: ConnectionSettings) : SetConnectionSettings => ({
+  type: Constants.SET_CONNECTION_SETTINGS,
+  connectionSettings
+})
+
+export const setDefaultConnectionSettings = (connectionSettings: ConnectionSettings) : SetDefaultConnectionSettings => ({
+  type: Constants.SET_DEFAULT_CONNECTION_SETTINGS,
+  connectionSettings
+})
+
+export const setAboutIsOpen = (isOpen: boolean) : SetAboutIsOpen => ({
+  type: Constants.SET_ABOUT_IS_OPEN,
+  isOpen
+})
+
+export const setActualVersionIsSaved = (isSaved: boolean) : SetActualVersionIsSaved => ({
+  type: Constants.SET_ACTUAL_VERSION_IS_SAVED,
+  isSaved
+})
+
+export const addDiagramEntitiesStamp = () : AddDiagramEntitiesStamp => ({
+  type: Constants.ADD_DIAGRAM_ENTITIES_STAMP
+})
+
+export const recoveryLastDiagramEntitiesStamp = () : RecoveryLastDiagramEntitiesStamp => ({
+  type: Constants.RECOVERY_LAST_DIAGRAM_ENTITIES_STAMP
+})
+
 export type Action = 
     SetScale 
   | IncreaseScale 
@@ -175,3 +267,16 @@ export type Action =
   | SetLastSaveSettings
   | SetIsSaving
   | SetTutorialIsOpen
+  | SetTextSettings
+  | SetDefaultTextSettings
+  | SetTextSettingsAreOpen
+  | SetEntitySettingsAreOpen
+  | SetEntitySettings
+  | SetDefaultEntitySettings
+  | SetConnectionSettingsAreOpen
+  | SetConnectionSettings
+  | SetDefaultConnectionSettings
+  | SetAboutIsOpen
+  | SetActualVersionIsSaved
+  | AddDiagramEntitiesStamp
+  | RecoveryLastDiagramEntitiesStamp

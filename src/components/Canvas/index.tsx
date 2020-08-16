@@ -98,7 +98,7 @@ export const Canvas = (props: CanvasProps) => {
         {
           isSaving ? <Saver saveSettings={saveSettings} /> : ""
         }
-        <svg width='100%' height='100%' id="TEMPO">
+        <svg width='100%' height='100%'>
           {renderConnections()}
           {renderEntities()}
           {(mode === MouseMode.connecting ||

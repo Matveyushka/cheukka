@@ -3,7 +3,7 @@ import { increaseScale, decreaseScale, setOffsetX, setOffsetY } from '../../acti
 import { useDispatch, useSelector } from 'react-redux'
 import { Store } from '../../stores'
 import { 
-  LEFT_MOUSE_BUTTON,
+  RIGHT_MOUSE_BUTTON,
   SCALE_STEP,
   DEFAULT_EMPTY_SPACE_WIDTH,
   DEFAULT_EMPTY_SPACE_HEIGHT,
@@ -38,7 +38,7 @@ export const useWorkspaceOffsetAndScale = () => {
   }
 
   const mouseMoveHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (event.buttons === LEFT_MOUSE_BUTTON) {
+    if (event.buttons === RIGHT_MOUSE_BUTTON) {
       const maxOffsetX = DEFAULT_EMPTY_SPACE_WIDTH * 2 + DEFAULT_CANVAS_WIDTH * scrollSyncScale - workspaceRef.current.clientWidth
       const maxOffsetY = DEFAULT_EMPTY_SPACE_HEIGHT * 2 + DEFAULT_CANVAS_HEIGHT * scrollSyncScale - workspaceRef.current.clientHeight
 
@@ -90,12 +90,16 @@ export const useWorkspaceOffsetAndScale = () => {
 
     const workspaceHalfWidth = workspaceRef.current.clientWidth / 2
 
-
     const defaultXOffset = DEFAULT_EMPTY_SPACE_WIDTH - workspaceHalfWidth + DEFAULT_CANVAS_WIDTH / 2 * getScale(START_SCALE)
     const defaultYOffset = DEFAULT_EMPTY_SPACE_HEIGHT * 0.95
 
     dispatch(setOffsetX(defaultXOffset))
     dispatch(setOffsetY(defaultYOffset))
+
+    return () => {
+      window.removeEventListener('keydown', keyPressHandler)
+      workspaceRef.current.addEventListener('mousewheel', onWheelHandler, { passive: false })
+    }
   }, [])
 
   React.useEffect(() => {

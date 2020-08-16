@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getScale } from '../../utils'
 import { Store } from '../../stores'
 import { Entity, ConnectionAreaPoint, MouseMode, allConnectionTypes, EntityPart, EntityConnectionPoint } from '../../types'
-import { removeEntity, updateEntity } from '../../actions'
+import { removeEntity, updateEntity, setEntitySettings, setEntitySettingsAreOpen } from '../../actions'
 import { getBackgroundSvgImage, getSvgExit } from '../../svg'
 import { ConnectionAreaContainer } from '../ConnectionAreaContainer'
 import { DiagramEntityBlock } from '../DiagramEntityBlock'
@@ -13,6 +13,7 @@ import {
   validEntityConnectionsBegin, 
   validEntityConnectionsEnd 
 } from '../../constants/dictionaries/validEntityConnections'
+import { TextSettings } from '../../types/Settings/TextSettings'
 
 export interface EntityContainerProps {
   entityId: number;
@@ -33,12 +34,28 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const [
     mouseMode,
     currentDiagramConnection,
-    diagramEntities
+    diagramEntities,
+    scale
   ] = useSelector((state: Store) => [
     state.mouseMode,
     state.currentDiagramConnection,
-    state.diagramEntities
+    state.diagramEntities,
+    getScale(state.scaleLevel)
   ])
+
+  React.useEffect(() => {
+    if (props.entity.selected) {
+      dispatch(setEntitySettings(props.entity.settings))
+      dispatch(setEntitySettingsAreOpen(true))
+    } else {
+      if (Array.from(diagramEntities.values()).filter(entity => entity.selected).length === 0) {
+        dispatch(setEntitySettingsAreOpen(false))
+      }
+    }
+  }, [props.entity.selected])
+
+  React.useEffect(() => {
+  }, [])
 
   const dispatch = useDispatch()
 
@@ -76,6 +93,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const changeBlockContent = (blockIndex: number, newContent: string) => {
     dispatch(updateEntity(props.entityId, {
       ...props.entity,
+      height: props.entity.heightToContentAdapter ? props.entity.heightToContentAdapter(props.entityId, scale) : props.entity.height,
       parts: props.entity.parts.map((part, index) =>
         blockIndex === index ?
           new EntityPart(part.renderer, part.contentEditable, newContent) :
@@ -86,7 +104,7 @@ export const EntityContainer = (props: EntityContainerProps) => {
   const renderBlocks = () => props.entity.parts.map((part, index) => (
     <DiagramEntityBlock
       key={index}
-      parentEntity={props.entity}
+      parentEntityId={props.entityId}
       entityPart={part}
       updateContent={(newContent: string) => changeBlockContent(index, newContent)}
       scale={props.scale}
@@ -144,7 +162,8 @@ export const EntityContainer = (props: EntityContainerProps) => {
       onMouseOver={onMouseEnterHandler}>
       {renderHoverableZone()}
       {shouldRenderConnectionAreas && renderConnectionAreas()}
-      <g
+      <g 
+        id={`entity ${props.entityId}`}
         onMouseDown={onMouseDownHandler}
         onMouseUp={onMouseUpHandler}
         onMouseMove={onMouseMoveHandler}

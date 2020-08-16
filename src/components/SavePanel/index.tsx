@@ -1,9 +1,7 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setSavePanelIsOpen, setLastSaveSettings } from '../../actions'
-import { saveAsPng } from './Savers/PngSaver'
-import { saveAsSvg } from './Savers/SvgSaver'
-import { PngSaveSettings, SvgSaveSettings } from '../../types/SaveSettings'
+import { setSavePanelIsOpen, setLastSaveSettings, setActualVersionIsSaved } from '../../actions'
+import { PngSaveSettings, SvgSaveSettings, HtmlSaveSettings, ChkSaveSettings } from '../../types/SaveSettings'
 import { useFileSaveHook } from '../../hooks/fileSaverHook'
 
 enum SaveType {
@@ -39,7 +37,7 @@ export const SavePanel = (props: SavePanelProps) => {
     <div className="save-panel">
       <button className="save-panel-close" onClick={() => dispatch(setSavePanelIsOpen(false))}>X</button>
       <div className="save-panel-header">
-        <div>Saving ass {SaveTypeNames[saveType]}</div>
+        <div>Saving as {SaveTypeNames[saveType]}</div>
       </div>
       <div className="save-panel-body">
         <input ref={nameRef} type="text" placeholder="Write the new file name" className="save-panel-input-name" />
@@ -81,7 +79,7 @@ export const SavePanel = (props: SavePanelProps) => {
         </div>
         <div className="save-panel-buttons">
           <button onClick={() => {
-            const name = nameRef.current.value === "" ? "diagram" : nameRef.current.value
+            const name = nameRef.current.value || "diagram"
             const scale = zoomRef.current.value
             const background = backgroundRef.current.checked
 
@@ -89,6 +87,10 @@ export const SavePanel = (props: SavePanelProps) => {
               saveLocally(new PngSaveSettings(name, scale, background))
             } else if (saveType === SaveType.SVG) {
               saveLocally(new SvgSaveSettings(name))
+            } else if (saveType === SaveType.HTML) {
+              saveLocally(new HtmlSaveSettings(name))
+            } else if (saveType === SaveType.CHK) {
+              saveLocally(new ChkSaveSettings(name))
             }
           }}>Save</button>
         </div>

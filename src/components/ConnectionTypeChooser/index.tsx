@@ -3,18 +3,20 @@ import { allConnectionTypes } from '../../types/DiagramConnectionTypes/Connectio
 import { useSelector, useDispatch } from 'react-redux'
 import { getScale } from '../../utils'
 import { Store } from '../../stores'
-import { 
+import {
   Connection,
   nonActiveConnectionTypeChooserState,
   ConnectionPathPoint,
   ConnectionAreaPoint,
   EntityConnectionPoint,
- } from '../../types'
+} from '../../types'
 import { addConnection, setConnectionTypeChooserState, setMouseMode } from '../../actions'
-import { 
-  validEntityConnectionsBegin, 
-  validEntityConnectionsEnd 
+import {
+  validEntityConnectionsBegin,
+  validEntityConnectionsEnd
 } from '../../constants/dictionaries/validEntityConnections'
+import { connectionTypeArrows } from '../../constants/dictionaries/connectionTypeArrows'
+import { connectionTypeDashedPaths } from '../../constants/arrays/connectionTypePaths'
 
 export interface ConnectionTypeChooserProps {
   x: number
@@ -23,11 +25,11 @@ export interface ConnectionTypeChooserProps {
 }
 
 export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
-  const [ 
+  const [
     scale,
     currentDiagramConnection,
     diagramEntities,
-  ]= useSelector((state: Store) => [
+  ] = useSelector((state: Store) => [
     getScale(state.scaleLevel),
     state.currentDiagramConnection,
     state.diagramEntities
@@ -36,13 +38,13 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
 
   const getStyle = () => ({
     left: props.x * scale,
-    top: props.y * scale,
+    top: props.y * scale, 
   })
 
   const getPossibleConnectionTypes = () => {
     const possibleBegins = (() => {
       if (currentDiagramConnection.begin instanceof ConnectionAreaPoint ||
-          currentDiagramConnection.begin instanceof EntityConnectionPoint) {
+        currentDiagramConnection.begin instanceof EntityConnectionPoint) {
         return validEntityConnectionsBegin.get(diagramEntities.get(currentDiagramConnection.begin.entityId).type)
       } else {
         return allConnectionTypes
@@ -73,8 +75,17 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
             props.endPoint,
             type
           )))
-        }}
-      />
+        }}>
+        <svg width="100%" height="100%">
+          <path
+            d="M 14 5 L 14 30"
+            stroke="black"
+            strokeWidth="1"
+            strokeDasharray={connectionTypeDashedPaths.indexOf(type) !== -1 ? '4 4' : '1 0'}
+          />
+          {connectionTypeArrows.get(type)(14, 5, 1, "black", 5)}
+        </svg>
+      </button>
     })
   }
 
@@ -90,7 +101,7 @@ export const ConnectionTypeChooser = (props: ConnectionTypeChooserProps) => {
   if (possibleConnectionTypes.length === 0) {
     dispatch(setConnectionTypeChooserState(nonActiveConnectionTypeChooserState))
   }
-  
+
   return (
     <div
       className='diagram-entity-type-chooser'

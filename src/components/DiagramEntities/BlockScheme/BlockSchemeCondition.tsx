@@ -1,6 +1,6 @@
 import { Entity, EntityPart, ConnectionType, ConnectionPoint, EntityType } from '../../../types'
 import { ConnectionArea, ConnectionDirection } from '../../../types/'
-import { EntityBlockRombus} from '../../../svg'
+import { EntityBlockRombus} from '../../../svg/blocks'
 import { EntityBlock } from '../../../types/DiagramEntityTypes/EntityPart'
 
 export class BlockSchemeCondition extends Entity {

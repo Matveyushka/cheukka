@@ -1,6 +1,6 @@
 import { Entity } from '../../../../types/DiagramEntityTypes/Entity'
 import { ConnectionArea, ConnectionDirection } from '../../../../types/'
-import { EntityBlockRectangle } from '../../../../svg'
+import { EntityBlockRectangle } from '../../../../svg/blocks'
 import { EntityPart, EntityType } from '../../../../types'
 import { EntityBlock } from '../../../../types/DiagramEntityTypes/EntityPart'
 

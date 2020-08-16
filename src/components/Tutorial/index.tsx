@@ -13,8 +13,6 @@ export const Tutorial = (props: TutorialProps) => {
   
   const bodyRef = React.useRef(null)
 
-  console.log(tutorialStructure)
-
   const openPage = (content: string) => {
     fetch(`/assets/tutorial/pages/${content}.html`).then(response => {
       response.text().then(text => bodyRef.current.innerHTML = text)
@@ -33,12 +31,10 @@ export const Tutorial = (props: TutorialProps) => {
     openPage("introduction")
   }, [])
 
-  console.log(navigationMenu)
-
   return (
     <div className='tutorial'>
       <div className='tutorial-header'>
-        <div className='tutorial-header-label'>Cheukka tutorial - Intro</div>
+        <div className='tutorial-header-label'>tutorial</div>
         <div className='tutorial-header-button' onClick={() => dispatch(setTutorialIsOpen(false))}>X</div>
       </div>
       <div className='tutorial-navigation'>

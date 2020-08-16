@@ -1,17 +1,20 @@
 import * as React from 'react'
 import { Canvas } from '../Canvas'
-import { 
+import {
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
   DEFAULT_EMPTY_SPACE_WIDTH,
   DEFAULT_EMPTY_SPACE_HEIGHT,
 } from '../../constants'
-import {
-  useWorkspaceOffsetAndScale
-} from './offsetAndScaleHook'
+import { useWorkspaceOffsetAndScale } from './offsetAndScaleHook'
 import { TextCustomizationPanel } from '../CustomizationPanels/TextCustomizationPanel'
 import { RightActionPanel } from '../ActionPanels/RightActionPanel'
 import { LeftActionPanel } from '../ActionPanels/LeftActionPanel'
+import { useSelector } from 'react-redux'
+import { Store } from '../../stores'
+import { EntityCustomizationPanel } from '../CustomizationPanels/EntityCustomizationPanel'
+import { ConnectionCustomizationPanel } from '../CustomizationPanels/ConnectionCustomizationPanel'
+import { useHotKeys } from './hotKeysHook'
 
 export interface DiagramCanvasProps { }
 
@@ -24,6 +27,20 @@ export const Workspace = () => {
     preventContextMenu,
   } = useWorkspaceOffsetAndScale()
 
+  useHotKeys()
+
+  const [
+    textSettingsAreOpen,
+    entitySettingsAreOpen,
+    connectionSettingsAreOpen,
+    saved
+  ] = useSelector((state: Store) => [
+    state.textSettingsAreOpen,
+    state.entitySettingsAreOpen,
+    state.connectionSettingsAreOpen,
+    state.actualVersionSaved
+  ])
+
   return (
     <div className='workspace'
       onMouseMove={mouseMoveHandler}
@@ -31,6 +48,7 @@ export const Workspace = () => {
       onScroll={scrollHandler}
       ref={workspaceRef}
     >
+      <div style={{position: "fixed", left: "20px", top: "20px"}}>{saved ? "saved" : "no"}</div>
       <div className='canvas-wrapper' style={{
         height: DEFAULT_CANVAS_HEIGHT * scale + 'px',
         width: DEFAULT_CANVAS_WIDTH * scale + 'px',
@@ -43,7 +61,12 @@ export const Workspace = () => {
         </Canvas>
       </div>
 
-      <LeftActionPanel/>
-      <RightActionPanel/>
+      <LeftActionPanel />
+      <RightActionPanel />
+      <div className='customization-panels'>
+        {textSettingsAreOpen && <><TextCustomizationPanel /> <div className='customization-panels-spacing'/></>}
+        {entitySettingsAreOpen && <><EntityCustomizationPanel /><div className='customization-panels-spacing'/></>}
+        {connectionSettingsAreOpen && <ConnectionCustomizationPanel />}
+      </div>
     </div>)
 }

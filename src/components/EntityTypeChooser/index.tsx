@@ -4,7 +4,7 @@ import { entityCreators } from '../../types/DiagramEntityTypes/EntityType'
 import { useDispatch, useSelector } from 'react-redux'
 import { addEntity, setConnectionTypeChooserState } from '../../actions'
 import { DEFAULT_CANVAS_WIDTH } from '../../constants'
-import { getScale, roundEntityCoordinateOrSize } from '../../utils'
+import { getScale, roundEntityCoordinateOrSize, vhToPx } from '../../utils'
 import { Store } from '../../stores'
 import { getSegmentAngle } from '../../utils/geometry'
 import { useCurrentDiagramConnectionController } from '../../hooks/currentDiagramConnectionHook'
@@ -28,7 +28,7 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
 
   const onChoose = (type: EntityType) => {
     const width = roundEntityCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10)
-    const height = roundEntityCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10 * 0.666)
+    const height = roundEntityCoordinateOrSize(DEFAULT_CANVAS_WIDTH / 10 * 0.6)
     const x = roundEntityCoordinateOrSize(props.x) - width / 2
     const y = roundEntityCoordinateOrSize(props.y) - height / 2
 
@@ -36,10 +36,10 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
       const beginPoint = currentConnectionController.getBegin()
       const endPoint = currentConnectionController.getEnd()
 
-      const beginX = beginPoint.getX(endPoint, entities)
-      const beginY = beginPoint.getY(endPoint, entities)
-      const endX = endPoint.getX(beginPoint, entities)
-      const endY = endPoint.getY(beginPoint, entities)
+      const beginX = beginPoint.getX(endPoint)
+      const beginY = beginPoint.getY(endPoint)
+      const endX = endPoint.getX(beginPoint)
+      const endY = endPoint.getY(beginPoint)
 
       const yBottomBound = roundEntityCoordinateOrSize((
         beginPoint instanceof ConnectionAreaPoint ||
@@ -99,8 +99,24 @@ export const EntityTypeChooser = (props: EntityTypeChooserProps) => {
           <button
             key={index}
             onClick={() => onChoose(type)}
+            style={{padding: 0}}
           >
-            {entityCreators.get(type).name}
+            {((): React.ReactNode => {
+              const tempEntity = entityCreators.get(type).create(0, 0, vhToPx(2.9), vhToPx(1.9))
+              return (<svg width="100%" height="100%">{tempEntity.parts.map((part, index) => {
+                const renderer = part.renderer(tempEntity, null, 1.5)
+                return (<g key={index}> {renderer.svgComponent(
+                  renderer.relativeX + vhToPx(0.5), 
+                  renderer.relativeY + vhToPx(1.14), 
+                  renderer.width, 
+                  renderer.height, 1.5, {
+                  thickness: 1,
+                  borderColor: "black",
+                  backgroundColor: "white"
+                })} </g>)
+              })}</svg>)
+            })()}
+            
           </button>))
       }
       {

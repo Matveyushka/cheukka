@@ -11,6 +11,6 @@ export class FreeConnectionPoint extends ConnectionPathPoint{
   x: number
   y: number
 
-  getX = (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => this.x
-  getY = (srcPoint: ConnectionPathPoint, entities: Map<number, Entity>) => this.y
+  getX = () => this.x
+  getY = () => this.y
 }

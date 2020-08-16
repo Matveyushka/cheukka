@@ -32,19 +32,19 @@ export const useConnectionHandlers = (connectionId: number) => {
       getTheClosestConnectionSegmentPointsId(x, y, closestConnection)
 
     const firstPointX = theClosestSegmentPointsId[0] === -1 ?
-    closestConnection.begin.getX(closestConnection.end, entities) :
+    closestConnection.begin.getX(closestConnection.end) :
     intermediatePoints[theClosestSegmentPointsId[0]].x
 
     const firstPointY = theClosestSegmentPointsId[0] === -1 ?
-    closestConnection.begin.getY(closestConnection.end, entities) :
+    closestConnection.begin.getY(closestConnection.end) :
     intermediatePoints[theClosestSegmentPointsId[0]].y
 
     const lastPointX = theClosestSegmentPointsId[1] === intermediatePoints.length ?
-    closestConnection.end.getX(closestConnection.begin, entities) :
+    closestConnection.end.getX(closestConnection.begin) :
     intermediatePoints[theClosestSegmentPointsId[1]].x
 
     const lastPointY = theClosestSegmentPointsId[1] === intermediatePoints.length ?
-    closestConnection.end.getY(closestConnection.begin, entities) :
+    closestConnection.end.getY(closestConnection.begin) :
     intermediatePoints[theClosestSegmentPointsId[1]].y
 
     const moved = (() => {
@@ -56,10 +56,13 @@ export const useConnectionHandlers = (connectionId: number) => {
     const newIntermediatePoints = intermediatePoints.map((point, index) => {
       if (theClosestSegmentPointsId.indexOf(index) >= 0) {
         return new IntermediateConnectionPoint(
-          point.getX(closestConnection.begin, entities), 
-          point.getY(closestConnection.begin, entities), 
+          point.getX(), 
+          point.getY(),
           true,
-          moved)
+          moved.movedX,
+          moved.movedY,
+          point.x,
+          point.y)
       } else {
         return point
       }
@@ -67,24 +70,32 @@ export const useConnectionHandlers = (connectionId: number) => {
 
     const pre = theClosestSegmentPointsId[0] === -1 ? [
       new IntermediateConnectionPoint(
-        closestConnection.begin.getX(closestConnection.end, entities),
-        closestConnection.begin.getY(closestConnection.end, entities),
+        closestConnection.begin.getX(closestConnection.end),
+        closestConnection.begin.getY(closestConnection.end),
         true,
-        moved)
+        moved.movedX,
+        moved.movedY,
+        closestConnection.begin.getX(closestConnection.end),
+        closestConnection.begin.getY(closestConnection.end),
+        )
     ] : []
 
     const post = theClosestSegmentPointsId[1] === intermediatePoints.length ? [
       new IntermediateConnectionPoint(
-        closestConnection.end.getX(closestConnection.begin, entities),
-        closestConnection.end.getY(closestConnection.begin, entities),
+        closestConnection.end.getX(closestConnection.begin),
+        closestConnection.end.getY(closestConnection.begin),
         true,
-        moved)
+        moved.movedX,
+        moved.movedY,
+        closestConnection.end.getX(closestConnection.begin),
+        closestConnection.end.getY(closestConnection.begin))
     ] : []
 
     const newPoints = [...pre, ...newIntermediatePoints, ...post]
 
     dispatch(updateConnection(theClosestConnectionId, {
       ...closestConnection,
+      selected: true,
       intermediatePoints: newPoints
     }))
     dispatch(setMouseMode(MouseMode.dragging))

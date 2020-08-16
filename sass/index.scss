@@ -8,8 +8,10 @@
 @import './DropdownMenu';
 @import './SavePanel';
 @import './Tutorial';
-@import './CustomizationPanels/Text';
+@import './CustomizationPanels/index';
 @import './ActionPanels';
+@import './SimpleSelect';
+@import './About';
 
 body, html, #root {
   height: 100%;

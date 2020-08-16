@@ -118,10 +118,10 @@ export const getTheClosestEntityConnectablePointCoordinates = (
 }
 
 export const getFreePointToConnectionDistance = (freeX: number, freeY: number, connection: Connection, entities: Map<number, Entity>) => {
-  const beginX = connection.begin.getX(connection.begin, entities)
-  const endX = connection.end.getX(connection.begin, entities)
-  const beginY = connection.begin.getY(connection.begin, entities)
-  const endY = connection.end.getY(connection.begin, entities)
+  const beginX = connection.begin.getX(connection.begin)
+  const endX = connection.end.getX(connection.begin)
+  const beginY = connection.begin.getY(connection.begin)
+  const endY = connection.end.getY(connection.begin)
 
   const result = getTheClosestSegmentPointToFreePoint(
     { x: freeX, y: freeY },
@@ -161,13 +161,13 @@ export const getEntityConnectionClosestPoint = (
     return point.directions.indexOf(ConnectionDirection.Left) >= 0
   })
 
-  if (targetEntity.y > oppositePoint.getY(oppositePoint, entities) && topPoints.length > 0) {
+  if (targetEntity.y > oppositePoint.getY(oppositePoint) && topPoints.length > 0) {
     return topPoints[0]
-  } else if (targetEntity.y + targetEntity.height < oppositePoint.getY(oppositePoint, entities) && bottomPoints.length > 0) {
+  } else if (targetEntity.y + targetEntity.height < oppositePoint.getY(oppositePoint) && bottomPoints.length > 0) {
     return bottomPoints[0]
-  } else if (targetEntity.x > oppositePoint.getX(oppositePoint, entities) && leftPoints.length > 0) {
+  } else if (targetEntity.x > oppositePoint.getX(oppositePoint) && leftPoints.length > 0) {
     return leftPoints[0]
-  } else if (targetEntity.x + targetEntity.width < oppositePoint.getX(oppositePoint, entities) && rightPoints.length > 0) {
+  } else if (targetEntity.x + targetEntity.width < oppositePoint.getX(oppositePoint) && rightPoints.length > 0) {
     return rightPoints[0]
   } else return null
 }
@@ -193,4 +193,50 @@ export const getEntityConnectionPosition = (
 
 export const getPointsDistance = (point1: Point, point2: Point) => {
   return Math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2)
+}
+
+export const isAreaInsideAnotherArea = (innerArea: {
+  beginX: number,
+  beginY: number,
+  endX: number,
+  endY: number,
+}, outerArea: {
+  beginX: number,
+  beginY: number,
+  endX: number,
+  endY: number,
+}) => {
+  const innerX = Math.min(innerArea.beginX, innerArea.endX)
+  const innerY = Math.min(innerArea.beginY, innerArea.endY)
+  const innerWidth = Math.max(innerArea.beginX - innerX, innerArea.endX - innerX)
+  const innerHeight = Math.max(innerArea.beginY - innerY, innerArea.endY - innerY)
+
+  const outerX = Math.min(outerArea.beginX, outerArea.endX)
+  const outerY = Math.min(outerArea.beginY, outerArea.endY)
+  const outerWidth = Math.max(outerArea.beginX - outerX, outerArea.endX - outerX)
+  const outerHeight = Math.max(outerArea.beginY - outerY, outerArea.endY - outerY)
+
+  if (innerX > outerX &&
+    innerX + innerWidth < outerX + outerWidth &&
+    innerY > outerY &&
+    innerY + innerHeight < outerY + outerHeight) return true;
+  return false;
+}
+
+export const isEntityInArea = (entity: Entity, area: {
+  beginX: number,
+  beginY: number,
+  endX: number,
+  endY: number,
+}) => {
+  const x = Math.min(area.beginX, area.endX)
+  const y = Math.min(area.beginY, area.endY)
+  const width = Math.max(area.beginX - x, area.endX - x)
+  const height = Math.max(area.beginY - y, area.endY - y)
+
+  if ((entity.x >= x) &&
+    ((entity.x + entity.width) < (x + width)) &&
+    (entity.y >= y) &&
+    ((entity.y + entity.height) < (y + height))) return true
+  return false
 }

@@ -1,0 +1,31 @@
+.about-page {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  &-head {
+    background-color: $main-color;
+    display: flex;
+
+    &-description {
+      flex-grow: 1;
+      padding: 0 0.5rem;
+      color: $second-color;
+    }
+  }
+
+  &-exit {
+    position: relative;
+    right: 0;
+    width: 1.2rem;
+    text-align: center;
+  }
+
+  &-body {
+    background-color: $second-color;
+    color: $dark-main-color;
+    border: 1px solid $main-color;
+    padding: 0.5rem;
+  }
+}

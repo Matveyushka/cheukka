@@ -1,13 +1,29 @@
 import * as React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setTextSettingsAreOpen, setEntitySettingsAreOpen, setConnectionSettingsAreOpen } from '../../actions'
+import { Store } from '../../stores'
 
 export const RightActionPanel = () => {
+  const dispatch = useDispatch()
   const [isOpen, setIsOpen] = React.useState(true)
+
+  const [
+    textSettingsAreOpen,
+    entitySettingsAreOpen,
+    connectionSettingsAreOpen
+  ] = useSelector((state: Store) => [
+    state.textSettingsAreOpen,
+    state.entitySettingsAreOpen,
+    state.connectionSettingsAreOpen
+  ])
 
   return (
     <div className="action-panel action-panel-right">
       {
         isOpen ? (<>
-          <button className="dark-button action-panel-button">
+          <button className="dark-button action-panel-button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => dispatch(setTextSettingsAreOpen(!textSettingsAreOpen))}>
             <svg
               className="action-panel-button-image"
               viewBox="-80 -80 500 500">
@@ -15,7 +31,9 @@ export const RightActionPanel = () => {
               </g>
             </svg>
           </button>
-          <button className="dark-button action-panel-button">
+          <button className="dark-button action-panel-button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => dispatch(setConnectionSettingsAreOpen(!connectionSettingsAreOpen))}>
             <svg
               className="action-panel-button-image"
               viewBox="-15 -15 140 140">
@@ -24,7 +42,9 @@ export const RightActionPanel = () => {
               </g>
             </svg>
           </button>
-          <button className="dark-button action-panel-button">
+          <button className="dark-button action-panel-button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => dispatch(setEntitySettingsAreOpen(!entitySettingsAreOpen))}>
             <svg className="action-panel-button-image" viewBox="-40 -40 600 600">
               <g>
                 <path d="M503.467,72.533h-51.2c-4.71,0-8.533,3.823-8.533,8.533v17.067H29.867c-2.355,0-4.267,1.911-4.267,4.267v268.8H8.533c-4.71,0-8.533,3.823-8.533,8.533v51.2c0,4.71,3.823,8.533,8.533,8.533h51.2c4.71,0,8.533-3.823,8.533-8.533v-17.067h413.867c2.355,0,4.267-1.911,4.267-4.267V140.8h17.067c4.71,0,8.533-3.823,8.533-8.533v-51.2C512,76.356,508.177,72.533,503.467,72.533zM51.2,422.4H17.067v-34.133H51.2V422.4z M469.333,396.8H68.267v-17.067c0-4.71-3.823-8.533-8.533-8.533H42.667v-256h401.067v17.067c0,4.71,3.823,8.533,8.533,8.533h17.067V396.8z M494.933,123.733H460.8V89.6h34.133V123.733z" />
